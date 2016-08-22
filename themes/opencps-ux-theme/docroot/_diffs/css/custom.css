@@ -32,6 +32,11 @@
 @import url(content.css);
 @import url(footer.css);
 
+@import url(schemes/vfa/custom_frame_1.css);
+@import url(schemes/vfa/font_face.css);
+@import url(schemes/vfa/header_style_1.css);
+@import url(schemes/vfa/overwrite.css);
+
 body{
 	background-color: #f5f5f5;
 	font-family: roboto;
