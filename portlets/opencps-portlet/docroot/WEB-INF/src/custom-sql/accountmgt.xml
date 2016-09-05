@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<custom-sql>
+	<sql id="org.opencps.accountmgt.service.persistence.BusinessFinder.searchBusiness">	
+		<![CDATA[
+	    	SELECT 
+	    		opencps_acc_business.*
+	    	FROM
+	    		opencps_acc_business
+	    	INNER JOIN
+	    		opencps_acc_businessdomain
+	    	ON
+	    		opencps_acc_business.businessId = opencps_acc_businessdomain.businessId
+	    	WHERE
+	    		1=1
+	    	AND
+	    		(opencps_acc_business.groupId = ?)
+	    	AND
+	    		(opencps_acc_business.accountStatus = ?)
+	    	AND
+	    		((lower(opencps_acc_business.name) LIKE ?) 
+	    		OR 
+	    			(lower(opencps_acc_business.shortName) LIKE ?) 
+	    		OR 
+	    			(lower(opencps_acc_business.enName) LIKE ?)
+	    		OR 
+	    			(lower(opencps_acc_business.email) LIKE ?))
+	    	AND
+	    		(opencps_acc_businessdomain.businessDomainCode = ?)
+		]]>
+	</sql>	
+	
+	<sql id="org.opencps.accountmgt.service.persistence.BusinessFinder.countBusiness">	
+		<![CDATA[
+	    	SELECT 
+	    		count(*) AS COUNT_VALUE
+	    	FROM
+	    		opencps_acc_business
+	    	INNER JOIN
+	    		opencps_acc_businessdomain
+	    	ON
+	    		opencps_acc_business.businessId = opencps_acc_businessdomain.businessId
+	    	WHERE
+	    		1=1
+	    	AND
+	    		(opencps_acc_business.groupId = ?)
+	    	AND
+	    		(opencps_acc_business.accountStatus = ?)
+	    	AND
+	    		((lower(opencps_acc_business.name) LIKE ?) 
+	    		OR 
+	    			(lower(opencps_acc_business.shortName) LIKE ?) 
+	    		OR 
+	    			(lower(opencps_acc_business.enName) LIKE ?)
+	    		OR 
+	    			(lower(opencps_acc_business.email) LIKE ?))
+	    	AND
+	    		(opencps_acc_businessdomain.businessDomainCode = ?)
+		]]>
+	</sql>
+	
+	<sql id="org.opencps.accountmgt.service.persistence.CitizenFinder.searchCitizen">	
+		<![CDATA[
+	    	SELECT 
+	    		opencps_acc_citizen.*
+	    	FROM
+	    		opencps_acc_citizen
+	    	WHERE
+	    		1=1
+	    	AND
+	    		(opencps_acc_citizen.groupId = ?)
+	    	AND
+	    		(opencps_acc_citizen.accountStatus = ?)
+	    	AND
+	    		((lower(opencps_acc_citizen.fullName) LIKE ?)
+	    		OR
+	    			(lower(opencps_acc_citizen.email) LIKE ?))
+		]]>
+	</sql>	
+	
+	<sql id="org.opencps.accountmgt.service.persistence.CitizenFinder.countCitizen">	
+		<![CDATA[
+	    	SELECT 
+	    		count(*) AS COUNT_VALUE
+	    	FROM
+	    		opencps_acc_citizen
+	    	WHERE
+	    		1=1
+	    	AND
+	    		(opencps_acc_citizen.groupId = ?)
+	    	AND
+	    		(opencps_acc_citizen.accountStatus = ?)
+	    	AND
+	    		((lower(opencps_acc_citizen.fullName) LIKE ?)
+	    		OR
+	    			(lower(opencps_acc_citizen.email) LIKE ?))
+		]]>
+	</sql>
+</custom-sql>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+	<jsp-config>
+		<taglib>
+			<taglib-uri>http://opencps.org/datamgt</taglib-uri>
+			<taglib-location>/WEB-INF/tld/opencps-datamgt.tld</taglib-location>
+		</taglib>
+		<taglib>
+			<taglib-uri>http://opencps.org/accountmgt</taglib-uri>
+			<taglib-location>/WEB-INF/tld/opencps-accountmgt.tld</taglib-location>
+		</taglib>
+	</jsp-config>
+	<servlet>
+		<servlet-name>VerifyEmailServlet</servlet-name>
+		<servlet-class>org.opencps.servlet.VerifyEmailServlet</servlet-class>
+		<init-param>
+			<param-name>config</param-name>
+			<param-value>/WEB-INF/struts-config.xml</param-value>
+		</init-param>
+		<init-param>
+			<param-name>debug</param-name>
+			<param-value>0</param-value>
+		</init-param>
+		<init-param>
+			<param-name>detail</param-name>
+			<param-value>0</param-value>
+		</init-param>
+		<load-on-startup>0</load-on-startup>
+	</servlet>
+	<servlet>
+      	<servlet-name>PreviewReportServlet</servlet-name>
+     	<servlet-class>org.opencps.servlet.PreviewReportServlet</servlet-class>
+  	</servlet>
+  	<servlet>
+      	<servlet-name>VerifySignServlet</servlet-name>
+     	<servlet-class>org.opencps.servlet.VerifySignDocumentServlet</servlet-class>
+  	</servlet>
+  	
+	<servlet-mapping>
+    	<servlet-name>VerifyEmailServlet</servlet-name>
+      	<url-pattern>/verify/*</url-pattern>
+  	</servlet-mapping> 
+  	
+	<servlet-mapping>
+		<servlet-name>PreviewReportServlet</servlet-name>
+		<url-pattern>/preview/report/*</url-pattern>
+	</servlet-mapping>  
+	
+	<servlet-mapping>
+		<servlet-name>VerifySignServlet</servlet-name>
+		<url-pattern>/verify-sign/*</url-pattern>
+	</servlet-mapping>  
+	
+	
+</web-app>

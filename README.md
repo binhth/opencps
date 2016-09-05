@@ -10,4 +10,4 @@ OpenCPS là phần mềm lõi dịch vụ công trực tuyến nguồn mở đ�
 * Mailing lists: [opencps@lists.opencps.vn](http://lists.opencps.vn/mailman/listinfo/opencps)
 
 # Tham khảo
-* Xem tài liệu dự án trên trang [Wiki](https://github.com/VietOpenCPS/OpenCPS/wiki)
+* Xem tài liệu dự án trên [Wiki](https://github.com/VietOpenCPS/doc/wiki)

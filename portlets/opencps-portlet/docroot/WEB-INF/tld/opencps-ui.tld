@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.0" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd">
+	<tlib-version>1.0</tlib-version>
+	<short-name>opencps-ui</short-name>
+	<uri>http://opencps.org/opencps-ui</uri>
+	<tag>
+		<description><![CDATA[Provides the OPENCPS - UI component tags, prefixed with <code>opencps-ui:</code>.]]></description>
+		<name>input-search</name>
+		<tag-class>org.opencps.taglib.ui.inputsearch.InputSearchTag</tag-class>
+		
+		<body-content>JSP</body-content>
+		<attribute>
+			<description>Whether the search field gets focus by default. The default value is <![CDATA[<code>false</code>]]>.</description>
+			<name>autoFocus</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>boolean</type>
+		</attribute>
+		<attribute>
+			<description>A text value for the search button's label. The default value is <![CDATA[<code>Search</code>]]>.</description>
+			<name>buttonLabel</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>A CSS class for styling the component.</description>
+			<name>cssClass</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>An ID for the component instance. The default value is <![CDATA[<code>displayTerms.KEYWORDS</code>]]>.</description>
+			<name>id</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>A name for the search box. The default value is <![CDATA[<code>displayTerms.KEYWORDS</code>]]>.</description>
+			<name>name</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>Placeholder text for the search field. The default value is the value of the <![CDATA[<code>buttonLabel</code>]]> attribute.</description>
+			<name>placeholder</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>Whether to show the search button. The default value is <![CDATA[<code>true</code>]]>.</description>
+			<name>showButton</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>boolean</type>
+		</attribute>
+		<attribute>
+			<description>A title for the search box.</description>
+			<name>title</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>Whether to use a namespace with the search button. The default value is <![CDATA[<code>true</code>]]>.</description>
+			<name>useNamespace</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>boolean</type>
+		</attribute>
+		<attribute>
+			<description>key url submit.</description>
+			<name>keySelect</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>url submit.</description>
+			<name>urlSelect</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description>currentTab submit.</description>
+			<name>currentTab</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+</taglib>

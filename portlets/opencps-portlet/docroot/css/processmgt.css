@@ -1,0 +1,188 @@
+.overview table {
+	width: 100%;
+}
+
+.overview tr td {
+	padding: 5px;
+	border: 1px solid #cbcbcb;
+}
+
+
+.level-0.opencps.dossiermgt.dossier-part {
+    padding-left: 0px;
+}
+
+.level-1.opencps.dossiermgt.dossier-part {
+    padding-left: 15px;
+}
+
+.level-2.opencps.dossiermgt.dossier-part {
+    padding-left: 30px;
+}
+
+.level-3.opencps.dossiermgt.dossier-part {
+    padding-left: 45px;
+}
+
+
+.dossier-file-counter {
+    background-color: green;
+    border: 1px solid green;
+    border-radius: 100%;
+    display: block;
+    height: 12px;
+    text-align: center;
+    width: 12px;
+}
+
+.counter-value {
+    color: white;
+    display: block;
+    font-size: 10px;
+    font-weight: bold;
+    line-height: 14px;
+}
+
+.opencps.dossiermgt.part-file-ctr.remove-file {
+    color: red;
+    font-size: 16px;
+}
+
+.opencps.dossiermgt.part-file-ctr.remove-group {
+    color: red;
+    font-size: 16px;
+}
+
+
+.opencps.dossiermgt.dossier-part-tree {
+    display: table;
+    width: 100%;
+}
+
+.opencps.dossiermgt.dossier-part-row {
+    border-bottom: 1px dotted #ccc;
+    display: table;
+    padding: 5px 0;
+    vertical-align: middle;
+    width: 100%;
+}
+
+
+.opencps.dossiermgt.dossier-part {
+   display: table-cell;
+   line-height: 30px;
+}
+
+.row-icon {
+    display: table-cell;
+    vertical-align: top;
+}
+
+.opencps.dossiermgt.dossier-part-name {
+    display: table-cell;
+    overflow: hidden;
+    padding-left: 5px;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+}
+
+.opencps.dossiermgt.dossier-part-control {
+    display: table-cell;
+    max-width: 255px;
+    line-height: 30px;
+    vertical-align: top;
+    width: 255px;
+}
+
+.opencps.dossiermgt.part-file-ctr.add-individual-part-group {
+	background-color: #698C77 !important;
+    padding-left: 0;
+    color: #fff !important;
+}
+
+.label.opencps.dossiermgt.part-file-ctr{
+	color: #fff !important;
+    background-color: #25BB61;
+    float: right;
+    margin-left: 5px;
+    padding: 5px 3px;
+}
+
+
+.dossier-actions-wraper {
+    width: 100%;
+}
+
+
+.dossier-version-counter{
+	background-color: green;
+    border: 1px solid green;
+    border-radius: 100%;
+    display: block;
+    height: 12px;
+    text-align: center;
+    width: 12px;
+}
+
+.version {
+    color: white;
+    display: block;
+    font-size: 10px;
+    font-weight: bold;
+    line-height: 14px;
+}
+
+.process-workflow-info {
+    width: 100%;
+}
+
+.process-workflow-info tr{
+	height: 30px;
+}
+
+.process-workflow-info tr, .process-workflow-info td{
+    border: 1px solid #ccc;
+}
+
+.row-fluid.process-workflow-action {
+    padding-top: 10px;
+}
+
+.searchcontainer-content .readonly{
+	background-color: #acacac !important;
+}
+
+.searchcontainer-content .readonly td {
+    background-color: transparent !important;
+    color: white;
+}
+
+.searchcontainer-content .readonly td input{
+    display: none !important;
+}
+
+.signature-file-list {
+    border: 1px solid #ddd;
+    height: 50px;
+    margin-bottom: 20px;
+    overflow-x: scroll;
+    overflow-y: auto;
+    padding: 5px 0;
+    width: 220px;
+}
+
+.signature-file-list table{
+    white-space: nowrap;
+}
+
+.signature-file-list .signature-status {
+	padding: 0 5px;
+    color: green;
+}
+
+
+.signature-file-list .signature-verify {
+	padding: 0 5px;
+    color: #455677;
+    cursor: pointer;
+}

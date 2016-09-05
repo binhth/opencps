@@ -1,0 +1,281 @@
+.alpaca-field legend{
+    margin-bottom: none !important;
+    font-size: 100% !important;
+    line-height: 200% !important;
+    border-bottom: 0px solid #e5e5e5;
+    margin-bottom: 0px !important;
+}
+.alpaca-field-object{
+    border: 0px solid #eee !important;
+    padding: 10px 0px 0px 0px !important;
+}
+
+.text-input-center input{
+    text-align: center;
+}
+
+.text-b{
+    font-weight: bold;  
+}
+
+.text-i{
+    font-style: italic;
+}
+
+.text-u{
+    font-style: underline;
+}
+
+.alpaca-control-label {
+    position: absolute;
+    margin-top: 0px;
+}
+.alpaca-container-item input{
+    border-bottom: 1px solid gainsboro !important;
+    border-top: 0px solid gainsboro !important;
+    border-left: 0px solid gainsboro !important;
+    border-right: 0px solid gainsboro !important;
+    margin-bottom: 0px !important;
+}
+.alpaca-container-item input{
+background-color: transparent !important;
+-webkit-box-shadow: inset 0 0px 0px rgba(0,0,0,0) !important;
+-moz-box-shadow: inset 0 0px 0px rgba(0,0,0,0) !important;
+box-shadow: inset 0 0px 0px rgba(0,0,0,0) !important;
+-webkit-transition: border linear 0s,box-shadow linear 0s !important;
+-moz-transition: border linear 0s,box-shadow linear 0s !important;
+-o-transition: border linear 0s,box-shadow linear 0s !important;
+transition: border linear 0s,box-shadow linear 0s !important;
+width: 80%;
+margin-left: 20%;
+padding: 0px !important;
+
+}
+.alpaca-field select{
+    background-color: white !important;
+    border-bottom: 1px solid gainsboro !important;
+    border-top: 0px solid gainsboro !important;
+    border-left: 0px solid gainsboro !important;
+    border-right: 0px solid gainsboro !important;
+}
+
+.alpaca-layout-binding-holder{
+    margin-bottom: 10px;
+}
+
+.form-input-10 input, .form-input-10 textarea, .form-input-10 select{
+    width: 10% !important;
+    margin-left: 90% !important;
+}
+.form-input-15 input, .form-input-15 textarea, .form-input-15 select{
+    width: 15% !important;
+    margin-left: 85% !important;
+}
+.form-input-20 input, .form-input-20 textarea, .form-input-20 select{
+    width: 20% !important;
+    margin-left: 80% !important;
+}
+.form-input-25 input, .form-input-25 textarea, .form-input-25 select{
+    width: 25% !important;
+    margin-left: 75% !important;
+}
+.form-input-30 input, .form-input-30 textarea, .form-input-30 select{
+    width: 30% !important;
+    margin-left: 70% !important;
+}
+.form-input-35 input, .form-input-35 textarea, .form-input-35 select{
+    width: 35% !important;
+    margin-left: 65% !important;
+}
+.form-input-40 input, .form-input-40 textarea, .form-input-40 select{
+    width: 40% !important;
+    margin-left: 60% !important;
+}
+.form-input-45 input, .form-input-45 textarea, .form-input-45 select{
+    width: 45% !important;
+    margin-left: 55% !important;
+}
+.form-input-50 input, .form-input-50 textarea, .form-input-50 select{
+    width: 50% !important;
+    margin-left: 50% !important;
+}
+.form-input-55 input, .form-input-55 textarea, .form-input-55 select{
+    width: 55% !important;
+    margin-left: 45% !important;
+}
+.form-input-60 input, .form-input-60 textarea, .form-input-60 select{
+    width: 60% !important;
+    margin-left: 40% !important;
+}
+.form-input-65 input, .form-input-65 textarea, .form-input-65 select{
+    width: 65% !important;
+    margin-left: 35% !important;
+}
+.form-input-70 input, .form-input-70 textarea, .form-input-70 select{
+    width: 70% !important;
+    margin-left: 30% !important;
+}
+.form-input-75 input, .form-input-75 textarea, .form-input-75 select{
+    width: 75% !important;
+    margin-left: 25% !important;
+}
+.form-input-80 input, .form-input-80 textarea, .form-input-80 select{
+    width: 80% !important;
+    margin-left: 20% !important;
+}
+.form-input-85 input, .form-input-85 textarea, .form-input-85 select{
+    width: 85% !important;
+    margin-left: 15% !important;
+}
+.form-input-90 input, .form-input-90 textarea, .form-input-90 select{
+    width: 90% !important;
+    margin-left: 10% !important;
+}
+.form-input-95 input, .form-input-95 textarea, .form-input-95 select{
+    width: 95%;
+    margin-left: 5%;
+}
+.form-input-100 input, .form-input-100 select{
+    width: 100% !important;
+    margin-left: 0 !important;
+}
+ .form-input-100 textarea{
+    width: 100% !important;
+    margin-left: 0;
+ }
+
+.alpaca-message{
+    display: none !important;
+}
+.glyphicon-star{
+    float: right;
+    color: red;
+    margin: 2px 0px 0px 2px;
+    font-size: 8px;
+}
+
+.table-top11 input{
+    height: 30px !important;
+    border-left: 1px solid gainsboro !important;
+    border-bottom: 0px !important;
+}
+.table-top11{
+    margin-top: -11px;
+}
+.table-border {
+    border: 1px solid gainsboro;
+}
+
+.row-pading0{
+    padding-top: 0 !important;
+}
+.row-top10{
+    margin-top: -10px;
+}
+.row-top20{
+    margin-top: -20px;
+}
+.row-top30{
+    margin-top: -30px;
+}
+.margin-top-10{
+	margin-top: 10px;
+}
+.margin-top-20{
+	margin-top: 20px;
+}
+.margin-top-30{
+	margin-top: 30px;
+}
+.has-error .help-block,
+.has-error .control-label,
+.has-error .radio,
+.has-error .checkbox,
+.has-error .radio-inline,
+.has-error .checkbox-inline,
+.has-error.radio label,
+.has-error.checkbox label,
+.has-error.radio-inline label,
+.has-error.checkbox-inline label {
+  color: #a94442;
+}
+.has-error .form-control {
+  border-color: #a94442;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+}
+.has-error .form-control:focus {
+  border-color: #843534;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #ce8483;
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #ce8483;
+}
+.has-error .input-group-addon {
+  color: #a94442;
+  background-color: #f2dede;
+  border-color: #a94442;
+}
+.has-error .form-control-feedback {
+  color: #a94442;
+}
+
+.alpaca-field-table table tr th{
+	vertical-align: inherit !important;
+}
+.alpaca-array-actionbar .btn-sm, .alpaca-array-actionbar .btn-group-sm > .btn {
+    background: transparent none repeat scroll 0% 0% !important;
+    border: none !important;
+    padding: 0px 0px 0px 10px !important;
+}
+.table.dsFormTable td {text-align: center !important; vertical-align: middle;}
+.table.dsFormTable > tbody > tr:first-child td, .table.dsFormTable > tbody > tr:nth-child(2) td {font-weight: bold}
+
+.aui .nav > li > a:hover, .aui .nav > li > a:focus{
+    color: #333 !important;
+}
+
+.alpaca-field-checkbox input{
+	margin: 0px 10px 10px !important;
+}
+.alpaca-field-focused .btn-group .multiselect-container,
+.multiselect-container:hover,
+.multiselect-container:FOCUS,
+.multiselect-container:ACTIVE{
+    display: block !important;
+}
+.alpaca-field-radio .alpaca-control-label{
+    position: inherit !important;
+}
+.form-input-80 .btn-group button.multiselect,
+.form-input-80 .multiselect-container{
+	margin-left: 20% !important;
+}
+.form-input-90 .btn-group button.multiselect,
+.form-input-90 .multiselect-container{
+    margin-left: 10% !important;
+}
+.alpaca-control.radio{
+	margin-left: 40px !important;
+}
+.nobutton .alpaca-array-toolbar{
+    display: none !important;
+}
+
+
+
+
+.alpaca-array-actionbar-action.btn {
+	height: 20px !important;
+	text-align: center;
+	color: #333 !important;
+}
+
+.alpaca-field-table td {
+    border-left: 1px solid #ddd !important;
+}
+tr.alpaca-field-tablerow > td.alpaca-container-item input{
+	margin-left: 0 !important;
+}
+#_13_WAR_opencpsportlet_dossier-dynamic-form_iframe_ .portlet-body,
+#_16_WAR_opencpsportlet_dossier-dynamic-form_iframe_ .portlet-body {
+    background-color: #fff !important;
+}
