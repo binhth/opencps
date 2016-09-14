@@ -39,6 +39,7 @@ import org.opencps.util.DLFolderUtil;
 import org.opencps.util.PortletConstants;
 import org.opencps.util.PortletUtil;
 import org.opencps.util.PortletUtil.SplitDate;
+import org.opencps.util.WebKeys;
 
 import com.liferay.portal.NoSuchUserException;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -194,6 +195,15 @@ public class DossierLocalServiceImpl extends DossierLocalServiceBaseImpl {
 		dossier.setFolderId(folder.getFolderId());
 
 		dossier = dossierPersistence.update(dossier);
+		
+		int actor = WebKeys.DOSSIER_ACTOR_CITIZEN;
+		long actorId = userId;
+		String actorName = StringPool.BLANK;
+		
+		if (actorId != 0) {
+			User user = userPersistence.fetchByPrimaryKey(actorId);
+			actorName = user.getFullName();
+		}
 
 		dossierStatusLocalService.addDossierStatus(
 			userId,
@@ -206,18 +216,21 @@ public class DossierLocalServiceImpl extends DossierLocalServiceBaseImpl {
 				PortletConstants.DOSSIER_STATUS_NEW, serviceContext.getLocale()),
 			now, PortletConstants.DOSSIER_FILE_SYNC_STATUS_NOSYNC,
 			serviceContext);
+		
+		// Update DossierLog with Actor
 		dossierLogLocalService.addDossierLog(
 			userId,
 			dossierId,
 			0,
 			PortletConstants.DOSSIER_STATUS_NEW,
-			"nltt",
+			actor,
+			actorId,
+			actorName,
 			PortletUtil.getActionInfo(
 				PortletConstants.DOSSIER_STATUS_NEW, serviceContext.getLocale()),
-			PortletUtil.getMessageInfo(
-				PortletConstants.DOSSIER_STATUS_NEW, serviceContext.getLocale()),
+			StringPool.BLANK,
 			now, PortletConstants.DOSSIER_LOG_NORMAL, serviceContext);
-
+		
 		long classTypeId = 0;
 
 		assetEntryLocalService.updateEntry(
@@ -1638,6 +1651,29 @@ public class DossierLocalServiceImpl extends DossierLocalServiceBaseImpl {
 		Indexer indexer = IndexerRegistryUtil.nullSafeGetIndexer(Dossier.class);
 
 		indexer.reindex(dossier);
+		int actor = WebKeys.DOSSIER_ACTOR_CITIZEN;
+		long actorId = userId;
+		String actorName = StringPool.BLANK;
+		
+		if (actorId != 0) {
+			User user = userPersistence.fetchByPrimaryKey(actorId);
+			actorName = user.getFullName();
+		}
+
+		dossierLogLocalService.addDossierLog(
+			userId,
+			dossierId,
+			0,
+			PortletConstants.DOSSIER_STATUS_NEW,
+			actor,
+			actorId,
+			actorName,
+			PortletUtil.getActionInfo(
+				PortletConstants.DOSSIER_STATUS_UPDATE, serviceContext.getLocale()),
+			StringPool.BLANK,
+			now, PortletConstants.DOSSIER_LOG_NORMAL, serviceContext);
+		
+		
 		return dossier;
 	}
 
@@ -1882,7 +1918,7 @@ public class DossierLocalServiceImpl extends DossierLocalServiceBaseImpl {
 		dossierLogLocalService.addDossierLog(
 			userId, dossier.getGroupId(), dossier.getCompanyId(), dossierId,
 			fileGroupId, status, PortletUtil.getActionInfo(status, locale),
-			PortletUtil.getMessageInfo(status, locale), now, level);
+			StringPool.BLANK, now, level);
 
 		dossierPersistence.update(dossier);
 

@@ -87,6 +87,8 @@ public class SyncFromBackOffice {
 			syncFromBackOfficeMsgBody.getReceiveDatetime(),
 			syncFromBackOfficeMsgBody.getFinishDatetime(),
 			syncFromBackOfficeMsgBody.getActor(),
+			syncFromBackOfficeMsgBody.getActorId(),
+			syncFromBackOfficeMsgBody.getActorName(),
 			syncFromBackOfficeMsgBody.getRequestCommand(),
 			syncFromBackOfficeMsgBody.getActionInfo(),
 			syncFromBackOfficeMsgBody.getMessageInfo(), syncDossierFiles,

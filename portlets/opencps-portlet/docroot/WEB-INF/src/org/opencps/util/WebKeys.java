@@ -232,6 +232,7 @@ public class WebKeys implements com.liferay.portal.kernel.util.WebKeys {
 	public static final String ORDER_BY_DESC = "desc";
 	
 	public static final int DOSSIER_ACTOR_SYSTEM = 0; 
+	public static final String DOSSIER_ACTOR_SYSTEM_NAME = "SYSTEM"; 
 	public static final int DOSSIER_ACTOR_CITIZEN = 1; 
 	public static final int DOSSIER_ACTOR_EMPLOYEE = 2;
 }

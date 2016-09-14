@@ -92,8 +92,6 @@ public class SyncFromFrontOffice implements MessageListener{
 				        userActionMgs.getDossierId(),
 				        userActionMgs.getFileGroupId())) {
 						
-
-
 						int logLevel = 0;
 
 						long govAgencyOrgId =

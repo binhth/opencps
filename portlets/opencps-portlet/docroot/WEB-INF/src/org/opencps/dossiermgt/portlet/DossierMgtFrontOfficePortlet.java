@@ -2183,9 +2183,7 @@ public class DossierMgtFrontOfficePortlet extends MVCPortlet {
 				WebKeys.DOSSIER_ACTOR_CITIZEN, actorId, actorName, StringPool.BLANK,
 				PortletUtil.getActionInfo(
 					PortletConstants.DOSSIER_STATUS_SYSTEM,
-					actionRequest.getLocale()), PortletUtil.getMessageInfo(
-					PortletConstants.DOSSIER_STATUS_SYSTEM,
-					actionRequest.getLocale()),
+					actionRequest.getLocale()),StringPool.BLANK,
 				PortletConstants.DOSSIER_FILE_SYNC_STATUS_REQUIREDSYNC,
 				PortletConstants.DOSSIER_LOG_NORMAL);
 

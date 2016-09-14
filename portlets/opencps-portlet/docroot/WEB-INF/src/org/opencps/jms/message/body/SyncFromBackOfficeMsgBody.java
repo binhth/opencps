@@ -48,7 +48,7 @@ public class SyncFromBackOfficeMsgBody implements Serializable{
 	}
 
 	
-	public String getActor() {
+/*	public String getActor() {
 	
 		return _actor;
 	}
@@ -57,7 +57,7 @@ public class SyncFromBackOfficeMsgBody implements Serializable{
 	public void setActor(String actor) {
 	
 		this._actor = actor;
-	}
+	}*/
 
 	
 	public long getDossierId() {
@@ -239,9 +239,67 @@ public class SyncFromBackOfficeMsgBody implements Serializable{
     	this._submitDateTime = _submitDateTime;
     }
 
+	
+    /**
+     * @return the actor
+     */
+    public int getActor() {
+    
+    	return actor;
+    }
+
+
+	
+    /**
+     * @param actor the actor to set
+     */
+    public void setActor(int actor) {
+    
+    	this.actor = actor;
+    }
+
+
+	
+    /**
+     * @return the actorId
+     */
+    public long getActorId() {
+    
+    	return actorId;
+    }
+
+
+	
+    /**
+     * @param actorId the actorId to set
+     */
+    public void setActorId(long actorId) {
+    
+    	this.actorId = actorId;
+    }
+
+
+	
+    /**
+     * @return the actorName
+     */
+    public String getActorName() {
+    
+    	return actorName;
+    }
+
+
+	
+    /**
+     * @param actorName the actorName to set
+     */
+    public void setActorName(String actorName) {
+    
+    	this.actorName = actorName;
+    }
+
 	private String _actionInfo;
 	
-	private String _actor;
 	
 	private long _dossierId;
 	
@@ -270,4 +328,9 @@ public class SyncFromBackOfficeMsgBody implements Serializable{
 	private PaymentFile _paymentFile;
 	
 	private Date _submitDateTime;
+	
+	
+	private int actor;
+	private long actorId;
+	private String actorName;
 }

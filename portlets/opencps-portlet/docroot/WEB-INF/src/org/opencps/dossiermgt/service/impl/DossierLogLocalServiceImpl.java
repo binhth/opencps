@@ -179,6 +179,38 @@ public class DossierLogLocalServiceImpl extends DossierLogLocalServiceBaseImpl {
 		return dossierLogPersistence.update(dossierLog);
 
 	}
+	
+	public DossierLog addDossierLog(
+		long userId, long dossierId, long fileGroupId, String status,
+		int actor, long actorId, String actorName, String actionInfo, String messageInfo,
+		Date updateDatetime, int level, ServiceContext serviceContext)
+		throws SystemException {
+
+		long dossierLogId =
+			counterLocalService.increment(DossierLog.class.getName());
+		DossierLog dossierLog = dossierLogPersistence.create(dossierLogId);
+		Date now = new Date();
+
+		dossierLog.setUserId(userId);
+		dossierLog.setGroupId(serviceContext.getScopeGroupId());
+		dossierLog.setCompanyId(serviceContext.getCompanyId());
+		dossierLog.setCreateDate(now);
+		dossierLog.setModifiedDate(now);
+
+		dossierLog.setDossierId(dossierId);
+		dossierLog.setFileGroupId(fileGroupId);
+		dossierLog.setDossierStatus(status);
+		dossierLog.setActionInfo(actionInfo);
+		dossierLog.setMessageInfo(messageInfo);
+		dossierLog.setUpdateDatetime(updateDatetime);
+		dossierLog.setLevel(level);
+		dossierLog.setActor(actor);
+		dossierLog.setActorId(actorId);
+		dossierLog.setActorName(actorName);
+
+		return dossierLogPersistence.update(dossierLog);
+
+	}
 
 	/**
 	 * @param userId
