@@ -69,18 +69,46 @@
 	}
 	
 	String headers = StringUtil.merge(headerNames, StringPool.COMMA);
+	
+	String currentTopTabs = 
+			ParamUtil.getString(request, "tabs1", DossierMgtUtil.TOP_TABS_DOSSIER_TEMPLATE);
+	
+	PortletURL editDossierBackURL = renderResponse.createRenderURL();
+	editDossierBackURL.setParameter("mvcPath", templatePath + "edit_dossier.jsp");
+	editDossierBackURL.setParameter(DossierTemplateDisplayTerms.DOSSIERTEMPLATE_DOSSIERTEMPLATEID, String.valueOf(dossierTemplate.getDossierTemplateId()));
+	
+	String currentEditDossierURL = editDossierBackURL.toString() + "#" +renderResponse.getNamespace() +"tab="+ renderResponse.getNamespace() + "dossierservicelist";
+	
 %>
 
-<portlet:renderURL var="editServiceConfigURL" >
-	<portlet:param name="mvcPath" value='<%= templatePath + "edit_service_config.jsp" %>'/>
-	<portlet:param name="redirectURL" value="<%=currentURL %>"/>
-	<portlet:param name="<%=DossierTemplateDisplayTerms.DOSSIERTEMPLATE_DOSSIERTEMPLATEID %>" value="<%=String.valueOf(dossierTemplateId) %>"/>
-</portlet:renderURL>
+<c:choose>
 
-<c:if test="<%=ServiceConfigPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_SERVICE_CONFIG) %>">
-		<%-- <div id="<portlet:namespace/>toolbarResponse"></div> --%>
-		<aui:button href="<%= editServiceConfigURL.toString() %>" value="add-service-config"/>
-</c:if>
+	<c:when test="<%=currentTopTabs.equals(DossierMgtUtil.TOP_TABS_DOSSIER_TEMPLATE) %>">
+		<portlet:renderURL var="editServiceConfigURL" >
+			<portlet:param name="mvcPath" value='<%= templatePath + "edit_service_config.jsp" %>'/>
+			<portlet:param name="backURL" value="<%=currentEditDossierURL %>"/>
+			<portlet:param name="<%=DossierTemplateDisplayTerms.DOSSIERTEMPLATE_DOSSIERTEMPLATEID %>" value="<%=String.valueOf(dossierTemplateId) %>"/>
+		</portlet:renderURL>
+		
+		<c:if test="<%=ServiceConfigPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_SERVICE_CONFIG) %>">
+				<%-- <div id="<portlet:namespace/>toolbarResponse"></div> --%>
+				<aui:button href="<%= editServiceConfigURL.toString() %>" value="add-service-config"/>
+		</c:if>
+	</c:when>
+	<c:otherwise>
+		<portlet:renderURL var="editServiceConfigURL" >
+			<portlet:param name="mvcPath" value='<%= templatePath + "edit_service_config.jsp" %>'/>
+			<portlet:param name="redirectURL" value="<%=currentURL %>"/>
+			<portlet:param name="<%=DossierTemplateDisplayTerms.DOSSIERTEMPLATE_DOSSIERTEMPLATEID %>" value="<%=String.valueOf(dossierTemplateId) %>"/>
+		</portlet:renderURL>
+		
+		<c:if test="<%=ServiceConfigPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_SERVICE_CONFIG) %>">
+				<%-- <div id="<portlet:namespace/>toolbarResponse"></div> --%>
+				<aui:button href="<%= editServiceConfigURL.toString() %>" value="add-service-config"/>
+		</c:if>
+	</c:otherwise>
+</c:choose>
+
 <div class="opencps-searchcontainer-wrapper">
 	<liferay-ui:search-container searchContainer="<%= new ServiceConfigSearch(renderRequest, totalCount, iteratorURL) %>" 
 		headerNames="<%= headers %>"> 

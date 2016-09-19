@@ -72,7 +72,7 @@
 %>
 
 <c:choose>
-	<c:if test="<%=employee != null %>">
+	<c:when test="<%=employee != null %>">
 		<%
 			List<String> govAgencyCodes = new ArrayList<String>();
 			try {
@@ -243,7 +243,7 @@
 		
 		</liferay-ui:search-container>
 		</div>
-	</c:if>
+	</c:when>
 	
 	<c:otherwise>
 		<div class="portlet-msg-warring">

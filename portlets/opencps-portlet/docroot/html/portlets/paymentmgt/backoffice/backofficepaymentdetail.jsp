@@ -1,3 +1,5 @@
+<%@page import="org.opencps.util.DateTimeUtil"%>
+<%@page import="com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil"%>
 <%@page import="com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil"%>
 <%@page import="org.opencps.backend.util.PaymentRequestGenerator"%>
 <%@page import="com.liferay.portal.kernel.util.ListUtil"%>
@@ -12,7 +14,6 @@
 <%@page import="com.liferay.util.PwdGenerator"%>
 <%@page import="org.opencps.usermgt.service.WorkingUnitLocalServiceUtil"%>
 <%@page import="org.opencps.usermgt.model.WorkingUnit"%>
-<%@page import="com.liferay.portal.kernel.util.FastDateFormatFactoryUtil"%>
 <%@page import="java.text.Format"%>
 <%@page import="org.opencps.util.PortletUtil"%>
 <%@page import="org.opencps.dossiermgt.service.DossierLocalServiceUtil"%>
@@ -42,7 +43,6 @@
 
 
 <%
-    Format dateFormatDate = FastDateFormatFactoryUtil.getDate(locale, timeZone);
     String backRedirect = ParamUtil.getString(request, "redirect");
     long paymentFileId = ParamUtil.getLong(request, "paymentFileId");
     PaymentFile paymentFile = PaymentFileLocalServiceUtil.fetchPaymentFile(paymentFileId);
@@ -87,7 +87,7 @@
                         <p><span><liferay-ui:message key="ten-phi-thanh-toan"/>:</span> </p><%=Validator.isNotNull(paymentFile) ?HtmlUtil.escape(paymentFile.getPaymentName()): LanguageUtil.get(pageContext, "monitoring-chua-co") %>
                     </div>
                     <div>
-                        <p><span><liferay-ui:message key="ngay-yeu-cau"/>:</span> </p><%=Validator.isNotNull(paymentFile)?HtmlUtil.escape(dateFormatDate.format(paymentFile.getRequestDatetime())): LanguageUtil.get(pageContext, "monitoring-chua-co") %>
+                        <p><span><liferay-ui:message key="ngay-yeu-cau"/>:</span> </p><%=Validator.isNotNull(paymentFile)?HtmlUtil.escape(DateTimeUtil.convertDateToString(paymentFile.getRequestDatetime(), DateTimeUtil._VN_DATE_FORMAT)): LanguageUtil.get(pageContext, "monitoring-chua-co") %>
                     </div>
                     <div>
                         <p><span><liferay-ui:message key="so-tien"/>:</span> </p><span class="red"><%=HtmlUtil.escape(df2.format(Double.valueOf(paymentFile.getAmount())).toString()) %> <liferay-ui:message key="vnd"/></span>
@@ -98,7 +98,7 @@
                 </div>
                 <div class="box50">
                     <div>
-                        <p><span><liferay-ui:message key="ngay-da-bao-nop"/>:</span></p> <%=Validator.isNotNull(paymentFile.getConfirmDatetime())?HtmlUtil.escape(dateFormatDate.format(paymentFile.getConfirmDatetime())): LanguageUtil.get(pageContext, "monitoring-chua-co") %>
+                        <p><span><liferay-ui:message key="ngay-da-bao-nop"/>:</span></p> <%=Validator.isNotNull(paymentFile.getConfirmDatetime())?HtmlUtil.escape(DateTimeUtil.convertDateToString(paymentFile.getRequestDatetime(), DateTimeUtil._VN_DATE_FORMAT)): LanguageUtil.get(pageContext, "monitoring-chua-co") %>
                     </div>
                     <div>
                         <p><span><liferay-ui:message key="hinh-thuc-thuc-hien"/>:</span> 
@@ -132,7 +132,7 @@
 						<%
 		                        FileEntry fileEntry = null;
 		                        try {
-		                            fileEntry = DLAppServiceUtil.getFileEntry(paymentFile.getConfirmFileEntryId());
+		                            fileEntry = DLAppLocalServiceUtil.getFileEntry(paymentFile.getConfirmFileEntryId());
 		                        }
 		                        catch (NoSuchFileEntryException e) {
 		                        }
@@ -162,7 +162,7 @@
                         <p><span><liferay-ui:message key="ghi-chu-kem-theo"/>:</span> </p><%=Validator.isNotNull(paymentFile)? HtmlUtil.escape(paymentFile.getRequestNote()): LanguageUtil.get(pageContext, "monitoring-chua-co") %>
                     </div>
                     <div>
-                        <p><span><liferay-ui:message key="ngay-xac-nhan-thu-phi"/>:</span> </p><%=Validator.isNotNull(paymentFile)?HtmlUtil.escape(dateFormatDate.format(paymentFile.getApproveDatetime())): LanguageUtil.get(pageContext, "monitoring-chua-co") %>
+                        <p><span><liferay-ui:message key="ngay-xac-nhan-thu-phi"/>:</span> </p><%=Validator.isNotNull(paymentFile)?HtmlUtil.escape(DateTimeUtil.convertDateToString(paymentFile.getRequestDatetime(), DateTimeUtil._VN_DATE_FORMAT)): LanguageUtil.get(pageContext, "monitoring-chua-co") %>
                     </div>
                     <div>
                         <p><span><liferay-ui:message key="noi-dung-xac-nhan"/>:</span> </p><%=Validator.isNotNull(paymentFile)? HtmlUtil.escape(paymentFile.getApproveNote()): LanguageUtil.get(pageContext, "monitoring-chua-co") %>

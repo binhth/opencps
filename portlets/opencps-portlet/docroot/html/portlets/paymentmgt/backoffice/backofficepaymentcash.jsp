@@ -1,8 +1,8 @@
+<%@page import="org.opencps.util.DateTimeUtil"%>
 <%@page import="java.text.DecimalFormat"%>
 <%@page import="org.opencps.paymentmgt.search.PaymentFileDisplayTerms"%>
 <%@page import="org.opencps.usermgt.service.WorkingUnitLocalServiceUtil"%>
 <%@page import="org.opencps.usermgt.model.WorkingUnit"%>
-<%@page import="com.liferay.portal.kernel.util.FastDateFormatFactoryUtil"%>
 <%@page import="java.text.Format"%>
 <%@page import="org.opencps.util.PortletUtil"%>
 <%@page import="org.opencps.dossiermgt.service.DossierLocalServiceUtil"%>
@@ -31,7 +31,6 @@
 <%@ include file="../init.jsp"%>
 
 <%
-    Format dateFormatDate = FastDateFormatFactoryUtil.getDate(locale, timeZone);
     String backRedirect = ParamUtil.getString(request, "redirect");
     long paymentFileId = ParamUtil.getLong(request, "paymentFileId");
     PaymentFile paymentFile = PaymentFileLocalServiceUtil.fetchPaymentFile(paymentFileId);

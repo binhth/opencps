@@ -173,7 +173,7 @@
 		
 		var A = AUI();
 	
-		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DOSSIER_MGT_PORTLET, themeDisplay.getPlid(), PortletRequest.ACTION_PHASE) %>');
+		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DOSSIER_BACKOFFICE_MANAGEMENT_PORTLET, themeDisplay.getPlid(), PortletRequest.ACTION_PHASE) %>');
 		portletURL.setParameter("javax.portlet.action", "previewAttachmentFile");
 		portletURL.setParameter("dossierFileId", dossierFileId);
 		portletURL.setPortletMode("view");

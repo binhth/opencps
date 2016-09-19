@@ -43,6 +43,8 @@
 	String groupName = ParamUtil.getString(request, DossierFileDisplayTerms.GROUP_NAME);
 	
 	String cssRequiredPage = StringPool.BLANK;
+	
+	String urlDownload = StringPool.BLANK;
 %>
 
 <div class="opencps dossiermgt dossier-part-tree">
@@ -77,6 +79,8 @@
 					
 					cssRequiredPage = dossierPart.getRequired() ? "cssRequired" : StringPool.BLANK;
 					
+					urlDownload = DossierMgtUtil.getURLDownloadTemplateFile(themeDisplay, dossierPart.getTemplateFileNo());
+					
 					%>
 						<div class='<%="opencps dossiermgt dossier-part-row r-" + index%>'>
 							<span class='<%="level-" + level + " opencps dossiermgt dossier-part"%>'>
@@ -101,9 +105,15 @@
 									<c:choose>
 										<c:when test="<%=level > 1 %>">
 											<%=dossierPart.getPartName() %>
+											<c:if test="<%=Validator.isNotNull(urlDownload) %>">
+												<a target="_blank" class="download-dossier-file" href="<%=urlDownload%>"><liferay-ui:message key="download-file-entry" /></a>
+											</c:if>
 										</c:when>
 										<c:otherwise>
 											<%=fileGroup.getDisplayName() %>
+											<c:if test="<%=Validator.isNotNull(urlDownload) %>">
+												<a target="_blank" class="download-dossier-file" href="<%=urlDownload%>"><liferay-ui:message key="download-file-entry" /></a>
+											</c:if>
 										</c:otherwise>
 									</c:choose>
 								</span>

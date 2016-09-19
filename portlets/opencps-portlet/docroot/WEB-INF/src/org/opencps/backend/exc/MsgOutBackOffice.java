@@ -132,10 +132,17 @@ public class MsgOutBackOffice implements MessageListener {
 					dossier.getReceptionNo() +
 					"--Time--" +
 					System.currentTimeMillis());
+				
+				_log.info("################################## toBackOffice.getReceptionNo()" +
+								toBackOffice.getReceptionNo() +
+								"--Time--" +
+								System.currentTimeMillis());
+				
+				
 
 				msgBody.setOid(dossier.getOid());
-				msgBody.setReceptionNo(dossier.getReceptionNo());
-				msgBody.setFinishDatetime(dossier.getFinishDatetime());
+				msgBody.setReceptionNo(toBackOffice.getReceptionNo());
+				msgBody.setFinishDatetime(toBackOffice.getFinishDatetime());
 				msgBody.setDossierStatus(toBackOffice.getDossierStatus());
 				msgBody.setLstDossierFileMsgBody(lstDossierFileMsgBody);
 				msgBody.setReceiveDatetime(toBackOffice.getReceiveDatetime());

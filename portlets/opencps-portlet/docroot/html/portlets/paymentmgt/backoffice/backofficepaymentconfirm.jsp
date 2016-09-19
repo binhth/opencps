@@ -1,3 +1,4 @@
+<%@page import="com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil"%>
 <%@page import="com.liferay.portal.service.UserLocalServiceUtil"%>
 <%@page import="org.opencps.backend.util.PaymentRequestGenerator"%>
 <%@page import="com.liferay.portal.kernel.util.ListUtil"%>
@@ -16,7 +17,6 @@
 <%@page import="org.opencps.usermgt.NoSuchWorkingUnitException"%>
 <%@page import="org.opencps.usermgt.service.WorkingUnitLocalServiceUtil"%>
 <%@page import="org.opencps.usermgt.model.WorkingUnit"%>
-<%@page import="com.liferay.portal.kernel.util.FastDateFormatFactoryUtil"%>
 <%@page import="java.text.Format"%>
 <%@page import="org.opencps.util.PortletUtil"%>
 <%@page import="org.opencps.dossiermgt.service.DossierLocalServiceUtil"%>
@@ -55,7 +55,6 @@
 }
 </style>
 <%
-    Format dateFormatDate = FastDateFormatFactoryUtil.getDate(locale, timeZone);
     String backRedirect = ParamUtil.getString(request, "redirect");
     long paymentFileId = ParamUtil.getLong(request, "paymentFileId");
     PaymentFile paymentFile = PaymentFileLocalServiceUtil.fetchPaymentFile(paymentFileId);
@@ -144,13 +143,9 @@
                         <p><span><liferay-ui:message key="chung-tu-kem-theo"/>:</span> 
 							<%
 							
-								permissionChecker = PermissionCheckerFactoryUtil.create(UserLocalServiceUtil.fetchUser(20199), true);
-
-								PermissionThreadLocal.setPermissionChecker(permissionChecker);
-								
 		                        FileEntry fileEntry = null;
 	                            try{
-	                            	fileEntry = DLAppServiceUtil.getFileEntry(paymentFile.getConfirmFileEntryId());
+	                            	fileEntry = DLAppLocalServiceUtil.getFileEntry(paymentFile.getConfirmFileEntryId());
 	                            }catch(NoSuchFileEntryException e){
 	                            	
 	                            }

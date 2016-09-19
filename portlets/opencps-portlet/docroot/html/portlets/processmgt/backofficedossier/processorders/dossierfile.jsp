@@ -393,7 +393,8 @@
 							</c:choose>
 						</c:when>
 						
-						<c:when test="<%=partType == PortletConstants.DOSSIER_PART_TYPE_RESULT %>"
+						<c:when test="<%=partType == PortletConstants.DOSSIER_PART_TYPE_RESULT ||
+										partType == PortletConstants.DOSSIER_PART_TYPE_MULTIPLE_RESULT%>"
 						>
 							<%
 							for(DossierPart dossierPart : dossierParts){
@@ -562,11 +563,17 @@
 				e.on('click', function(){
 					
 					var instance = A.one(e);
+					var dossierId = instance.attr('dossier');
+					var dossierFileId = instance.attr('dossier-file');
+					var dossierPartId = instance.attr('dossier-part');
 					var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.DOSSIER_BACKOFFICE_MANAGEMENT_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>');
 					portletURL.setParameter("mvcPath", "/html/portlets/processmgt/backofficedossier/modal_dialog.jsp");
 					portletURL.setWindowState("<%=LiferayWindowState.POP_UP.toString()%>"); 
 					portletURL.setPortletMode("normal");
-					portletURL.setParameter("content", "declaration-online");
+					portletURL.setParameter("content", "view-form");
+					portletURL.setParameter('<%=DossierDisplayTerms.DOSSIER_ID %>', dossierId);
+					portletURL.setParameter('<%=DossierFileDisplayTerms.DOSSIER_FILE_ID %>', dossierFileId);
+					portletURL.setParameter('<%=DossierFileDisplayTerms.DOSSIER_PART_ID %>', dossierPartId);
 					dynamicForm(this, portletURL.toString(), '<portlet:namespace/>');
 				});
 			});

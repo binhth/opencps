@@ -17,27 +17,19 @@
 
 package org.opencps.jms.message;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import javax.jms.BytesMessage;
 import javax.jms.JMSException;
 import javax.naming.NamingException;
 
 import org.opencps.dossiermgt.model.Dossier;
-import org.opencps.dossiermgt.model.FileGroup;
-import org.opencps.dossiermgt.service.DossierLocalServiceUtil;
 import org.opencps.jms.SyncServiceContext;
 import org.opencps.jms.business.SubmitDossier;
 import org.opencps.jms.context.JMSContext;
 import org.opencps.jms.context.JMSHornetqContext;
 import org.opencps.jms.context.JMSLocalContext;
-import org.opencps.jms.message.body.DossierFileMsgBody;
 import org.opencps.jms.message.body.DossierMsgBody;
 import org.opencps.jms.util.JMSMessageBodyUtil;
 import org.opencps.jms.util.JMSMessageUtil;
-import org.opencps.util.PortletConstants;
 import org.opencps.util.WebKeys;
 
 import com.liferay.portal.kernel.exception.PortalException;
@@ -151,24 +143,6 @@ public class SubmitDossierMessage {
 				bytesMessage.writeBytes(sender);
 
 				_hornetqContext.getMessageProducer().send(bytesMessage);
-
-				// Lat co syncStatus sang trang thai success
-
-				List<Long> fileGroupIdIds = new ArrayList<Long>();
-				List<DossierFileMsgBody> dossierFileMsgBodies =
-					dossierMsgBody.getLstDossierFileMsgBody();
-
-				if (dossierFileMsgBodies != null) {
-					for (DossierFileMsgBody dossierFileMsgBody : dossierFileMsgBodies) {
-						if (dossierFileMsgBody.getFileGroup() != null) {
-							fileGroupIdIds.add(dossierFileMsgBody.getFileGroup().getFileGroupId());
-						}
-					}
-				}
-
-				DossierLocalServiceUtil.updateSyncStatus(
-					dossierMsgBody.getDossier().getOid(), fileGroupIdIds,
-					PortletConstants.DOSSIER_FILE_SYNC_STATUS_SYNCSUCCESS);
 			}
 
 		}

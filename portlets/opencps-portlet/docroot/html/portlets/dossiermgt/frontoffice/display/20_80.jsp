@@ -1,4 +1,5 @@
 
+<%@page import="org.opencps.util.PortletConstants"%>
 <%@page import="org.opencps.util.PortletPropsValues"%>
 <%@page import="com.liferay.portal.kernel.json.JSONFactoryUtil"%>
 <%@page import="com.liferay.portal.kernel.json.JSONObject"%>
@@ -59,8 +60,9 @@
 
 <%@ include file="../../init.jsp"%>
 
-
 <liferay-ui:success  key="<%=MessageKeys.DEFAULT_SUCCESS_KEY %>" message="<%=MessageKeys.DEFAULT_SUCCESS_KEY %>"/>
+
+<liferay-ui:success  key="<%=MessageKeys.DEFAULT_SUCCESS_KEY_X %>" message="<%=MessageKeys.DEFAULT_SUCCESS_KEY_X %>"/>
 
 <liferay-ui:error 
 	exception="<%= NoSuchDossierException.class %>" 
@@ -91,18 +93,7 @@
 	List<Dossier> dossiers =  new ArrayList<Dossier>();
 	
 	int totalCount = 0;
-	
-	try{
-		
-		dossiers = DossierLocalServiceUtil.getDossierByUserNewRequest(scopeGroupId, themeDisplay.getUserId(), 0, itemsToDisplay_cfg, 
-			null);
-		totalCount = dossiers.size();
-	
-	}catch(Exception e){
-		_log.error(e);
-		
-	}
-	
+
 	JSONObject arrayParam = JSONFactoryUtil
 		    .createJSONObject();
 	arrayParam.put(DossierDisplayTerms.SERVICE_DOMAIN_ID, (serviceDomainId > 0) ? String.valueOf(serviceDomainId):StringPool.BLANK);
@@ -121,9 +112,9 @@
 		
 		String serviceDomainJsonData = ProcessOrderUtils.generateTreeView(
 				PortletPropsValues.DATAMGT_MASTERDATA_SERVICE_DOMAIN, 
-				"0", 
+				PortletConstants.TREE_VIEW_DEFAULT_ITEM_CODE, 
 				LanguageUtil.get(locale, "filter-by-service-domain-left") , 
-				1, 
+				PortletConstants.TREE_VIEW_LEVER_2, 
 				"radio",
 				false,
 				renderRequest);
@@ -137,9 +128,9 @@
 		<% 
 		String dossierStatusJsonData = ProcessOrderUtils.generateTreeView(
 				PortletPropsValues.DATAMGT_MASTERDATA_DOSSIER_STATUS, 
-				"0", 
+				PortletConstants.TREE_VIEW_DEFAULT_ITEM_CODE, 
 				LanguageUtil.get(locale, "dossier-status") , 
-				0, 
+				PortletConstants.TREE_VIEW_LEVER_0, 
 				"radio",
 				true,
 				renderRequest);
@@ -187,7 +178,7 @@
 	<aui:col width="75" >
 
 		<liferay-util:include page='<%=templatePath + "toolbar.jsp" %>' servletContext="<%=application %>" />
-		<c:if test="<%=!dossierStatusCHKInit.equals(\"-1\") %>">
+		
 			<div class="opencps-searchcontainer-wrapper default-box-shadow radius8">
 			<div class="opcs-serviceinfo-list-label">
 				<div class="title_box">
@@ -206,7 +197,7 @@
 						
 						DictItem domainItem = null;
 					
-						
+
 						try{
 							if(serviceDomainId > 0){
 								domainItem = DictItemLocalServiceUtil.getDictItem(serviceDomainId);
@@ -217,7 +208,9 @@
 							}
 							
 							%>
-								<%@include file="/html/portlets/dossiermgt/frontoffice/dosier_search_results.jspf" %>
+								<c:if test="<%=!dossierStatusCHKInit.equals(\"-1\") %>">
+									<%@include file="/html/portlets/dossiermgt/frontoffice/dosier_search_results.jspf" %>
+								</c:if>
 							<%
 						}catch(Exception e){
 							_log.error(e);
@@ -367,7 +360,6 @@
 				
 			</liferay-ui:search-container>
 		</div>
-		</c:if>
 		
 	</aui:col>
 </aui:row>

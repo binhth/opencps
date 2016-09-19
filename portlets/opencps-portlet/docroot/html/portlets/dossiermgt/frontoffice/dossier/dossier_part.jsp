@@ -84,6 +84,8 @@
 	
 	String cssRequired = StringPool.BLANK;
 	
+	String urlDownload = StringPool.BLANK;
+	
 	if(dossierTemplate != null){
 		try{
 			dossierPartsLevel1 = DossierPartLocalServiceUtil.getDossierPartsByT_P(dossierTemplate.getDossierTemplateId(), 0);
@@ -138,6 +140,8 @@
 								
 								cssRequired = dossierPart.getRequired() ? "cssRequired" : StringPool.BLANK;
 								
+								urlDownload = DossierMgtUtil.getURLDownloadTemplateFile(themeDisplay, dossierPart.getTemplateFileNo());
+								
 								%>
 									<div class='<%="opencps dossiermgt dossier-part-row r-" + index%>'>
 										<span class='<%="level-" + level + " opencps dossiermgt dossier-part"%>'>
@@ -161,7 +165,10 @@
 												
 											</span>
 											<span class="opencps dossiermgt dossier-part-name <%=cssRequired %>">
-												<%=dossierPart.getPartName() %>
+												<%=dossierPart.getPartName() %> 
+												<c:if test="<%=Validator.isNotNull(urlDownload) %>">
+													<a target="_blank" class="download-dossier-file" href="<%=urlDownload%>"><liferay-ui:message key="download-file-entry" /></a>
+												</c:if>
 											</span>
 										</span>
 									
@@ -297,6 +304,9 @@
 								}catch(Exception e){}
 								
 								cssRequired = dossierPartLevel1.getRequired() ? "cssRequired" : StringPool.BLANK;
+								
+								urlDownload = DossierMgtUtil.getURLDownloadTemplateFile(themeDisplay, dossierPartLevel1.getTemplateFileNo());
+								
 							%>
 							<div class='<%="opencps dossiermgt dossier-part-row r-" + index%>'>
 								<span class='<%="level-0" + " opencps dossiermgt dossier-part"%>'>
@@ -305,6 +315,9 @@
 									</span>
 									<span class="opencps dossiermgt dossier-part-name <%=cssRequired %>">
 										<%=dossierPartLevel1.getPartName() %>
+										<c:if test="<%=Validator.isNotNull(urlDownload) %>">
+											<a target="_blank" class="download-dossier-file" href="<%=urlDownload%>"><liferay-ui:message key="download-file-entry" /></a>
+										</c:if>
 									</span>
 								</span>
 								<span class="opencps dossiermgt dossier-part-control">

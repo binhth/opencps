@@ -1226,6 +1226,7 @@ public class DossierLocalServiceImpl extends DossierLocalServiceBaseImpl {
 		throws SystemException, PortalException {
 
 		Dossier dossier = dossierPersistence.findByOID(oid);
+
 		dossier.setReceptionNo(receptionNo);
 		dossier.setEstimateDatetime(estimateDatetime);
 		dossier.setReceiveDatetime(receiveDatetime);
@@ -1356,6 +1357,8 @@ public class DossierLocalServiceImpl extends DossierLocalServiceBaseImpl {
 			dossier.getUserId(), dossier.getGroupId(), dossier.getCompanyId(),
 			dossier.getDossierId(), fileGroupId, dossierStatus, actor, actorId, actorName,
 			requestCommand, actionInfo, messageInfo, level);
+
+		System.out.println("Done syncDossierStatus /////////////////////////////////////////");
 
 		dossierPersistence.update(dossier);
 
@@ -2041,6 +2044,64 @@ public class DossierLocalServiceImpl extends DossierLocalServiceBaseImpl {
 			actionInfo, messageInfo, level);
 
 		dossierPersistence.update(dossier);
+	}
+	
+	
+	/**
+	 * @param oId
+	 * @param fileGroupIds
+	 * @param syncStatus
+	 * @throws SystemException
+	 * @throws NoSuchDossierStatusException
+	 * @throws PortalException
+	 */
+	public void updateSyncStatus(
+		String oId, List<Long> fileGroupIds, int syncStatus)
+		throws SystemException, NoSuchDossierStatusException, PortalException {
+
+		Date now = new Date();
+
+		Dossier dossier = dossierLocalService.getByoid(oId);
+
+		int flagStatus = PortletConstants.DOSSIER_FILE_SYNC_STATUS_NOSYNC;
+
+		if (syncStatus == PortletConstants.DOSSIER_FILE_SYNC_STATUS_SYNCSUCCESS ||
+			syncStatus == PortletConstants.DOSSIER_FILE_SYNC_STATUS_SYNCERROR) {
+			flagStatus = PortletConstants.DOSSIER_FILE_SYNC_STATUS_REQUIREDSYNC;
+		}
+
+		if (fileGroupIds != null) {
+			for (long fileGroupId : fileGroupIds) {
+				FileGroup fileGroup =
+					fileGroupLocalService.getFileGroup(fileGroupId);
+				List<DossierFile> dossierFiles =
+					dossierFileLocalService.findByF_D_S_R(
+						fileGroupId, dossier.getDossierId(), flagStatus, 0);
+				if (dossierFiles != null) {
+					for (DossierFile dossierFile : dossierFiles) {
+						dossierFile.setSyncStatus(syncStatus);
+						dossierFile.setModifiedDate(now);
+						dossierFileLocalService.updateDossierFile(dossierFile);
+					}
+				}
+				fileGroup.setSyncStatus(syncStatus);
+				fileGroup.setModifiedDate(now);
+				fileGroupLocalService.updateFileGroup(fileGroup);
+			}
+		}
+
+		List<DossierFile> dossierFiles =
+			dossierFileLocalService.findByF_D_S_R(
+				0, dossier.getDossierId(), flagStatus, 0);
+		if (dossierFiles != null) {
+			for (DossierFile dossierFile : dossierFiles) {
+				dossierFile.setSyncStatus(syncStatus);
+				dossierFile.setModifiedDate(now);
+
+				dossierFileLocalService.updateDossierFile(dossierFile);
+			}
+		}
+
 	}
 
 	/**

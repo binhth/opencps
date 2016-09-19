@@ -76,7 +76,7 @@ public class SyncFromBackOffice {
 		}
 		
 		System.out.println("########################################################" +
-			"syncFromBackOfficeMsgBody.getReceptionNo() " + System.currentTimeMillis());
+			"syncFromBackOfficeMsgBody.getReceptionNo() " + syncFromBackOfficeMsgBody.getReceptionNo());
 
 		DossierLocalServiceUtil.syncDossierStatus(
 			syncFromBackOfficeMsgBody.getOid(),

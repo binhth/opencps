@@ -380,15 +380,20 @@ public class PortletUtil {
 		return name;
 	}
 
-	public static List<DictItem> getDossierStatus(long groupId) throws NoSuchDictCollectionException, SystemException {
+	public static List<DictItem> getDossierStatus(long groupId) {
 
-		DictCollection dictCollection = DictCollectionLocalServiceUtil.getDictCollection(groupId, "DOSSIER_STATUS");
-		
-		
-		List<DictItem> result = DictItemLocalServiceUtil
-			.getDictItemsInUseByDictCollectionIdAndParentItemId(
-					dictCollection.getDictCollectionId(), 0);
-		
+		DictCollection dictCollection = null;
+		List<DictItem> result = new ArrayList<DictItem>();
+		try {
+			dictCollection = DictCollectionLocalServiceUtil.getDictCollection(groupId, "DOSSIER_STATUS");
+			if(Validator.isNotNull(dictCollection)) {
+				result = DictItemLocalServiceUtil
+								.getDictItemsByDictCollectionId(dictCollection.getDictCollectionId());
+			}
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+		}
 		return result;
 	}
 
@@ -397,6 +402,7 @@ public class PortletUtil {
 		return StringUtil.merge(folderNames, StringPool.FORWARD_SLASH);
 	}
 
+	@Deprecated
 	public static String getCitizenDossierDestinationFolder(
 		long groupId, long userId) {
 
@@ -405,6 +411,7 @@ public class PortletUtil {
 			String.valueOf(userId);
 	}
 
+	@Deprecated
 	public static String getBusinessDossierDestinationFolder(
 		long groupId, long orgId) {
 
@@ -428,6 +435,17 @@ public class PortletUtil {
 			StringPool.SLASH + String.valueOf(year) + StringPool.SLASH +
 			String.valueOf(month) + StringPool.SLASH + String.valueOf(day) +
 			StringPool.SLASH + oid;
+	}
+	
+	public static String getPaymentDestinationFolder(
+		long groupId, int year, int month, int day, long ownId,
+		String accountType) {
+
+		return String.valueOf(groupId) + StringPool.SLASH + "Payments" +
+			StringPool.SLASH + accountType + StringPool.SLASH +
+			String.valueOf(year) + StringPool.SLASH + String.valueOf(month) +
+			StringPool.SLASH + String.valueOf(day) + StringPool.SLASH +
+			String.valueOf(ownId);
 	}
 
 	public static DictItem getDictItem(

@@ -28,8 +28,8 @@
 		preferences1 = PortletPreferencesFactoryUtil.getPortletSetup(request, portletResource);
 	}
 	
-	String oderByToDo = preferences1.getValue("oderByToDo", WebKeys.ORDER_BY_ASC);
-	String oderByJustFinish = preferences1.getValue("oderByJustFinish", WebKeys.ORDER_BY_ASC);
+	String oderByToDo = preferences1.getValue("oderByToDo", WebKeys.ORDER_BY_DESC);
+	String oderByJustFinish = preferences1.getValue("oderByJustFinish", WebKeys.ORDER_BY_DESC);
 	
 	String oderFieldToDo = preferences1.getValue("oderFieldToDo", ProcessOrderDisplayTerms.MODIFIEDDATE);
 	String oderFieldJustFinish = preferences1.getValue("oderFieldJustFinish", ProcessOrderDisplayTerms.MODIFIEDDATE);

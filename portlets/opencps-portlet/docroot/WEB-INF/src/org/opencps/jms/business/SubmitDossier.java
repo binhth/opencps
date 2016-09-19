@@ -17,10 +17,8 @@
 
 package org.opencps.jms.business;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.opencps.backend.message.SendToEngineMsg;
 import org.opencps.dossiermgt.model.Dossier;
@@ -97,23 +95,22 @@ public class SubmitDossier {
 		if (syncDossier != null && syncDossierFiles != null &&
 			syncDLFileEntries != null && data != null &&
 			syncDossierTemplate != null && serviceContext != null) {
-
+			
 			boolean isNew = false;
-
+			
 			Dossier dossierBackend = null;
-
+			
 			try {
-				dossierBackend =
-					DossierLocalServiceUtil.getByoid(syncDossier.getOid());
-			}
-			catch (Exception e) {
-
-			}
-
+				dossierBackend = DossierLocalServiceUtil.getByoid(syncDossier.getOid());
+            }
+            catch (Exception e) {
+	            
+            }
+			
 			if (Validator.isNull(dossierBackend)) {
 				isNew = true;
 			}
-
+			
 			if (isNew) {
 				dossier =
 					DossierLocalServiceUtil.syncDossier(
@@ -129,20 +126,8 @@ public class SubmitDossier {
 						syncDossierTemplate, serviceContext);
 			}
 
-			// Lat co syncStatus sang trang thai success
-			List<Long> fileGroupIdIds = new ArrayList<Long>();
-			if (syncFileGroups != null) {
-				for (Map.Entry<String, FileGroup> entry : syncFileGroups.entrySet()) {
-					fileGroupIdIds.add(entry.getValue().getDossierPartId());
-				}
-			};
-
-			DossierLocalServiceUtil.updateSyncStatus(
-				dossier.getOid(), fileGroupIdIds,
-				PortletConstants.DOSSIER_FILE_SYNC_STATUS_SYNCSUCCESS);
-
 			sendToBackend(
-				dossier.getDossierId(), 0, dossier.getDossierStatus(),
+				dossier.getDossierId(),0, dossier.getDossierStatus(),
 				serviceContext, isNew);
 		}
 
@@ -165,7 +150,7 @@ public class SubmitDossier {
 		Message message = new Message();
 
 		SendToEngineMsg engineMsg = new SendToEngineMsg();
-
+		
 		if (!isNew) {
 			engineMsg.setAction(WebKeys.ACTION_RESUBMIT_VALUE);
 
@@ -178,17 +163,15 @@ public class SubmitDossier {
 			engineMsg.setGroupId(serviceContext.getScopeGroupId());
 
 			engineMsg.setCompanyId(serviceContext.getCompanyId());
-			
-			engineMsg.setAction(WebKeys.ACTION_SUBMIT_VALUE);
-			
+
 			ProcessOrder processOrder =
 				ProcessOrderLocalServiceUtil.getProcessOrder(
 					dossierId, fileGroupId);
 
 			engineMsg.setProcessOrderId(processOrder.getProcessOrderId());
 
-		}
-		else {
+			
+		} else {
 			engineMsg.setAction(WebKeys.ACTION_SUBMIT_VALUE);
 
 			engineMsg.setDossierId(dossierId);
@@ -204,7 +187,7 @@ public class SubmitDossier {
 			engineMsg.setGroupId(serviceContext.getScopeGroupId());
 
 			engineMsg.setUserId(serviceContext.getUserId());
-
+			
 		}
 
 		message.put("msgToEngine", engineMsg);

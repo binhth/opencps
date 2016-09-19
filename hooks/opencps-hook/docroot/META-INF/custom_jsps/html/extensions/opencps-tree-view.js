@@ -17,6 +17,7 @@ Liferay.provide(window, 'buildTreeView', function(boundingBox, nameControl, data
 		        }
 		}).render();
 		
+		setTimeout(function(){
 			var dataJson = {};
 			for(j in json){
 				dataJson[nameSpace+j] = json[j];
@@ -56,7 +57,7 @@ Liferay.provide(window, 'buildTreeView', function(boundingBox, nameControl, data
 							}
 						},
 						failure: function() {
-							setTimeout(function(){
+							
 								var myTreeObj = A.one("#"+boundingBox);
 								var allLI = myTreeObj.all( ".tree-node" );
 								allLI.each(function (taskNode) {
@@ -67,8 +68,6 @@ Liferay.provide(window, 'buildTreeView', function(boundingBox, nameControl, data
 										taskNode.removeClass("current");
 									}
 					             });
-					        }, 1000);
-							
 						},
 					    end: function() {
 					    	console.log("menu js sleep end!");
@@ -77,7 +76,8 @@ Liferay.provide(window, 'buildTreeView', function(boundingBox, nameControl, data
 				}
 			);
 		
-			
+		}, 1000);	
+		
 		treeView.after('lastSelectedChange', function(event) {
 			var newCode = event.newVal.get('id');
 					

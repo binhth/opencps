@@ -171,4 +171,12 @@ public class PortletConstants {
 	public static final String PAYMENT_TYPE_CONFIRM_CASH = "paymentConfirmCash";
 	
 	public static final String PAYMENT_TYPE = "paymentType";
+	
+	public static final int TREE_VIEW_LEVER_0 = 0;
+	
+	public static final int TREE_VIEW_LEVER_1 = 1;
+	
+	public static final int TREE_VIEW_LEVER_2 = 2;
+	
+	public static final String TREE_VIEW_DEFAULT_ITEM_CODE = "0";
 }

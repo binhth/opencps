@@ -18,6 +18,12 @@
 %>
 <%@ include file="init.jsp"%>
 
+<%
+
+	String templatesToDisplay_cfg = GetterUtil.getString(portletPreferences.getValue("templatesToDisplay", "default"));
+
+%>
+
 <liferay-ui:success key="potlet-config-saved" message="portlet-configuration-have-been-successfully-saved" />
 
 <liferay-portlet:actionURL var="configurationActionURL" portletConfiguration="true"/>
@@ -67,5 +73,12 @@
 		</aui:col>
 	</aui:row>
 
+	<aui:select name="templatesToDisplay" id="templatesToDisplay">
+			
+			<aui:option selected="<%= templatesToDisplay_cfg.equals(\"default\") %>" value="default">default</aui:option>
+			
+			<aui:option selected="<%= templatesToDisplay_cfg.equals(\"20_80\") %>" value="20_80">20_80</aui:option>
+	
+	</aui:select>
 	<aui:button type="submit" name="Save" value="save"/>
 </aui:form>

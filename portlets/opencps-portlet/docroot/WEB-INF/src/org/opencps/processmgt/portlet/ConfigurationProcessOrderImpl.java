@@ -51,11 +51,13 @@ public class ConfigurationProcessOrderImpl implements ConfigurationAction{
 
 		String oderByToDo = ParamUtil.getString(actionRequest, "oderByToDo", ProcessOrderDisplayTerms.MODIFIEDDATE);
 		String oderByJustFinish = ParamUtil.getString(actionRequest, "oderByJustFinish", ProcessOrderDisplayTerms.MODIFIEDDATE);
-		String oderFieldToDo = ParamUtil.getString(actionRequest, "oderFieldToDo", WebKeys.ORDER_BY_ASC);
-		String oderFieldJustFinish = ParamUtil.getString(actionRequest, "oderFieldJustFinish", WebKeys.ORDER_BY_ASC);
+		String oderFieldToDo = ParamUtil.getString(actionRequest, "oderFieldToDo", WebKeys.ORDER_BY_DESC);
+		String oderFieldJustFinish = ParamUtil.getString(actionRequest, "oderFieldJustFinish", WebKeys.ORDER_BY_DESC);
 		String portletResource =
 					    ParamUtil.getString(actionRequest, "portletResource");
 
+		String templatesToDisplay = ParamUtil.getString(actionRequest, "templatesToDisplay", "default");
+		
 		PortletPreferences preferences =
 		    PortletPreferencesFactoryUtil.getPortletSetup(
 		        actionRequest, portletResource);
@@ -64,6 +66,7 @@ public class ConfigurationProcessOrderImpl implements ConfigurationAction{
 		preferences.setValue("oderByJustFinish", String.valueOf(oderByJustFinish));
 		preferences.setValue("oderFieldToDo", oderFieldToDo);
 		preferences.setValue("oderFieldJustFinish", oderFieldJustFinish);
+		preferences.setValue("templatesToDisplay", String.valueOf(templatesToDisplay));
 		
 		preferences.store();
 

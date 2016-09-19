@@ -1,5 +1,3 @@
-<%@page import="java.util.ArrayList"%>
-<%@page import="java.util.List"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -42,6 +40,8 @@
 <%@page import="java.util.Date"%>
 <%@page import="org.opencps.util.PortletUtil"%>
 <%@page import="org.opencps.util.DateTimeUtil"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="java.util.List"%>
 
 <%@ include file="../init.jsp" %>
 
@@ -233,6 +233,9 @@
 	 					
 	 				>
 	 				</liferay-ui:input-date>
+	 				<div  id="<portlet:namespace/>defErrBirthDate" style="text-align: left; color: #b50303; margin-left:7px; margin-bottom: 10px; display: none;">
+						<liferay-ui:message key="required-field"/>
+					</div>
 				</aui:row>
 				
 				<aui:row cssClass="input-file">
@@ -284,6 +287,7 @@
 						placeholder="<%=CitizenDisplayTerms.CITIZEN_ADDRESS %>"
 					>
 						<aui:validator name="maxLength">255</aui:validator>
+						<aui:validator name="required"/>
 					</aui:input>
 				</aui:row>
 				
@@ -369,7 +373,8 @@
 		var register = A.one('#<portlet:namespace />register');
 		var termsOfUse = A.one('#<portlet:namespace />termsOfUse');
 		var checkTel = telephoneCheck();
-		if(termsOfUse.val() == 'true' && checkTel == true){
+		var checkDate = checkBirthDate();
+		if(termsOfUse.val() == 'true' && checkTel == true && checkDate == true 	){
 			submitForm(document.<portlet:namespace />fm);
 		}else{
 			return;
@@ -383,6 +388,20 @@
 		
 	},['aui-io','liferay-portlet-url']);
 	
+	function checkBirthDate() {
+			
+		var birthDate = A.one('#<portlet:namespace />birthDate');
+		if(birthDate.val() === "") {
+			birthDate.addClass('changeDefErr');
+			A.one("#<portlet:namespace/>defErrBirthDate").addClass('displayDefErr');
+			return false;
+		} else {
+			birthDate.removeClass('changeDefErr');
+			A.one("#<portlet:namespace/>defErrBirthDate").removeClass('displayDefErr');
+			return true;
+		}
+	}
+	
 	function telephoneCheck() {
 		var numRegex = A.one("#<portlet:namespace/>telNo").val();
 		
@@ -391,7 +410,7 @@
 		var temp = A.one("#<portlet:namespace/>telNo");
 		var isphone = /^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]*$/;
 		if(isphone.test(numRegex) && num>=10){
-			A.one("#<portlet:namespace/>def").removeClass('changeDefErr');
+			A.one("#<portlet:namespace/>telNo").removeClass('changeDefErr');
 			A.one("#<portlet:namespace/>defErr").removeClass('displayDefErr');
 			A.one("#<portlet:namespace/>defErr2").removeClass('displayDefErr');
 			return true;
@@ -400,12 +419,12 @@
 			  if(num==0){return true;}
 			  else {
 				 if(num<10){
-				  A.one("#<portlet:namespace/>def").addClass('changeDefErr');
+				  A.one("#<portlet:namespace/>telNo").addClass('changeDefErr');
 				  A.one("#<portlet:namespace/>defErr").removeClass('displayDefErr');
 				  A.one("#<portlet:namespace/>defErr2").addClass('displayDefErr');
 				  return false;
 			  } else if(!isphone.test(numRegex)) {
-				  A.one("#<portlet:namespace/>def").addClass('changeDefErr');
+				  A.one("#<portlet:namespace/>telNo").addClass('changeDefErr');
 				  A.one("#<portlet:namespace/>defErr").addClass('displayDefErr');
 				  A.one("#<portlet:namespace/>defErr2").removeClass('displayDefErr');
 			  }

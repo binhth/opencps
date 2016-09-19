@@ -216,6 +216,7 @@ public class BackOfficeProcessEngine implements MessageListener {
 			else {
 				processWorkflow =
 				    ProcessWorkflowLocalServiceUtil.fetchProcessWorkflow(processWorkflowId);
+				_log.info("######################## GET WORKFLOW ###############");
 
 			}
 
