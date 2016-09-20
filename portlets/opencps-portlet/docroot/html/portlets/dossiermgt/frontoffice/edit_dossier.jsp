@@ -1,3 +1,4 @@
+
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -16,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 %>
-
+<%@page import="com.liferay.portal.kernel.language.UnicodeLanguageUtil"%>
 <%@page import="org.opencps.util.AccountUtil"%>
 <%@page import="org.opencps.util.ActionKeys"%>
 <%@page import="org.opencps.dossiermgt.permissions.DossierPermission"%>
@@ -82,6 +83,8 @@
 	catch (Exception e) {
 		
 	}
+	
+	boolean quickCreateDossier = dossier == null ? true : false;
 %>
 
 <c:choose>
@@ -95,6 +98,8 @@
 		/>
 		
 		<portlet:actionURL var="updateDossierURL" name="updateDossier"/>
+		
+		<portlet:actionURL var="quickUpdateDossierURL" name="quickUpdateDossier"/>
 		
 		<liferay-util:buffer var="htmlTop">
 			<c:if test="<%= dossier != null %>">
@@ -186,19 +191,21 @@
 			  		
 		 		</c:if>
 		 	
-			 	<div>	
-			 		<aui:button 
-			 			type="submit"
-			 			cssClass="btn des-sub-button radius20" 
-			 			icon="add"
-			 			value="edit-dossier-btn"
-			 		/>	
+			 	<div>
+			 		<c:if test="<%=!quickCreateDossier %>">
+				 		<aui:button 
+				 			type="submit"
+				 			cssClass="btn des-sub-button radius20" 
+				 			icon="add"
+				 			value="edit-dossier-btn"
+				 		/>	
+			 		</c:if>
 			 	</div>
 			</c:if>
 			
 		</liferay-util:buffer>
 	
-		<aui:form name="fm" action="<%=updateDossierURL %>" method="post">
+		<aui:form name="fm" action="<%=dossier != null ? updateDossierURL : quickUpdateDossierURL %>" method="post">
 		
 			<aui:model-context bean="<%= dossier %>" model="<%= Dossier.class %>" />
 			
@@ -308,6 +315,23 @@
 				/>
 			</div>
 		</aui:form>	
+		
+		<aui:script use="aui-loading-mask-deprecated">
+			AUI().ready(function(A){
+				var quickCreateDossier = '<%=quickCreateDossier%>';
+				if(quickCreateDossier ==='true'){
+					var loadingMask = new A.LoadingMask(
+						{
+							'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "rending...") %>',
+							target: A.one('#<portlet:namespace/>fm')
+						}
+					);
+					
+					loadingMask.show();
+					submitForm(document.<portlet:namespace />fm);
+				}
+			});
+		</aui:script>
 	</c:when>
 	
 	<c:otherwise>
