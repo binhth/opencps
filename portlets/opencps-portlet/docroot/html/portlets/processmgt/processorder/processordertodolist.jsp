@@ -27,6 +27,7 @@
 <%@page import="com.liferay.portal.kernel.dao.search.RowChecker"%>
 <%@page import="org.opencps.processmgt.service.ProcessOrderLocalServiceUtil"%>
 <%@page import="org.opencps.processmgt.search.ProcessOrderDisplayTerms"%>
+
 <%@ include file="init.jsp"%>
 
 <liferay-util:include page='<%=templatePath + "toptabs.jsp" %>' servletContext="<%=application %>" />
@@ -34,11 +35,6 @@
 <%
 	//get config to load jsp display dossier
 	String templatesToDisplay_cfg = GetterUtil.getString(portletPreferences.getValue("templatesToDisplay", "default"));
-
 %>
 
 <liferay-util:include page='<%=templatePath + "display/" + templatesToDisplay_cfg + ".jsp" %>' servletContext="<%=application %>" />
-
-<%!
-	private Log _log = LogFactoryUtil.getLog("html.portlets.processmgt.processorder.processordertodolist.jsp");
-%>

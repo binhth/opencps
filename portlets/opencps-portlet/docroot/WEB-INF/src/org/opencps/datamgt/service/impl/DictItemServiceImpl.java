@@ -27,6 +27,7 @@ import org.opencps.datamgt.model.DictCollection;
 import org.opencps.datamgt.model.DictItem;
 import org.opencps.datamgt.service.base.DictItemServiceBaseImpl;
 
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -38,6 +39,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.security.ac.AccessControlled;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextThreadLocal;
+import com.liferay.util.dao.orm.CustomSQLUtil;
 
 /**
  * The implementation of the dict item remote service. <p> All custom service
@@ -267,6 +269,30 @@ public class DictItemServiceImpl extends DictItemServiceBaseImpl {
 		List<DictItem> result = dictItemLocalService
 			.getDictItemsInUseByDictCollectionIdAndParentItemId(
 					dictCollection.getDictCollectionId(), parentId);
+		
+		for (DictItem dictItem : result) {
+			jsonObject
+				.put(String
+					.valueOf(dictItem
+						.getItemCode()),
+					dictItem
+						.getItemName(Locale
+							.getDefault()));
+		}
+		return jsonObject;
+	}
+	
+	@JSONWebService(value = "get-dictitems_itemCode_keywords_datasource")
+	@AccessControlled(guestAccessEnabled = true)
+	public JSONObject getDictItemsByItemCodeDataSourceFitter(
+			String collectionCode, String itemCode, String keywords, long groupId) throws SystemException, PortalException {
+
+		JSONObject jsonObject = JSONFactoryUtil
+			.createJSONObject();
+		
+		List<DictItem> result = dictItemLocalService
+			.searchDictItemByName_like(
+					collectionCode, itemCode, keywords, groupId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 		
 		for (DictItem dictItem : result) {
 			jsonObject

@@ -41,27 +41,25 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
-
 /**
  * @author khoavd
- *
  */
 public class BackendUtils {
-	
+
 	public static final String PRE_CONDITION_PAYOK = "payok";
-	
+
 	public static final String PRE_CONDITION_TAG_LABEL = "tag_";
-	
+
 	public static final String PRE_CONDITION_CANCEL = "cancel";
-	
+
 	public static final String PRE_CONDITION_SERVICE_ID = "service_";
-	
+
 	public static final String PRE_CONDITION_ONEGATE = "onegate";
 
 	public static final String PRE_CONDITION_ONELINE = "oneline";
-	
+
 	public static final String PRE_CONDITION_REPAIR = "repair";
-	
+
 	/**
 	 * @param pattern
 	 * @return
@@ -74,7 +72,6 @@ public class BackendUtils {
 		return actionName;
 	}
 
-	
 	/**
 	 * @param pattern
 	 * @return
@@ -84,7 +81,7 @@ public class BackendUtils {
 		boolean validPreCondition = true;
 
 		List<String> lsCondition =
-		    ListUtil.toList(StringUtil.split(pattern, StringPool.SPACE));
+			ListUtil.toList(StringUtil.split(pattern, StringPool.SPACE));
 
 		boolean validPayok = true;
 		boolean validCancel = true;
@@ -93,12 +90,11 @@ public class BackendUtils {
 		boolean validOnline = true;
 		boolean validOnegate = true;
 		boolean validRepair = true;
-		
 
 		for (String condition : lsCondition) {
 			if (StringUtil.equalsIgnoreCase(
-			    StringUtil.split(condition, StringPool.UNDERLINE)[0],
-			    PRE_CONDITION_PAYOK)) {
+				StringUtil.split(condition, StringPool.UNDERLINE)[0],
+				PRE_CONDITION_PAYOK)) {
 
 				validPayok = _checkPayOkCondition(dossierId);
 
@@ -106,19 +102,19 @@ public class BackendUtils {
 			}
 
 			if (StringUtil.equalsIgnoreCase(
-			    StringUtil.split(condition, StringPool.UNDERLINE)[0],
-			    PRE_CONDITION_CANCEL)) {
+				StringUtil.split(condition, StringPool.UNDERLINE)[0],
+				PRE_CONDITION_CANCEL)) {
 
 				validCancel =
-				    _checkRequestCommandlCondition(
-				        dossierId, WebKeys.REQUEST_COMMAND_CANCEL);
+					_checkRequestCommandlCondition(
+						dossierId, WebKeys.REQUEST_COMMAND_CANCEL);
 
 				continue;
 			}
 
 			if (StringUtil.equalsIgnoreCase(
-			    StringUtil.split(condition, StringPool.UNDERLINE)[0],
-			    PRE_CONDITION_TAG_LABEL)) {
+				StringUtil.split(condition, StringPool.UNDERLINE)[0],
+				PRE_CONDITION_TAG_LABEL)) {
 
 				validTagLabel = _checkTagLabelCondition();
 
@@ -126,8 +122,8 @@ public class BackendUtils {
 			}
 
 			if (StringUtil.equalsIgnoreCase(
-			    StringUtil.split(condition, StringPool.UNDERLINE)[0],
-			    PRE_CONDITION_SERVICE_ID)) {
+				StringUtil.split(condition, StringPool.UNDERLINE)[0],
+				PRE_CONDITION_SERVICE_ID)) {
 
 				validService = _checkServiceCondition();
 
@@ -135,8 +131,8 @@ public class BackendUtils {
 			}
 
 			if (StringUtil.equalsIgnoreCase(
-			    StringUtil.split(condition, StringPool.UNDERLINE)[0],
-			    PRE_CONDITION_ONEGATE)) {
+				StringUtil.split(condition, StringPool.UNDERLINE)[0],
+				PRE_CONDITION_ONEGATE)) {
 
 				validOnegate = _checkOnegateCondition();
 
@@ -144,8 +140,8 @@ public class BackendUtils {
 			}
 
 			if (StringUtil.equalsIgnoreCase(
-			    StringUtil.split(condition, StringPool.UNDERLINE)[0],
-			    PRE_CONDITION_ONELINE)) {
+				StringUtil.split(condition, StringPool.UNDERLINE)[0],
+				PRE_CONDITION_ONELINE)) {
 
 				validOnline = _checkOnlineCondition();
 
@@ -153,58 +149,59 @@ public class BackendUtils {
 			}
 
 			if (StringUtil.equalsIgnoreCase(
-			    StringUtil.split(condition, StringPool.UNDERLINE)[0],
-			    PRE_CONDITION_REPAIR)) {
+				StringUtil.split(condition, StringPool.UNDERLINE)[0],
+				PRE_CONDITION_REPAIR)) {
 				validRepair =
-				    _checkRequestCommandlCondition(
-				        dossierId, WebKeys.REQUEST_COMMAND_REPAIR);
+					_checkRequestCommandlCondition(
+						dossierId, WebKeys.REQUEST_COMMAND_REPAIR);
 			}
 
 		}
 
 		if (validPayok && validCancel && validOnline && validOnegate &&
-		    validTagLabel && validService && validRepair) {
+			validTagLabel && validService && validRepair) {
 			validPreCondition = true;
 		}
 		else {
 			validPreCondition = false;
 		}
-		
+
 		return validPreCondition;
 	}
-	
 
-	
 	private static boolean _checkPayOkCondition(long dossierId) {
+
 		boolean isCondition = true;
-		
+
 		int countAllPayment = 0;
-		
+
 		int countPaymentComplated = 0;
-		
+
 		try {
-	        countAllPayment = PaymentFileLocalServiceUtil.countAllPaymentFile(dossierId);
-	        
-	        countPaymentComplated = PaymentFileLocalServiceUtil.countPaymentFile(dossierId, 2);
-	        
-	        if (!((countAllPayment - countPaymentComplated) == 0)) {
-	        	isCondition = false;
-	        }
-        }
-        catch (Exception e) {
-        	isCondition = false;
-        }
+			countAllPayment =
+				PaymentFileLocalServiceUtil.countAllPaymentFile(dossierId);
+
+			countPaymentComplated =
+				PaymentFileLocalServiceUtil.countPaymentFile(dossierId, 2);
+
+			if (!((countAllPayment - countPaymentComplated) == 0)) {
+				isCondition = false;
+			}
+		}
+		catch (Exception e) {
+			isCondition = false;
+		}
 
 		return isCondition;
 	}
-	
+
 	/**
 	 * @param dossierId
 	 * @param requestCommand
 	 * @return
 	 */
 	private static boolean _checkRequestCommandlCondition(
-	    long dossierId, String requestCommand) {
+		long dossierId, String requestCommand) {
 
 		boolean isCondition = true;
 
@@ -212,8 +209,8 @@ public class BackendUtils {
 
 		try {
 			countRequestCommand =
-			    DossierLogLocalServiceUtil.countDossierByRequestCommand(
-			        dossierId, requestCommand);
+				DossierLogLocalServiceUtil.countDossierByRequestCommand(
+					dossierId, requestCommand);
 		}
 		catch (Exception e) {
 			_log.error(e);
@@ -228,167 +225,176 @@ public class BackendUtils {
 
 		return isCondition;
 	}
-	
+
 	/**
 	 * @return
 	 */
 	private static boolean _checkTagLabelCondition() {
-		//TODO: implement here
+
+		// TODO: implement here
 		return true;
 	}
-	
+
 	/**
 	 * @return
 	 */
 	private static boolean _checkServiceCondition() {
-		//TODO: implement here
+
+		// TODO: implement here
 		return true;
 	}
-	
+
 	/**
 	 * @return
 	 */
-	private static boolean _checkOnlineCondition(){
-		//TODO: implement here
+	private static boolean _checkOnlineCondition() {
+
+		// TODO: implement here
 		return true;
 	}
-	
+
 	/**
 	 * @return
 	 */
 	private static boolean _checkOnegateCondition() {
-		//TODO: implement here
+
+		// TODO: implement here
 		return true;
 	}
-	
+
 	/**
 	 * @param dossierId
 	 * @return
 	 */
 	public static boolean checkPaymentStatus(long dossierId) {
-		
+
 		boolean paymentStatus = true;
-		
+
 		int countAllPayment = 0;
-		
+
 		int countPaymentComplated = 0;
-		
+
 		try {
-	        countAllPayment = PaymentFileLocalServiceUtil.countAllPaymentFile(dossierId);
-	        
-	        countPaymentComplated = PaymentFileLocalServiceUtil.countPaymentFile(dossierId, 2);
-	        
-	        if (!((countAllPayment - countPaymentComplated) == 0)) {
-	        	paymentStatus = false;
-	        }
-        }
-        catch (Exception e) {
-        	paymentStatus = false;
-        }
-		
+			countAllPayment =
+				PaymentFileLocalServiceUtil.countAllPaymentFile(dossierId);
+
+			countPaymentComplated =
+				PaymentFileLocalServiceUtil.countPaymentFile(dossierId, 2);
+
+			if (!((countAllPayment - countPaymentComplated) == 0)) {
+				paymentStatus = false;
+			}
+		}
+		catch (Exception e) {
+			paymentStatus = false;
+		}
+
 		return paymentStatus;
 	}
-	
+
 	/**
 	 * @param dossierId
 	 * @return
 	 */
 	public static long getGovAgencyOrgId(long dossierId) {
-		
+
 		long govAgencyOrgId = 0;
-		
+
 		try {
-	        Dossier dossier = DossierLocalServiceUtil.getDossier(dossierId);
-	        
-	        long serviceConfigId = dossier.getServiceConfigId();
-	        
-	        ServiceConfig serviceConfig = ServiceConfigLocalServiceUtil.fetchServiceConfig(serviceConfigId);
-	        
-	        if (Validator.isNotNull(serviceConfig)) {
-	        	govAgencyOrgId = serviceConfig.getGovAgencyOrganizationId();
-	        }
-        }
-        catch (Exception e) {
-	        // TODO: handle exception
-        }
-		
+			Dossier dossier = DossierLocalServiceUtil.getDossier(dossierId);
+
+			long serviceConfigId = dossier.getServiceConfigId();
+
+			ServiceConfig serviceConfig =
+				ServiceConfigLocalServiceUtil.fetchServiceConfig(serviceConfigId);
+
+			if (Validator.isNotNull(serviceConfig)) {
+				govAgencyOrgId = serviceConfig.getGovAgencyOrganizationId();
+			}
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+		}
+
 		return govAgencyOrgId;
 	}
-	
+
 	public static String getDossierStatus(long dossierId, long fileGroupId) {
+
 		String status = StringPool.BLANK;
-		
+
 		try {
-	        Dossier dossier = DossierLocalServiceUtil.fetchDossier(dossierId);
-	        
-	        if (Validator.isNotNull(dossier)) {
-	        	status = dossier.getDossierStatus();
-	        }
-        }
-        catch (Exception e) {
-	        // TODO: handle exception
-        }
-		
+			Dossier dossier = DossierLocalServiceUtil.fetchDossier(dossierId);
+
+			if (Validator.isNotNull(dossier)) {
+				status = dossier.getDossierStatus();
+			}
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+		}
+
 		return status;
 	}
-	
+
 	public static int getDossierStatus(long stepId) {
-		
+
 		int status = 0;
-		
+
 		try {
-			ProcessStep step = ProcessStepLocalServiceUtil.fetchProcessStep(stepId);
-			
+			ProcessStep step =
+				ProcessStepLocalServiceUtil.fetchProcessStep(stepId);
+
 			if (Validator.isNotNull(step)) {
 				status = GetterUtil.getInteger(step.getDossierStatus());
-			} 
+			}
 
-        }
-        catch (Exception e) {
-	        return 0;
-        }
-		
+		}
+		catch (Exception e) {
+			return 0;
+		}
+
 		return status;
 	}
-	
+
 	public static ProcessWorkflow getFirstProcessWorkflow(long serviceProcessId) {
+
 		ProcessWorkflow flow = null;
-		
-		
+
 		try {
-			flow = ProcessWorkflowLocalServiceUtil.getFirstProcessWorkflow(serviceProcessId);
-			
-        }
-        catch (Exception e) {
-        }
-		
+			flow =
+				ProcessWorkflowLocalServiceUtil.getFirstProcessWorkflow(serviceProcessId);
+
+		}
+		catch (Exception e) {
+		}
+
 		return flow;
 	}
-	
 
-	
 	/**
 	 * @param serviceProcessId
 	 * @return
 	 */
 	public static long getFristStepLocalService(long serviceProcessId) {
-		
+
 		ProcessWorkflow flow = null;
-		
+
 		long stepId = 0;
-		
+
 		try {
-			flow = ProcessWorkflowLocalServiceUtil.getFirstProcessWorkflow(serviceProcessId);
-			
+			flow =
+				ProcessWorkflowLocalServiceUtil.getFirstProcessWorkflow(serviceProcessId);
+
 			stepId = flow.getPostProcessStepId();
-        }
-        catch (Exception e) {
-	        // TODO: handle exception
-        }
-		
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+		}
+
 		return stepId;
 	}
-	
+
 	/**
 	 * Get Dossier by DossierId
 	 * 
@@ -396,18 +402,18 @@ public class BackendUtils {
 	 * @return
 	 */
 	public static Dossier getDossier(long dossierId) {
+
 		Dossier dossier = null;
-		
+
 		try {
-	        dossier = DossierLocalServiceUtil.fetchDossier(dossierId);
-        }
-        catch (Exception e) {
-	        _log.error(e);
-        }
-		
+			dossier = DossierLocalServiceUtil.fetchDossier(dossierId);
+		}
+		catch (Exception e) {
+			_log.error(e);
+		}
+
 		return dossier;
 	}
-	
 
 	/**
 	 * Get ProcessOrder
@@ -422,8 +428,8 @@ public class BackendUtils {
 
 		try {
 			order =
-			    ProcessOrderLocalServiceUtil. getProcessOrder(
-			        dossierId, fileGroupId);
+				ProcessOrderLocalServiceUtil.getProcessOrder(
+					dossierId, fileGroupId);
 		}
 		catch (Exception e) {
 			return order;
@@ -431,6 +437,34 @@ public class BackendUtils {
 		return order;
 
 	}
-	
+
+	/**
+	 * @param dossierId
+	 * @return
+	 */
+	public static boolean checkServiceMode(long dossierId) {
+
+		boolean trustServiceMode = false;
+
+		try {
+			Dossier dossier = DossierLocalServiceUtil.fetchDossier(dossierId);
+
+			long serviceConfigId = dossier.getServiceConfigId();
+
+			ServiceConfig serviceConfig =
+				ServiceConfigLocalServiceUtil.fetchServiceConfig(serviceConfigId);
+
+			if (serviceConfig.getServicePortal() &&
+				serviceConfig.getServiceBackoffice()) {
+				trustServiceMode = true;
+			}
+		}
+		catch (Exception e) {
+			_log.error(e);
+		}
+
+		return trustServiceMode;
+	}
+
 	private static Log _log = LogFactoryUtil.getLog(BackendUtils.class);
 }

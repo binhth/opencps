@@ -29,12 +29,14 @@ import org.opencps.dossiermgt.search.DossierTemplateDisplayTerms;
 import org.opencps.dossiermgt.service.DossierPartLocalServiceUtil;
 import org.opencps.servicemgt.model.TemplateFile;
 import org.opencps.servicemgt.service.TemplateFileLocalServiceUtil;
+import org.opencps.util.PortletConstants;
 
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
@@ -286,6 +288,37 @@ public class DossierMgtUtil {
 		return result;
 	}
 	
+	/**
+	 * @param requestCommand
+	 * @param messageInfo
+	 * @return
+	 */
+	public static String getDossierLogs(
+	    String requestCommand, String messageInfo) {
+
+		String dossierLog = StringPool.BLANK;
+		
+		if (Validator.isNotNull(messageInfo)) {
+			if (Validator.equals(
+			    requestCommand, PortletConstants.REQUEST_COMMAND_PAYMENT)) {
+
+				String[] arrMsgInfo =
+				    StringUtil.split(messageInfo, StringPool.SEMICOLON);
+
+				if (arrMsgInfo.length != 0) {
+					dossierLog = arrMsgInfo[0];
+				}
+
+			}
+			else {
+				dossierLog = messageInfo;
+			}
+
+		}
+
+		return dossierLog;
+	}
+
 	private static Log _log =
 		LogFactoryUtil.getLog(DossierMgtUtil.class.getName());
 }

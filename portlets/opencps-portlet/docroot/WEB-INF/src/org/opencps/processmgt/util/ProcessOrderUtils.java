@@ -580,7 +580,7 @@ public class ProcessOrderUtils {
 					List<DictItem> resultlv2 = null;
 					resultlv2 = DictItemLocalServiceUtil
 							.getDictItemsInUseByDictCollectionIdAndParentItemId(
-									dictCollectionId, dictItemId);
+									dictCollectionId, dictItem2.getDictItemId());
 					JSONArray jsonArraylv2 = JSONFactoryUtil.createJSONArray();
 					for (DictItem dictItem3 : resultlv2) {
 						JSONObject jsonObjectlv2 = JSONFactoryUtil

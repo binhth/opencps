@@ -53,6 +53,7 @@
 		label='<%=StringPool.BLANK %>' 
 		onChange='<%=renderResponse.getNamespace() + "getJobPosByWorkingUnitId(this)" %>'
 		required='<%=true %>'
+		cssClass="input100"
 	>
 		<aui:option value="0"><liferay-ui:message key="select-working-unit"/></aui:option>
 		<%
@@ -72,6 +73,7 @@
 		name='<%=EmployeeDisplayTerm.MAIN_JOBPOS_ID %>' 
 		label='<%=StringPool.BLANK %>'
 		required='<%=true %>'
+		cssClass="input100"
 	>
 		<aui:option value=""><liferay-ui:message key="select-jobpos"/></aui:option>
 		<%

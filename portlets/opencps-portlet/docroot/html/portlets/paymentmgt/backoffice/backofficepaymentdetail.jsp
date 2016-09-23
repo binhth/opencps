@@ -88,6 +88,7 @@
                     </div>
                     <div>
                         <p><span><liferay-ui:message key="ngay-yeu-cau"/>:</span> </p><%=Validator.isNotNull(paymentFile)?HtmlUtil.escape(DateTimeUtil.convertDateToString(paymentFile.getRequestDatetime(), DateTimeUtil._VN_DATE_FORMAT)): LanguageUtil.get(pageContext, "monitoring-chua-co") %>
+
                     </div>
                     <div>
                         <p><span><liferay-ui:message key="so-tien"/>:</span> </p><span class="red"><%=HtmlUtil.escape(df2.format(Double.valueOf(paymentFile.getAmount())).toString()) %> <liferay-ui:message key="vnd"/></span>
@@ -99,6 +100,7 @@
                 <div class="box50">
                     <div>
                         <p><span><liferay-ui:message key="ngay-da-bao-nop"/>:</span></p> <%=Validator.isNotNull(paymentFile.getConfirmDatetime())?HtmlUtil.escape(DateTimeUtil.convertDateToString(paymentFile.getRequestDatetime(), DateTimeUtil._VN_DATE_FORMAT)): LanguageUtil.get(pageContext, "monitoring-chua-co") %>
+
                     </div>
                     <div>
                         <p><span><liferay-ui:message key="hinh-thuc-thuc-hien"/>:</span> 

@@ -23,6 +23,8 @@
 <%@page import="org.opencps.util.WebKeys"%>
 <%@page import="org.opencps.servicemgt.model.ServiceInfo"%>
 <%@page import="org.opencps.servicemgt.service.ServiceInfoLocalServiceUtil"%>
+<%@page import="org.opencps.dossiermgt.service.ServiceConfigLocalServiceUtil"%>
+<%@page import="org.opencps.dossiermgt.model.ServiceConfig"%>
 <%@ include file="init.jsp" %>
 <%
 	long serviceinfoId = ParamUtil.getLong(request, "serviceinfoId");
@@ -35,7 +37,18 @@
 	
 	String backURL = ParamUtil.getString(request, "backURL");
 	
-	
+	ServiceConfig scf = null;
+	try {
+		scf = ServiceConfigLocalServiceUtil.getServiceConfigByG_S(scopeGroupId, serviceinfoId);
+	} catch(Exception e){
+		//
+	}
+	boolean serviceIsConfiged;
+	if(Validator.isNotNull(scf) && scf.getServiceLevel() >= 3){
+		serviceIsConfiged = true;
+	} else {
+		serviceIsConfiged = false;
+	}
 %>
 
 <liferay-portlet:renderURL 
@@ -188,9 +201,11 @@
 					</td>
 				</tr>
 				<tr>
-					<td class="col-left" colspan="2">
-						<aui:button href="<%= renderToSubmitOnline.toString() %>" cssClass="des-sub-button radius20" value="online-url-button"></aui:button>
-					</td>
+					<c:if test="<%= serviceIsConfiged %>">
+						<td class="col-left" colspan="2">
+							<aui:button href="<%= renderToSubmitOnline.toString() %>" cssClass="des-sub-button radius20" value="online-url-button"></aui:button>
+						</td>
+					</c:if>
 				</tr>
 			</table>
 		</div>

@@ -64,7 +64,7 @@
 	String cmd = ParamUtil.getString(request, Constants.CMD, Constants.UPDATE);
 	
 	String[] dossierSections = dossier != null ? 
-		new String[]{"dossier_info", "dossier_part", "result", "history"} : 
+		new String[]{"dossier_part", "dossier_info", "result", "history"} : 
 		new String[]{"dossier_info"};
 	
 	String[][] categorySections = {dossierSections};
@@ -83,6 +83,10 @@
 		
 	}
 %>
+
+<liferay-portlet:renderURL var="backDossierList">
+	<portlet:param name="mvcPath" value="/html/portlets/dossiermgt/frontoffice/frontofficedossierlist.jsp"/>
+</liferay-portlet:renderURL>
 
 <c:choose>
 	<c:when test="<%=DossierPermission.contains(permissionChecker, scopeGroupId, ActionKeys.UPDATE) && Validator.isNotNull(accountType) &&
@@ -134,6 +138,7 @@
 									<portlet:param name="<%=DossierDisplayTerms.DOSSIER_ID %>" value="<%=String.valueOf(dossier.getDossierId()) %>"/>
 									<portlet:param name="<%=DossierDisplayTerms.DOSSIER_STATUS %>" value="<%=String.valueOf(PortletConstants.DOSSIER_STATUS_WAITING) %>"/>
 									<portlet:param name="backURL" value="<%=currentURL %>"/>
+									<portlet:param name="redirectURL" value="<%=backDossierList %>"/>
 								</portlet:actionURL> 
 						 		<liferay-ui:icon
 						 			cssClass="search-container-action fa forward"
@@ -143,10 +148,6 @@
 						 		/> 
 					 		</c:if>
 					 	</c:if>
-					 	
-					 	<liferay-portlet:renderURL var="backDossierList">
-					 		<portlet:param name="mvcPath" value="/html/portlets/dossiermgt/frontoffice/frontofficedossierlist.jsp"/>
-					 	</liferay-portlet:renderURL>
 					 	
 					 	<liferay-ui:icon
 								image="back"

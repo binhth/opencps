@@ -214,7 +214,7 @@ body{
 /* Overwrite portlet alert  */
 
 .opencps-theme.ux .alert {
-    margin: 10px !important;
+    margin: 10px 0 !important;
 }
 
 #navigation ul li.selected {
@@ -234,3 +234,13 @@ body{
   background: transparent !important;
 }
 
+.opencps-theme.ux .lfr-input-date.input100 input{
+	-moz-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-khtml-box-sizing: border-box;
+	box-sizing: border-box;
+	min-height: 30px;
+	max-width: 100% !important;
+	width: 100%;
+}

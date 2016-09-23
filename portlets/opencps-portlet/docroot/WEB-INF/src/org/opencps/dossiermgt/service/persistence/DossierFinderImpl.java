@@ -363,8 +363,7 @@ public class DossierFinderImpl extends BasePersistenceImpl<Dossier>
 						StringPool.BLANK);
 			}
 			else {
-				if (StringUtil
-					.contains(serviceDomainTreeIndex, StringPool.PERIOD)) {
+				if (serviceDomainTreeIndex.contains(StringPool.PERIOD)) {
 					sql = StringUtil
 						.replace(sql,
 							"AND (opencps_dossier.serviceDomainIndex LIKE ? OR opencps_dossier.serviceDomainIndex = ?)",
@@ -421,15 +420,13 @@ public class DossierFinderImpl extends BasePersistenceImpl<Dossier>
 			}
 			
 			if (Validator
-				.isNotNull(serviceDomainTreeIndex) && StringUtil
-					.contains(serviceDomainTreeIndex, StringPool.PERIOD)) {
+				.isNotNull(serviceDomainTreeIndex) && serviceDomainTreeIndex.contains(StringPool.PERIOD)) {
 				qPos
 					.add(serviceDomainTreeIndex + StringPool.PERCENT);
 
 			}
 			else if (Validator
-				.isNotNull(serviceDomainTreeIndex) && !StringUtil
-					.contains(serviceDomainTreeIndex, StringPool.PERIOD)) {
+				.isNotNull(serviceDomainTreeIndex) && !serviceDomainTreeIndex.contains(StringPool.PERIOD)) {
 				qPos
 					.add(serviceDomainTreeIndex + StringPool.PERIOD +
 						StringPool.PERCENT);
@@ -718,8 +715,7 @@ public class DossierFinderImpl extends BasePersistenceImpl<Dossier>
 						StringPool.BLANK);
 			}
 			else {
-				if (StringUtil
-					.contains(serviceDomainTreeIndex, StringPool.PERIOD)) {
+				if (serviceDomainTreeIndex.contains(StringPool.PERIOD)) {
 					sql = StringUtil
 						.replace(sql,
 							"AND (opencps_dossier.serviceDomainIndex LIKE ? OR opencps_dossier.serviceDomainIndex = ?)",
@@ -778,15 +774,13 @@ public class DossierFinderImpl extends BasePersistenceImpl<Dossier>
 			}
 			
 			if (Validator
-				.isNotNull(serviceDomainTreeIndex) && StringUtil
-					.contains(serviceDomainTreeIndex, StringPool.PERIOD)) {
+				.isNotNull(serviceDomainTreeIndex) && serviceDomainTreeIndex.contains(StringPool.PERIOD)) {
 				qPos
 					.add(serviceDomainTreeIndex + StringPool.PERCENT);
 
 			}
 			else if (Validator
-				.isNotNull(serviceDomainTreeIndex) && !StringUtil
-					.contains(serviceDomainTreeIndex, StringPool.PERIOD)) {
+				.isNotNull(serviceDomainTreeIndex) && !serviceDomainTreeIndex.contains(StringPool.PERIOD)) {
 				qPos
 					.add(serviceDomainTreeIndex + StringPool.PERIOD +
 						StringPool.PERCENT);

@@ -42,8 +42,6 @@ import org.opencps.accountmgt.NoSuchAccountOwnOrgIdException;
 import org.opencps.accountmgt.NoSuchAccountOwnUserIdException;
 import org.opencps.accountmgt.NoSuchAccountTypeException;
 import org.opencps.backend.message.SendToEngineMsg;
-import org.opencps.datamgt.model.DictItem;
-import org.opencps.datamgt.service.DictItemLocalServiceUtil;
 import org.opencps.dossiermgt.DuplicateFileGroupException;
 import org.opencps.dossiermgt.EmptyFileGroupException;
 import org.opencps.dossiermgt.NoSuchDossierException;
@@ -1417,7 +1415,7 @@ public class ProcessOrderPortlet extends MVCPortlet {
 
 		setHasPermission(true);
 
-		validatePermission(renderRequest, renderResponse);
+		//validatePermission(renderRequest, renderResponse);
 
 		if (hasPermission()) {
 			long processOrderId =
@@ -2087,46 +2085,63 @@ public class ProcessOrderPortlet extends MVCPortlet {
 			}
 		}
 	}
-	
-	public void menuCounterAction(ActionRequest actionRequest, ActionResponse actionResponse) throws PortalException, SystemException, IOException {
+
+	public void menuCounterAction(
+		ActionRequest actionRequest, ActionResponse actionResponse)
+		throws PortalException, SystemException, IOException {
+
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
-		ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
-		
-        long groupId = themeDisplay.getScopeGroupId();
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
-        // now read your parameters, e.g. like this:
-        // long someParameter = ParamUtil.getLong(request, "someParameter");
-        
-        long serviceInfoId = ParamUtil.getLong(actionRequest, "serviceInfoId");
-        String tabs1 = ParamUtil.getString(actionRequest, "tabs1");
-        
-        List<ProcessOrderBean> processOrderSteps = new ArrayList<ProcessOrderBean>();
-        if(tabs1.equals(ProcessUtils.TOP_TABS_PROCESS_ORDER_WAITING_PROCESS)){
-			if(serviceInfoId > 0){
-				processOrderSteps = (List<ProcessOrderBean>) ProcessOrderLocalServiceUtil.getUserProcessStep(themeDisplay.getUserId(), serviceInfoId);
-			}
-		}else{
-			if(serviceInfoId > 0){
-				processOrderSteps = (List<ProcessOrderBean>) ProcessOrderLocalServiceUtil.getUserProcessStepJustFinished(themeDisplay.getUserId(), serviceInfoId);
+		long groupId = themeDisplay.getScopeGroupId();
+
+		// now read your parameters, e.g. like this:
+		// long someParameter = ParamUtil.getLong(request, "someParameter");
+
+		long serviceInfoId = ParamUtil.getLong(actionRequest, "serviceInfoId");
+		String tabs1 = ParamUtil.getString(actionRequest, "tabs1");
+
+		List<ProcessOrderBean> processOrderSteps =
+			new ArrayList<ProcessOrderBean>();
+		if (tabs1.equals(ProcessUtils.TOP_TABS_PROCESS_ORDER_WAITING_PROCESS)) {
+			if (serviceInfoId > 0) {
+				processOrderSteps =
+					(List<ProcessOrderBean>) ProcessOrderLocalServiceUtil.getUserProcessStep(
+						themeDisplay.getUserId(), serviceInfoId);
 			}
 		}
-        
+		else {
+			if (serviceInfoId > 0) {
+				processOrderSteps =
+					(List<ProcessOrderBean>) ProcessOrderLocalServiceUtil.getUserProcessStepJustFinished(
+						themeDisplay.getUserId(), serviceInfoId);
+			}
+		}
+
 		long counterVal = 0;
 		JSONObject obj = null;
-		for (ProcessOrderBean item : processOrderSteps){
+		for (ProcessOrderBean item : processOrderSteps) {
 			obj = JSONFactoryUtil.createJSONObject();
 
-			if(tabs1.equals(ProcessUtils.TOP_TABS_PROCESS_ORDER_WAITING_PROCESS)){
-				
-				counterVal = ProcessOrderLocalServiceUtil.countProcessOrder(serviceInfoId, item.getProcessStepId(), themeDisplay.getUserId(), themeDisplay.getUserId());
+			if (tabs1.equals(ProcessUtils.TOP_TABS_PROCESS_ORDER_WAITING_PROCESS)) {
 
-			}else{
-				
-				counterVal =  ProcessOrderLocalServiceUtil.countProcessOrderJustFinished(serviceInfoId, item.getProcessStepId(), themeDisplay.getUserId());
-				
+				counterVal =
+					ProcessOrderLocalServiceUtil.countProcessOrder(
+						serviceInfoId, item.getProcessStepId(),
+						themeDisplay.getUserId(), themeDisplay.getUserId());
+
 			}
-			
+			else {
+
+				counterVal =
+					ProcessOrderLocalServiceUtil.countProcessOrderJustFinished(
+						serviceInfoId, item.getProcessStepId(),
+						themeDisplay.getUserId());
+
+			}
+
 			obj.put("code", item.getProcessStepId());
 			obj.put("counter", String.valueOf(counterVal));
 			jsonArray.put(obj);
@@ -2135,41 +2150,55 @@ public class ProcessOrderPortlet extends MVCPortlet {
 		PortletUtil.writeJSON(actionRequest, actionResponse, jsonObject);
 	}
 
-	public void menuCounterServiceInfoIdAction(ActionRequest actionRequest, ActionResponse actionResponse) throws PortalException, SystemException, IOException {
+	public void menuCounterServiceInfoIdAction(
+		ActionRequest actionRequest, ActionResponse actionResponse)
+		throws PortalException, SystemException, IOException {
+
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
-		ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
-		
-        long groupId = themeDisplay.getScopeGroupId();
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
-        // now read your parameters, e.g. like this:
-        // long someParameter = ParamUtil.getLong(request, "someParameter");
-        
-        long serviceInfoId = ParamUtil.getLong(actionRequest, "serviceInfoId");
-        String tabs1 = ParamUtil.getString(actionRequest, "tabs1");
-        
-        List<ProcessOrderBean> processOrderServices = new ArrayList<ProcessOrderBean>();
-        if(tabs1.equals(ProcessUtils.TOP_TABS_PROCESS_ORDER_WAITING_PROCESS)){
-			processOrderServices = (List<ProcessOrderBean>) ProcessOrderLocalServiceUtil.getProcessOrderServiceByUser(themeDisplay.getUserId());
-		}else{
-			processOrderServices = (List<ProcessOrderBean>) ProcessOrderLocalServiceUtil.getProcessOrderServiceJustFinishedByUser(themeDisplay.getUserId());
+		long groupId = themeDisplay.getScopeGroupId();
+
+		// now read your parameters, e.g. like this:
+		// long someParameter = ParamUtil.getLong(request, "someParameter");
+
+		long serviceInfoId = ParamUtil.getLong(actionRequest, "serviceInfoId");
+		String tabs1 = ParamUtil.getString(actionRequest, "tabs1");
+
+		List<ProcessOrderBean> processOrderServices =
+			new ArrayList<ProcessOrderBean>();
+		if (tabs1.equals(ProcessUtils.TOP_TABS_PROCESS_ORDER_WAITING_PROCESS)) {
+			processOrderServices =
+				(List<ProcessOrderBean>) ProcessOrderLocalServiceUtil.getProcessOrderServiceByUser(themeDisplay.getUserId());
 		}
-        
+		else {
+			processOrderServices =
+				(List<ProcessOrderBean>) ProcessOrderLocalServiceUtil.getProcessOrderServiceJustFinishedByUser(themeDisplay.getUserId());
+		}
+
 		long counterVal = 0;
 		JSONObject obj = null;
-		for (ProcessOrderBean item : processOrderServices){
+		for (ProcessOrderBean item : processOrderServices) {
 			obj = JSONFactoryUtil.createJSONObject();
 
-			if(tabs1.equals(ProcessUtils.TOP_TABS_PROCESS_ORDER_WAITING_PROCESS)){
-				
-				counterVal = ProcessOrderLocalServiceUtil.countProcessOrder(item.getServiceInfoId(), 0, themeDisplay.getUserId(), themeDisplay.getUserId());
+			if (tabs1.equals(ProcessUtils.TOP_TABS_PROCESS_ORDER_WAITING_PROCESS)) {
 
-			}else{
-				
-				counterVal =  ProcessOrderLocalServiceUtil.countProcessOrderJustFinished(item.getServiceInfoId(), 0, themeDisplay.getUserId());
-				
+				counterVal =
+					ProcessOrderLocalServiceUtil.countProcessOrder(
+						item.getServiceInfoId(), 0, themeDisplay.getUserId(),
+						themeDisplay.getUserId());
+
 			}
-			
+			else {
+
+				counterVal =
+					ProcessOrderLocalServiceUtil.countProcessOrderJustFinished(
+						item.getServiceInfoId(), 0, themeDisplay.getUserId());
+
+			}
+
 			obj.put("code", item.getServiceInfoId());
 			obj.put("counter", String.valueOf(counterVal));
 			jsonArray.put(obj);

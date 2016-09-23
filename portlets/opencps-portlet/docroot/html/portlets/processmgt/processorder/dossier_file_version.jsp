@@ -1,4 +1,5 @@
 
+<%@page import="com.liferay.portal.kernel.language.LanguageUtil"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -124,6 +125,13 @@
 					modelVar="dossierFile" 
 					keyProperty="dossierFileId"
 				>
+					<%
+						boolean access = true;
+					   	if (dossierFile.getUserId() != user.getUserId() &&
+							(dossierFile.getSyncStatus() == PortletConstants.DOSSIER_FILE_SYNC_STATUS_NOSYNC || dossierFile.getSyncStatus() == PortletConstants.DOSSIER_FILE_SYNC_STATUS_REQUIREDSYNC)) {
+							access = false;
+						}
+					%>
 					<liferay-ui:search-container-column-text 
 						title="#"
 						name="#"
@@ -153,10 +161,20 @@
 					<liferay-ui:search-container-column-text 
 						title="version"
 						name="version"
-						value="<%=String.valueOf(dossierFile.getVersion()) %>"
+						value="<%=String.valueOf(dossierFile.getVersion()) + (access  ? StringPool.BLANK : StringPool.OPEN_PARENTHESIS +  LanguageUtil.get(locale, \"updating\") + StringPool.CLOSE_PARENTHESIS)%>"
 					/>
 					
-					<liferay-ui:search-container-column-button href='<%="viewAttachment(" + dossierFile.getDossierFileId() + ")" %>' name="view" valign="center" cssClass="view-attachment"/>
+					<%
+					   if(access){
+						   
+					   }
+					%>
+					<liferay-ui:search-container-column-button 
+					   href='<%=access ? "viewAttachment(" + dossierFile.getDossierFileId() + ")" : "javascript:alert("+ StringPool.APOSTROPHE + LanguageUtil.get(locale, "dossier-file-updating") + StringPool.APOSTROPHE +")" %>' 
+					   name="view" 
+					   valign="center" 
+					   cssClass="view-attachment"
+					/>
 		
 				</liferay-ui:search-container-row> 
 			

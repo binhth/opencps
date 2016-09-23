@@ -1,3 +1,4 @@
+
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -16,6 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 %>
+<%@page import="org.opencps.accountmgt.OutOfLengthCitizenNameException"%>
 <%@page import="org.opencps.util.PortletPropsValues"%>
 <%@page import="org.opencps.accountmgt.search.CitizenDisplayTerms"%>
 <%@page import="org.opencps.util.PortletUtil"%>
@@ -71,6 +73,13 @@
 %>
 
 <aui:model-context bean="<%=citizen %>" model="<%=Citizen.class%>" />
+
+<liferay-ui:error-marker key="errorSection" value="general_info" />
+
+<liferay-ui:error 
+	exception="<%= OutOfLengthCitizenNameException.class %>" 
+	message="<%=OutOfLengthCitizenNameException.class.getName() %>"
+/>
 
 <c:if test="<%=isAdminViewProfile && citizenId > 0%>">
 	<aui:row cssClass="nav-content-row-2">
@@ -170,7 +179,7 @@
 	</c:when>
 	<c:otherwise>
 		<aui:row cssClass="nav-content-row-2">
-			<aui:col width="25">
+			<aui:col width="100">
 				<aui:input 
 					name="<%=CitizenDisplayTerms.CITIZEN_FULLNAME %>" 
 					disabled="<%=isViewProfile %>" 
@@ -180,8 +189,10 @@
 				<aui:validator name="maxLength">255</aui:validator>
 				</aui:input>
 			</aui:col>
-			
-			<aui:col width="25">
+		</aui:row>
+		
+		<aui:row cssClass="nav-content-row-2">
+			<aui:col width="30">
 				<aui:input 
 					name="<%=CitizenDisplayTerms.CITIZEN_PERSONALID %>"
 					disabled="<%=isViewProfile %>"
@@ -189,7 +200,7 @@
 				/>
 			</aui:col>
 			
-			<aui:col width="25">
+			<aui:col width="30">
 				<label class="control-label custom-lebel" for='<portlet:namespace/><%=CitizenDisplayTerms.CITIZEN_BIRTHDATE %>'>
 					<liferay-ui:message key="birth-date"/>
 				</label>
@@ -209,7 +220,7 @@
 				</liferay-ui:input-date>
 			</aui:col>
 			
-			<aui:col width="25">
+			<aui:col width="30">
 				<aui:select 
 					name="<%=CitizenDisplayTerms.CITIZEN_GENDER %>"
 					disabled="<%=isViewProfile %>"

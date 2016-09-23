@@ -137,7 +137,6 @@
 			value="<%=employee != null 
 				&& employee.getWorkingStatus() == PortletConstants.WORKING_STATUS_ACTIVATE ? true : false %>"
 			disabled='<%=userViewProfile ? true : false %>'
-			cssClass="input100"
 		/>
 	</aui:col>
 </aui:row>

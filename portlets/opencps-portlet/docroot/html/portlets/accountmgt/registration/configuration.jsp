@@ -1,8 +1,3 @@
-<%@page import="com.liferay.portal.service.LayoutLocalServiceUtil"%>
-<%@page import="com.liferay.portal.model.Layout"%>
-<%@page import="java.util.List"%>
-<%@page import="com.liferay.portal.kernel.util.Constants"%>
-<%@page import="com.liferay.portal.kernel.util.GetterUtil"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -21,9 +16,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 %>
+<%@page import="com.liferay.portal.service.LayoutLocalServiceUtil"%>
+<%@page import="com.liferay.portal.model.Layout"%>
+<%@page import="java.util.List"%>
+<%@page import="com.liferay.portal.kernel.util.Constants"%>
+<%@page import="com.liferay.portal.kernel.util.GetterUtil"%>
+
 <%@ include file="../init.jsp"%>
 
 <liferay-portlet:actionURL var="configurationURL" portletConfiguration="true" />
+
 <liferay-ui:success key="config-stored" message="config-stored" />
 
 <aui:form action="<%= configurationURL.toString() %>" method="post" name="fm">
@@ -49,8 +51,8 @@
 		<aui:col width="40"></aui:col>
 	</aui:row>
 	
-	
     <aui:input name="action" type="hidden" id="action"></aui:input>
+    
     <aui:button-row>
         <aui:button type="button" id="save" name="save" value="save" />  
     </aui:button-row>

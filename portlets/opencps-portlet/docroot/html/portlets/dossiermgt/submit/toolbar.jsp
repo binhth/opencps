@@ -19,6 +19,14 @@
 <%@page import="com.liferay.portal.kernel.language.LanguageUtil"%>
 <%@page import="javax.portlet.PortletURL"%>
 <%@page import="org.opencps.servicemgt.search.ServiceDisplayTerms"%>
+<%@page import="org.opencps.util.WebKeys"%>
+<%@page import="org.opencps.datamgt.service.DictItemLocalServiceUtil"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="java.util.List"%>
+<%@page import="org.opencps.datamgt.service.DictCollectionLocalServiceUtil"%>
+<%@page import="org.opencps.datamgt.model.DictItem"%>
+<%@page import="org.opencps.datamgt.model.DictCollection"%>
+
 <%@ include file="/init.jsp"%>
 <%
 	PortletURL searchURL = renderResponse.createRenderURL();
@@ -33,6 +41,19 @@
 	
 	request.setAttribute(ServiceDisplayTerms.SERVICE_DOMAINCODE, domainCode);
 	
+	DictCollection collectionDomain = null;
+	DictItem curDictItem = null;
+	try {
+		collectionDomain = DictCollectionLocalServiceUtil.getDictCollection(scopeGroupId, WebKeys.SERVICE_DOMAIN);
+	} catch (Exception e) {
+		
+	}
+	
+	List<DictItem> dictItems = new ArrayList<DictItem>();
+	
+	if(Validator.isNotNull(collectionDomain)) {
+		dictItems = DictItemLocalServiceUtil.getDictItemsByDictCollectionId(collectionDomain.getDictCollectionId());
+	}
 %>
 <aui:nav-bar cssClass="opencps-toolbar custom-toolbar">
 <div class="form-search">
@@ -53,7 +74,7 @@
 
 			</aui:col>
 			<aui:col width="25" cssClass="search-col">
-				<datamgt:ddr
+				<%-- <datamgt:ddr
 					depthLevel="1" 
 					dictCollectionCode="SERVICE_DOMAIN"
 					itemNames="domainCode"
@@ -63,7 +84,32 @@
 					showLabel="false"
 					selectedItems="<%=domainCode %>"
 				>
-				</datamgt:ddr>
+				</datamgt:ddr> --%>
+				
+				<aui:select name="<%=ServiceDisplayTerms.SERVICE_DOMAINCODE %>" label="">
+					<aui:option value="">
+						<liferay-ui:message key="<%=ServiceDisplayTerms.SERVICE_DOMAINCODE %>"/>
+					</aui:option>
+					<%
+						if(dictItems != null){
+							for(DictItem dictItem : dictItems){
+								if((curDictItem != null && dictItem.getDictItemId() == curDictItem.getDictItemId())||
+										(curDictItem != null && dictItem.getTreeIndex().contains(curDictItem.getDictItemId() + StringPool.PERIOD))){
+									continue;
+								}
+								
+								int level = StringUtil.count(dictItem.getTreeIndex(), StringPool.PERIOD);
+								String index = "|";
+								for(int i = 0; i < level; i++){
+									index += "_";
+								}
+								%>
+									<aui:option value="<%=dictItem.getDictItemId() %>"><%=index + dictItem.getItemName(locale) %></aui:option>
+								<%
+							}
+						}
+					%>
+				</aui:select>
 
 			</aui:col>
 			<aui:col width="45" cssClass="search-col">

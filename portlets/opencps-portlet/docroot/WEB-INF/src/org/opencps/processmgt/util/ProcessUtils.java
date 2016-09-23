@@ -20,6 +20,7 @@ import org.opencps.processmgt.model.WorkflowOutput;
 import org.opencps.processmgt.model.impl.ProcessStepDossierPartImpl;
 import org.opencps.processmgt.model.impl.StepAllowanceImpl;
 import org.opencps.processmgt.model.impl.WorkflowOutputImpl;
+import org.opencps.processmgt.service.ProcessStepDossierPartLocalServiceUtil;
 import org.opencps.processmgt.service.ProcessStepLocalServiceUtil;
 import org.opencps.processmgt.service.ServiceProcessLocalServiceUtil;
 import org.opencps.processmgt.service.StepAllowanceLocalServiceUtil;
@@ -430,6 +431,25 @@ public class ProcessUtils {
 		}
 
 		return stepName;
+	}
+	
+	/**
+	 * @param processStepId
+	 * @return
+	 */
+	public static List<ProcessStepDossierPart> getDossierPartByStep(long processStepId) {
+		List<ProcessStepDossierPart> ls = new ArrayList<ProcessStepDossierPart>();
+		
+		try {
+	        if (processStepId != 0) {
+	        	ls = ProcessStepDossierPartLocalServiceUtil.getByStep(processStepId);
+	        }
+        }
+        catch (Exception e) {
+	        _log.error(e);
+        }
+		
+		return ls;
 	}
 
 	public static final String TOP_TABS_PROCESS_ORDER_WAITING_PROCESS =

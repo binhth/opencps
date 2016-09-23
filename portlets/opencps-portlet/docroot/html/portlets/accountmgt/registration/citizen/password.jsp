@@ -1,3 +1,4 @@
+
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -16,11 +17,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 %>
-
+<%@page import="com.liferay.portal.UserPasswordException"%>
 <%@page import="org.opencps.accountmgt.search.CitizenDisplayTerms"%>
 
 <%@ include file="/init.jsp" %> 
 
+<liferay-ui:error-marker key="errorSection" value="password" />
+
+<liferay-ui:error 
+	exception="<%= UserPasswordException.class %>" 
+	message="<%=UserPasswordException.class.getName() %>"
+/>
 
 <aui:row cssClass="nav-content-row-2">
 	<aui:col>

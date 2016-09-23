@@ -1,4 +1,6 @@
 
+<%@page import="org.opencps.dossiermgt.util.DossierMgtUtil"%>
+<%@page import="org.opencps.dossiermgt.service.persistence.DossierUtil"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -152,7 +154,7 @@
 					</span>
 					
 					<span class="span8">
-						<%= dossierLog.getMessageInfo() %>
+						<%= DossierMgtUtil.getDossierLogs(StringPool.BLANK, dossierLog.getMessageInfo())  %>
 					</span>
 					
 				</aui:row>

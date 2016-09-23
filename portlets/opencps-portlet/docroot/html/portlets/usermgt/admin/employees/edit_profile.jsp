@@ -40,9 +40,9 @@
 	String screenName = (String)request.getAttribute(WebKeys.TURN_BACK_SCREEN_NAME);
 %>
 
-<aui:model-context bean="<%=mappingUser%>" model="<%=User.class%>" />
-
 <liferay-ui:error-marker key="errorSection" value="edit_profile" />
+
+<aui:model-context bean="<%=mappingUser%>" model="<%=User.class%>" />
 
 <liferay-ui:error exception="<%= UserPasswordException.class %>">
 	<%
@@ -121,28 +121,29 @@
 	</aui:row>
 	
 	<aui:row cssClass="nav-content-row-2">
-		<aui:input name="changePassWord" type="checkbox" checked="false"/>
+		<aui:row>
+			<aui:input name="changePassWord" type="checkbox" checked="false"/>
+		</aui:row>
+		<aui:row>
+			<div id = "<portlet:namespace />showOrHidePasswordsField" >
+				<aui:row>
+					<aui:col width="30">
+						<aui:input name="<%= EmployeeDisplayTerm.OLD_PASS_WORD%>" type="password" cssClass="input100"/>
+					</aui:col>
+					
+					<aui:col width="30">
+						<aui:input name="<%= EmployeeDisplayTerm.PASS_WORD%>" type="password" cssClass="input100"/>
+					</aui:col>
+					
+					<aui:col width="30">
+						<aui:input name="<%= EmployeeDisplayTerm.RE_PASS_WORD%>" type="password" cssClass="input100">
+							<aui:validator name="equalTo">'#<portlet:namespace /><%= EmployeeDisplayTerm.PASS_WORD%>'</aui:validator>
+						</aui:input>
+					</aui:col>
+				</aui:row>
+			</div>
+		</aui:row>
 	</aui:row>
-	
-	<div id = "<portlet:namespace />showOrHidePasswordsField" >
-		<aui:row cssClass="nav-content-row-2">
-			<aui:col width="100">
-				<aui:input name="<%= EmployeeDisplayTerm.OLD_PASS_WORD%>" type="password" cssClass="input100"/>
-			</aui:col>
-		</aui:row>
-		
-		<aui:row cssClass="nav-content-row-2">
-			<aui:col width="50">
-				<aui:input name="<%= EmployeeDisplayTerm.PASS_WORD%>" type="password" cssClass="input100"/>
-			</aui:col>
-			
-			<aui:col width="50">
-				<aui:input name="<%= EmployeeDisplayTerm.RE_PASS_WORD%>" type="password" cssClass="input100">
-					<aui:validator name="equalTo">'#<portlet:namespace /><%= EmployeeDisplayTerm.PASS_WORD%>'</aui:validator>
-				</aui:input>
-			</aui:col>
-		</aui:row>
-	</div>
 </div>	
 
 <aui:script>

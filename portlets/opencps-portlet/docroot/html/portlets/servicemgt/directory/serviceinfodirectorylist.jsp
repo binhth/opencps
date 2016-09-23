@@ -51,6 +51,20 @@
 	request.setAttribute(ServiceDisplayTerms.SERVICE_ADMINISTRATION, administrationCode);
 	
 	request.setAttribute(ServiceDisplayTerms.SERVICE_DOMAINCODE, domainCode);
+	
+	DictCollection collectionDomain = null;
+	DictItem curDictItem = null;
+	try {
+		collectionDomain = DictCollectionLocalServiceUtil.getDictCollection(scopeGroupId, WebKeys.SERVICE_DOMAIN);
+	} catch (Exception e) {
+		
+	}
+	
+	List<DictItem> dictItems = new ArrayList<DictItem>();
+	
+	if(Validator.isNotNull(collectionDomain)) {
+		dictItems = DictItemLocalServiceUtil.getDictItemsByDictCollectionId(collectionDomain.getDictCollectionId());
+	}
 %>
 
 <div class="title_box">
@@ -79,7 +93,7 @@
 
 						</aui:col>
 						<aui:col width="30" cssClass="search-col">
-							<datamgt:ddr 
+							<%-- <datamgt:ddr 
 								depthLevel="1" 
 								dictCollectionCode="SERVICE_DOMAIN"
 								itemNames="<%= ServiceDisplayTerms.SERVICE_DOMAINCODE %>"
@@ -89,7 +103,32 @@
 								cssClass="search-input select-box"
 								showLabel="false"
 							>
-							</datamgt:ddr>
+							</datamgt:ddr> --%>
+							
+							<aui:select name="<%=ServiceDisplayTerms.SERVICE_DOMAINCODE %>" label="">
+								<aui:option value="">
+									<liferay-ui:message key="<%=ServiceDisplayTerms.SERVICE_DOMAINCODE %>"/>
+								</aui:option>
+								<%
+									if(dictItems != null){
+										for(DictItem dictItem : dictItems){
+											if((curDictItem != null && dictItem.getDictItemId() == curDictItem.getDictItemId())||
+													(curDictItem != null && dictItem.getTreeIndex().contains(curDictItem.getDictItemId() + StringPool.PERIOD))){
+												continue;
+											}
+											
+											int level = StringUtil.count(dictItem.getTreeIndex(), StringPool.PERIOD);
+											String index = "|";
+											for(int i = 0; i < level; i++){
+												index += "_";
+											}
+											%>
+												<aui:option value="<%=dictItem.getDictItemId() %>"><%=index + dictItem.getItemName(locale) %></aui:option>
+											<%
+										}
+									}
+								%>
+							</aui:select>
 
 						</aui:col>
 						<aui:col width="30" cssClass="search-col">

@@ -80,7 +80,7 @@ public class SyncFromFrontOffice implements MessageListener {
 
 		long dossierId = userActionMgs.getDossierId();
 
-		boolean trustServiceMode = _checkServiceMode(dossierId);
+		boolean trustServiceMode = BackendUtils.checkServiceMode(dossierId);
 
 		if (trustServiceMode) {
 			try {
@@ -256,33 +256,6 @@ public class SyncFromFrontOffice implements MessageListener {
 
 	}
 
-	/**
-	 * @param dossierId
-	 * @return
-	 */
-	private boolean _checkServiceMode(long dossierId) {
-
-		boolean trustServiceMode = false;
-
-		try {
-			Dossier dossier = DossierLocalServiceUtil.fetchDossier(dossierId);
-
-			long serviceConfigId = dossier.getServiceConfigId();
-
-			ServiceConfig serviceConfig =
-				ServiceConfigLocalServiceUtil.fetchServiceConfig(serviceConfigId);
-
-			if (serviceConfig.getServicePortal() &&
-				serviceConfig.getServiceBackoffice()) {
-				trustServiceMode = true;
-			}
-		}
-		catch (Exception e) {
-			_log.error(e);
-		}
-
-		return trustServiceMode;
-	}
 
 	private boolean _checkStatus(long dossierId, long fileGroupId) {
 
