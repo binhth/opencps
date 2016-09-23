@@ -45,7 +45,7 @@
 	
 	long govAgencyId = ParamUtil.getLong(request, "govAgencyId");
 	
-	String dossierStatus = ParamUtil.getString(request, "dossierStatus", PortletConstants.DOSSIER_STATUS_NEW);
+	String dossierStatus = ParamUtil.getString(request, "dossierStatus", StringPool.BLANK);
 
 	String tabs1 = ParamUtil.getString(request, "tabs1", DossierMgtUtil.TOP_TABS_DOSSIER);
 	

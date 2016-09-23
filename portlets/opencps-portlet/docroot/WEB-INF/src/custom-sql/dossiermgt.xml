@@ -461,7 +461,11 @@
 			AND
 				(opencps_dossier.userId = ?)
 			AND
-				((lower(opencps_serviceinfo.serviceName) LIKE ? [$AND_OR_NULL_CHECK$]) OR (lower(opencps_service_config.govAgencyName) LIKE ? [$AND_OR_NULL_CHECK$]) OR (lower(opencps_dossier.subjectName) LIKE ? [$AND_OR_NULL_CHECK$]) OR (lower(opencps_dossier.receptionNo) LIKE ? [$AND_OR_NULL_CHECK$]))
+				((lower(opencps_serviceinfo.serviceName) LIKE ? [$AND_OR_NULL_CHECK$]) 
+					OR (lower(opencps_service_config.govAgencyName) LIKE ? [$AND_OR_NULL_CHECK$]) 
+					OR (lower(opencps_dossier.subjectName) LIKE ? [$AND_OR_NULL_CHECK$]) 
+					OR (lower(opencps_dossier.receptionNo) LIKE ? [$AND_OR_NULL_CHECK$]) 
+					OR (lower(opencps_dossier.dossierId) LIKE ? [$AND_OR_NULL_CHECK$]))
 			AND 
 				(opencps_dossier.dossierStatus = ?)
 			AND 
@@ -490,7 +494,11 @@
 			AND
 				(opencps_dossier.userId = ?)
 			AND
-				((lower(opencps_serviceinfo.serviceName) LIKE ? [$AND_OR_NULL_CHECK$]) OR (lower(opencps_service_config.govAgencyName) LIKE ? [$AND_OR_NULL_CHECK$]) OR (lower(opencps_dossier.subjectName) LIKE ? [$AND_OR_NULL_CHECK$]) OR (lower(opencps_dossier.receptionNo) LIKE ? [$AND_OR_NULL_CHECK$]))
+				((lower(opencps_serviceinfo.serviceName) LIKE ? [$AND_OR_NULL_CHECK$]) 
+					OR (lower(opencps_service_config.govAgencyName) LIKE ? [$AND_OR_NULL_CHECK$]) 
+					OR (lower(opencps_dossier.subjectName) LIKE ? [$AND_OR_NULL_CHECK$]) 
+					OR (lower(opencps_dossier.receptionNo) LIKE ? [$AND_OR_NULL_CHECK$]) 
+					OR (lower(opencps_dossier.dossierId) LIKE ? [$AND_OR_NULL_CHECK$]))
 			AND 
 				(opencps_dossier.dossierStatus = ?)
 			AND 
