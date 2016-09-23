@@ -24,6 +24,7 @@
 <%@page import="com.liferay.portal.UserPasswordException"%>
 <%@page import="com.liferay.portal.kernel.language.LanguageUtil"%>
 <%@page import="com.liferay.portal.DuplicateUserScreenNameException"%>
+
 <%@ include file="../../init.jsp"%>
 
 <%
@@ -32,6 +33,7 @@
 	String screenName = (String)request.getAttribute(WebKeys.TURN_BACK_SCREEN_NAME);
 %>
 <aui:model-context bean="<%=mappingUser%>" model="<%=User.class%>" />
+
 <liferay-ui:error-marker key="errorSection" value="account_info" />
 
 <liferay-ui:error exception="<%= DuplicateUserEmailAddressException.class %>" 

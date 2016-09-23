@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<custom-sql>
+	<sql id="org.opencps.datamgt.service.persistence.DictItemFinder.searchDictItemByNameLike">	
+		<![CDATA[
+	    	SELECT * FROM opencps_dictitem 
+			INNER JOIN opencps_dictcollection
+			on opencps_dictitem.dictCollectionId = opencps_dictcollection.dictCollectionId
+			WHERE 
+			
+			1 = 1
+			
+			and opencps_dictcollection.collectionCode = ?
+			
+			and opencps_dictitem.itemCode = ?
+			
+			and opencps_dictitem.parentItemId = ?
+			
+			and opencps_dictitem.groupId = ?
+			
+			and (lower(ExtractValue(itemName, '//ItemName')) LIKE ? [$AND_OR_NULL_CHECK$])
+		]]>
+	</sql>
+</custom-sql>

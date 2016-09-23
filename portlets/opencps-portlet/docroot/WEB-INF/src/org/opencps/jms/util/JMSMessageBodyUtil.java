@@ -200,7 +200,7 @@ public class JMSMessageBodyUtil {
 				ServiceInfoLocalServiceUtil.getServiceInfo(dossier.getServiceInfoId());
 
 			List<DossierFile> dossierFiles =
-				DossierFileLocalServiceUtil.getDossierFileByD_S_R(
+				DossierFileLocalServiceUtil.getDossierFileByDID_SS_R(
 					dossierId,
 					PortletConstants.DOSSIER_FILE_SYNC_STATUS_REQUIREDSYNC, 0);
 
@@ -286,7 +286,7 @@ public class JMSMessageBodyUtil {
 				ServiceInfoLocalServiceUtil.getServiceInfo(dossier.getServiceInfoId());
 
 			List<DossierFile> dossierFiles =
-				DossierFileLocalServiceUtil.getDossierFileByD_S_R(
+				DossierFileLocalServiceUtil.getDossierFileByDID_SS_R(
 					dossier.getDossierId(),
 					PortletConstants.DOSSIER_FILE_SYNC_STATUS_NOSYNC, 0);
 

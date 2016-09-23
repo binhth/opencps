@@ -188,7 +188,7 @@
 	
 	<div style="margin-bottom: 25px;" class="opencps-searchcontainer-wrapper default-box-shadow radius8">
 		
-		<div id="serviceDomainIdTree" class="openCPSTree"></div>
+		<div id="serviceDomainIdTree" class="openCPSTree scrollable"></div>
 		
 		<%
 			String serviceDomainJsonData = ProcessOrderUtils.generateTreeView(

@@ -422,4 +422,12 @@ public class DossierLogLocalServiceImpl extends DossierLogLocalServiceBaseImpl {
 		return dossierLogFinder.countAdminLog(
 			fromUpdateDatetime, toUpdateDatetime, level, dossierStatus);
 	}
+	
+	public List<DossierLog> findDossierByRequestCommand(
+		long dossierId, String requestCommand)
+		throws PortalException, SystemException {
+
+		return dossierLogPersistence.findByD_RC(dossierId, requestCommand);
+	}
+
 }

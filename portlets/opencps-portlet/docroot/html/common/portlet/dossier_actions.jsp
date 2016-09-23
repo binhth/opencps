@@ -1,5 +1,4 @@
 
-<%@page import="com.liferay.portal.kernel.language.LanguageUtil"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -23,6 +22,7 @@
 <%@page import="org.opencps.util.PortletConstants"%>
 <%@page import="org.opencps.dossiermgt.search.DossierFileDisplayTerms"%>
 <%@page import="org.opencps.dossiermgt.search.DossierDisplayTerms"%>
+<%@page import="com.liferay.portal.kernel.language.LanguageUtil"%>
 
 <%@ include file="/init.jsp"%>
 
@@ -54,6 +54,8 @@
 	int partType = ParamUtil.getInteger(request, DossierFileDisplayTerms.PART_TYPE);
 	
 	int level = ParamUtil.getInteger(request, DossierFileDisplayTerms.LEVEL);
+	
+	boolean showVersionItemReference = ParamUtil.getBoolean(request, "showVersionItemReference", true);
 	
 	String groupName = ParamUtil.getString(request, DossierFileDisplayTerms.GROUP_NAME);
 	
@@ -153,23 +155,25 @@
 				</td>
 				
 				<td width="10%" align="right">
-					<span class="dossier-version-counter">
-						<span class="counter-value" title='<%=LanguageUtil.get(pageContext, "version") %>'>
-							<aui:a 
-								id="<%=String.valueOf(dossierPartId) %>"
-								dossier="<%=String.valueOf(dossierId) %>"
-								dossier-part="<%=String.valueOf(isChildDossierPart ? childDossierPartId : dossierPartId) %>"
-								dossier-file="<%=String.valueOf(dossierFileId) %>"
-								file-group="<%=String.valueOf(fileGroupId) %>"
-								group-dossier-part="<%=String.valueOf(groupDossierPartId) %>"
-								group-name="<%=groupName %>"
-								href="javascript:void(0);" 
-								cssClass="view-version"
-							>
-								<%=version %>
-							</aui:a>
+					<c:if test="<%=showVersionItemReference %>">
+						<span class="dossier-version-counter">
+							<span class="counter-value" title='<%=LanguageUtil.get(pageContext, "version") %>'>
+								<aui:a 
+									id="<%=String.valueOf(dossierPartId) %>"
+									dossier="<%=String.valueOf(dossierId) %>"
+									dossier-part="<%=String.valueOf(isChildDossierPart ? childDossierPartId : dossierPartId) %>"
+									dossier-file="<%=String.valueOf(dossierFileId) %>"
+									file-group="<%=String.valueOf(fileGroupId) %>"
+									group-dossier-part="<%=String.valueOf(groupDossierPartId) %>"
+									group-name="<%=groupName %>"
+									href="javascript:void(0);" 
+									cssClass="view-version"
+								>
+									<%=version %>
+								</aui:a>
+							</span>
 						</span>
-					</span>
+					</c:if>
 				</td>
 				
 				<td width="10%" align="right">
@@ -254,24 +258,27 @@
 				</td>
 				
 				<td width="10%" align="right">
-					<span class="dossier-version-counter">
-						<span class="counter-value" title='<%=LanguageUtil.get(pageContext, "version") %>'>
-							<aui:a 
-								id="<%=String.valueOf(dossierPartId) %>"
-								dossier="<%=String.valueOf(dossierId) %>"
-								dossier-part="<%=String.valueOf(isChildDossierPart ? childDossierPartId : dossierPartId) %>"
-								dossier-file="<%=String.valueOf(dossierFileId) %>"
-								file-group="<%=String.valueOf(fileGroupId) %>"
-								group-dossier-part="<%=String.valueOf(groupDossierPartId) %>"
-								group-name="<%=groupName %>"
-								href="javascript:void(0);" 
-								cssClass="view-version"
-							>
-								<%=version %>
-							</aui:a>
+					<c:if test="<%=showVersionItemReference %>">
+						<span class="dossier-version-counter">
+							<span class="counter-value" title='<%=LanguageUtil.get(pageContext, "version") %>'>
+								<aui:a 
+									id="<%=String.valueOf(dossierPartId) %>"
+									dossier="<%=String.valueOf(dossierId) %>"
+									dossier-part="<%=String.valueOf(isChildDossierPart ? childDossierPartId : dossierPartId) %>"
+									dossier-file="<%=String.valueOf(dossierFileId) %>"
+									file-group="<%=String.valueOf(fileGroupId) %>"
+									group-dossier-part="<%=String.valueOf(groupDossierPartId) %>"
+									group-name="<%=groupName %>"
+									href="javascript:void(0);" 
+									cssClass="view-version"
+								>
+									<%=version %>
+								</aui:a>
+							</span>
 						</span>
-					</span>
+					</c:if>
 				</td>
+				
 				<td width="10%" align="right">
 					<c:if test="<%=isEditDossier %>">
 						<aui:a 
@@ -371,24 +378,27 @@
 				</td>
 				
 				<td width="10%" align="right">
-					<span class="dossier-version-counter">
-						<span class="counter-value" title='<%=LanguageUtil.get(pageContext, "version") %>'>
-							<aui:a 
-								id="<%=String.valueOf(dossierPartId) %>"
-								dossier="<%=String.valueOf(dossierId) %>"
-								dossier-part="<%=String.valueOf(isChildDossierPart ? childDossierPartId : dossierPartId) %>"
-								dossier-file="<%=String.valueOf(dossierFileId) %>"
-								file-group="<%=String.valueOf(fileGroupId) %>"
-								group-dossier-part="<%=String.valueOf(groupDossierPartId) %>"
-								group-name="<%=groupName %>"
-								href="javascript:void(0);" 
-								cssClass="view-version"
-							>
-								<%=version %>
-							</aui:a>
+					<c:if test="<%=showVersionItemReference %>">
+						<span class="dossier-version-counter">
+							<span class="counter-value" title='<%=LanguageUtil.get(pageContext, "version") %>'>
+								<aui:a 
+									id="<%=String.valueOf(dossierPartId) %>"
+									dossier="<%=String.valueOf(dossierId) %>"
+									dossier-part="<%=String.valueOf(isChildDossierPart ? childDossierPartId : dossierPartId) %>"
+									dossier-file="<%=String.valueOf(dossierFileId) %>"
+									file-group="<%=String.valueOf(fileGroupId) %>"
+									group-dossier-part="<%=String.valueOf(groupDossierPartId) %>"
+									group-name="<%=groupName %>"
+									href="javascript:void(0);" 
+									cssClass="view-version"
+								>
+									<%=version %>
+								</aui:a>
+							</span>
 						</span>
-					</span>
+					</c:if>
 				</td>
+				
 				<td width="10%" align="right">
 					<c:if test="<%=isEditDossier %>">
 						<aui:a 
@@ -481,38 +491,44 @@
 						</c:otherwise>
 					</c:choose>
 				</td>
+				
 				<td width="10%" align="right">
-					<span class="dossier-version-counter">
-						<span class="counter-value" title='<%=LanguageUtil.get(pageContext, "version") %>'>
-							<aui:a 
-								id="<%=String.valueOf(dossierPartId) %>"
-								dossier="<%=String.valueOf(dossierId) %>"
-								dossier-part="<%=String.valueOf(isChildDossierPart ? childDossierPartId : dossierPartId) %>"
-								dossier-file="<%=String.valueOf(dossierFileId) %>"
-								file-group="<%=String.valueOf(fileGroupId) %>"
-								group-dossier-part="<%=String.valueOf(groupDossierPartId) %>"
-								group-name="<%=groupName %>"
-								href="javascript:void(0);" 
-								cssClass="view-version"
-							>
-								<%=version %>
-							</aui:a>
+					<c:if test="<%=showVersionItemReference %>">
+						<span class="dossier-version-counter">
+							<span class="counter-value" title='<%=LanguageUtil.get(pageContext, "version") %>'>
+								<aui:a 
+									id="<%=String.valueOf(dossierPartId) %>"
+									dossier="<%=String.valueOf(dossierId) %>"
+									dossier-part="<%=String.valueOf(isChildDossierPart ? childDossierPartId : dossierPartId) %>"
+									dossier-file="<%=String.valueOf(dossierFileId) %>"
+									file-group="<%=String.valueOf(fileGroupId) %>"
+									group-dossier-part="<%=String.valueOf(groupDossierPartId) %>"
+									group-name="<%=groupName %>"
+									href="javascript:void(0);" 
+									cssClass="view-version"
+								>
+									<%=version %>
+								</aui:a>
+							</span>
 						</span>
-					</span>
+					</c:if>
 				</td>
+				
 				<td width="10%" align="right">
-					<aui:a
-						cssClass="opencps dossiermgt part-file-ctr remove-dossier-file"
-						process-order="<%=String.valueOf(processOrderId) %>"
-						dossier-file="<%=String.valueOf(dossierFileId) %>"
-						level = "<%=level %>"
-						href="javascript:void(0);" 
-						id="<%=String.valueOf(dossierPartId) %>"
-						title="remove"
-					>
-						<i class="fa fa-times" aria-hidden="true"></i>
-						
-					</aui:a>
+					<c:if test="<%=isEditDossier %>">
+						<aui:a
+							cssClass="opencps dossiermgt part-file-ctr remove-dossier-file"
+							process-order="<%=String.valueOf(processOrderId) %>"
+							dossier-file="<%=String.valueOf(dossierFileId) %>"
+							level = "<%=level %>"
+							href="javascript:void(0);" 
+							id="<%=String.valueOf(dossierPartId) %>"
+							title="remove"
+						>
+							<i class="fa fa-times" aria-hidden="true"></i>
+							
+						</aui:a>
+					</c:if>
 				</td>
 			</c:when>
 			

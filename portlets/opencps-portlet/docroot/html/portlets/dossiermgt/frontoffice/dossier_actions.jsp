@@ -1,3 +1,4 @@
+
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -32,6 +33,10 @@
 <%@page import="org.opencps.dossiermgt.search.DossierDisplayTerms"%>
 <%@page import="org.opencps.util.PortletConstants"%>
 <%@page import="org.opencps.dossiermgt.model.ServiceConfig"%>
+<%@page import="com.liferay.portal.kernel.log.Log"%>
+<%@page import="com.liferay.portal.kernel.log.LogFactoryUtil"%>
+<%@page import="org.opencps.util.PortletPropsValues"%>
+
 <%@page pageEncoding="UTF-8"%>
 
 <%@ include file="../init.jsp"%>
@@ -43,11 +48,12 @@
 	DossierBean dossierBean = (DossierBean) row.getObject();
 	
 	Dossier dossier = dossierBean.getDossier();
-	ProcessOrder processOrder = null;
+
 	ProcessWorkflow workFlow = null;
+	
 	try {
-		processOrder = ProcessOrderLocalServiceUtil.getProcessOrder(dossier.getDossierId(), 0);
-		workFlow = ProcessWorkflowLocalServiceUtil.getByS_PreP_AN(processOrder.getServiceProcessId(), processOrder.getProcessStepId(), "Thông báo hủy hồ sơ");
+		ProcessOrder processOrder = ProcessOrderLocalServiceUtil.getProcessOrder(dossier.getDossierId(), 0);
+		workFlow = ProcessWorkflowLocalServiceUtil.getByS_PreP_AN(processOrder.getServiceProcessId(), processOrder.getProcessStepId(), PortletPropsValues.OPENCPS_CANCEL_DOSSIER_NOTICE);
 	}
 	catch (Exception e) {
 		
@@ -130,10 +136,18 @@
 		 	</c:if>
  		</c:when>
   		<c:when test="<%= (dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_PROCESSING) && workFlow != null) %>">
-		 		<portlet:actionURL var="cancelDossierURL" name="cancelDossier" >
-					<portlet:param name="<%=DossierDisplayTerms.DOSSIER_ID %>" value="<%=String.valueOf(dossier.getDossierId()) %>"/>
-					<portlet:param name="redirectURL" value="<%=currentURL %>"/>
-				</portlet:actionURL>
-		</c:when>  		
+			<portlet:actionURL var="cancelDossierURL" name="cancelDossier" >
+				<portlet:param name="<%=DossierDisplayTerms.DOSSIER_ID %>" value="<%=String.valueOf(dossier.getDossierId()) %>"/>
+				<portlet:param name="redirectURL" value="<%=currentURL %>"/>
+			</portlet:actionURL>
+			
+			<liferay-ui:icon-delete 
+				image="undo"
+				cssClass="search-container-action fa delete"
+				confirmation="are-you-sure-cancel-entry" 
+				message="cancel"  
+				url="<%=cancelDossierURL.toString() %>" 
+			/>
+		</c:when>
  	</c:choose>
-<%-- </liferay-ui:icon-menu> --%> 
+<%-- </liferay-ui:icon-menu> --%>

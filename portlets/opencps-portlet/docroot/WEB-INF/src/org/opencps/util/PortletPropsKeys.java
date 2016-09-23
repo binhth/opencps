@@ -58,7 +58,6 @@ public class PortletPropsKeys {
 	public static final String DATAMGT_MASTERDATA_BUSINESS_TYPE= "opencps.datamgt.masterdata.business.type";
 	public static final String DATAMGT_MASTERDATA_SERVICE_DOMAIN = "opencps.datamgt.masterdata.service.domain";
 	public static final String DATAMGT_MASTERDATA_SERVICE_ADMINISTRATION = "opencps.datamgt.masterdata.service.administration";
-	public static final String DATAMGT_MASTERDATA_ADMINISTRATION_REGION = "opencps.datamgt.masterdata.administration.region";
 	public static final String DATAMGT_MASTERDATA_ADMINISTRATIVE_REGION = "opencps.datamgt.masterdata.administrative.region";
 	public static final String DATAMGT_MASTERDATA_GOVERNMENT_AGENCY = "opencps.datamgt.masterdata.goverment.agency";
 	public static final String DATAMGT_MASTERDATA_DOSSIER_STATUS = "opencps.datamgt.masterdata.dossier.status";

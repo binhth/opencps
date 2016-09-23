@@ -22,11 +22,13 @@ import java.util.Date;
 import java.util.List;
 
 import org.opencps.dossiermgt.NoSuchDossierFileException;
+import org.opencps.dossiermgt.NoSuchDossierStatusException;
 import org.opencps.dossiermgt.model.DossierFile;
 import org.opencps.dossiermgt.model.DossierPart;
 import org.opencps.dossiermgt.model.FileGroup;
 import org.opencps.dossiermgt.service.DossierFileLocalServiceUtil;
 import org.opencps.dossiermgt.service.base.DossierFileLocalServiceBaseImpl;
+import org.opencps.processmgt.model.WorkflowOutput;
 import org.opencps.util.PortletConstants;
 
 import com.liferay.portal.kernel.exception.PortalException;
@@ -251,12 +253,9 @@ public class DossierFileLocalServiceImpl
 		// Add file
 		FileEntry fileEntry =
 			dlAppService.addFileEntry(
-				serviceContext.getScopeGroupId(),
-				folderId,
-				sourceFileName,
-				mimeType,
-				getFileName(sourceFileName),
-				description, changeLog, is, size, serviceContext);
+				serviceContext.getScopeGroupId(), folderId, sourceFileName,
+				mimeType, getFileName(sourceFileName), description, changeLog,
+				is, size, serviceContext);
 
 		dossierFile.setFileEntryId(fileEntry.getFileEntryId());
 
@@ -329,12 +328,9 @@ public class DossierFileLocalServiceImpl
 		// Add file
 		FileEntry fileEntry =
 			dlAppService.addFileEntry(
-				serviceContext.getScopeGroupId(),
-				folderId,
-				sourceFileName,
-				mimeType,
-				getFileName(sourceFileName),
-				description, changeLog, bytes, serviceContext);
+				serviceContext.getScopeGroupId(), folderId, sourceFileName,
+				mimeType, getFileName(sourceFileName), description, changeLog,
+				bytes, serviceContext);
 
 		dossierFile.setFileEntryId(fileEntry.getFileEntryId());
 
@@ -449,12 +445,9 @@ public class DossierFileLocalServiceImpl
 		// Add file
 		FileEntry fileEntry =
 			dlAppService.addFileEntry(
-				serviceContext.getScopeGroupId(),
-				folderId,
-				sourceFileName,
-				mimeType,
-				getFileName(sourceFileName), description, changeLog, is,
-				size, serviceContext);
+				serviceContext.getScopeGroupId(), folderId, sourceFileName,
+				mimeType, getFileName(sourceFileName), description, changeLog,
+				is, size, serviceContext);
 
 		dossierFile.setFileEntryId(fileEntry.getFileEntryId());
 
@@ -610,8 +603,9 @@ public class DossierFileLocalServiceImpl
 		FileEntry fileEntry =
 			dlAppLocalService.addFileEntry(
 				serviceContext.getUserId(), serviceContext.getScopeGroupId(),
-				folderId, sourceFileName, mimeType, getFileName(sourceFileName), description,
-				changeLog, bytes, serviceContext);
+				folderId, sourceFileName, mimeType,
+				getFileName(sourceFileName), description, changeLog, bytes,
+				serviceContext);
 		/*
 		 * FileEntry fileEntry = dlAppServiceUtil.addFileEntry(
 		 * serviceContext.getScopeGroupId(), folderId, sourceFileName, mimeType,
@@ -726,12 +720,9 @@ public class DossierFileLocalServiceImpl
 		// Add file
 		FileEntry fileEntry =
 			dlAppService.addFileEntry(
-				serviceContext.getScopeGroupId(),
-				folderId,
-				sourceFileName,
-				mimeType,
-				getFileName(sourceFileName),
-				description, changeLog, is, size, serviceContext);
+				serviceContext.getScopeGroupId(), folderId, sourceFileName,
+				mimeType, getFileName(sourceFileName), description, changeLog,
+				is, size, serviceContext);
 
 		dossierFile.setFileEntryId(fileEntry.getFileEntryId());
 
@@ -901,12 +892,28 @@ public class DossierFileLocalServiceImpl
 	 * @return
 	 * @throws SystemException
 	 */
-	public List<DossierFile> findByF_D_S_R(
+	public List<DossierFile> getDossierFileByGFID_DID_SS_R(
 		long fileGroupId, long dossierId, int syncStatus, int removed)
 		throws SystemException {
 
-		return dossierFilePersistence.findByF_D_S_R(
+		return dossierFilePersistence.findByGFID_DID_SS_R(
 			fileGroupId, dossierId, syncStatus, removed);
+	}
+
+	/**
+	 * @param dossierId
+	 * @param syncStatus
+	 * @param dossierPartId
+	 * @param removed
+	 * @return
+	 * @throws SystemException
+	 */
+	public List<DossierFile> getDossierFileByDID_SS_DPID_R(
+		long dossierId, int syncStatus, long dossierPartId, int removed)
+		throws SystemException {
+
+		return dossierFilePersistence.findByDID_SS_DPID_R(
+			dossierId, syncStatus, dossierPartId, removed);
 	}
 
 	/**
@@ -945,11 +952,11 @@ public class DossierFileLocalServiceImpl
 	 * @return
 	 * @throws SystemException
 	 */
-	public List<DossierFile> getDossierFileByD_S_R(
+	public List<DossierFile> getDossierFileByDID_SS_R(
 		long dossierId, int syncStatus, int removed)
 		throws SystemException {
 
-		return dossierFilePersistence.findByD_S_R(
+		return dossierFilePersistence.findByDID_SS_R(
 			dossierId, syncStatus, removed);
 	}
 
@@ -1175,11 +1182,74 @@ public class DossierFileLocalServiceImpl
 		FileEntry fileEntry =
 			dlAppService.addFileEntry(
 				serviceContext.getScopeGroupId(), folderId, sourceFileName,
-				mimeType, getFileName(sourceFileName), description,
-				changeLog, is, size, serviceContext);
+				mimeType, getFileName(sourceFileName), description, changeLog,
+				is, size, serviceContext);
 
 		dossierFile.setFileEntryId(fileEntry.getFileEntryId());
 		return dossierFilePersistence.update(dossierFile);
+	}
+
+	/**
+	 * @param userId
+	 * @param dossierId
+	 * @param syncStatus
+	 * @param worklows
+	 * @throws SystemException
+	 * @throws NoSuchDossierStatusException
+	 * @throws PortalException
+	 */
+	public void updateDossierFileSyncStatus(
+		long userId, long dossierId, int syncStatus,
+		List<WorkflowOutput> worklows)
+		throws SystemException, NoSuchDossierStatusException, PortalException {
+
+		Date now = new Date();
+
+		for (WorkflowOutput output : worklows) {
+
+			DossierFile dossierFile =
+				dossierFileLocalService.getDossierFileInUse(
+					dossierId, output.getDossierPartId());
+
+			dossierFile.setSyncStatus(syncStatus);
+			dossierFile.setModifiedDate(now);
+
+			if (userId != 0) {
+				dossierFile.setUserId(userId);
+			}
+
+			dossierFileLocalService.updateDossierFile(dossierFile);
+
+		}
+	}
+
+	/**
+	 * @param userId
+	 * @param dossierId
+	 * @param syncStatus
+	 * @throws SystemException
+	 * @throws NoSuchDossierStatusException
+	 * @throws PortalException
+	 */
+	public void updateDossierFileSyncStatus(
+		long userId, long dossierId, long fileGroupId, int syncStatus)
+		throws SystemException, NoSuchDossierStatusException, PortalException {
+
+		Date now = new Date();
+
+		List<DossierFile> dossierFiles =
+			dossierFileLocalService.getDossierFileByD_GF(dossierId, 0);
+
+		if (dossierFiles != null) {
+			for (DossierFile dossierFile : dossierFiles) {
+				dossierFile.setSyncStatus(syncStatus);
+				dossierFile.setModifiedDate(now);
+				if (userId != 0) {
+					dossierFile.setUserId(userId);
+				}
+				dossierFileLocalService.updateDossierFile(dossierFile);
+			}
+		}
 	}
 
 	public DossierFile fetchByTemplateFileNoDossierId_First(
@@ -1199,7 +1269,7 @@ public class DossierFileLocalServiceImpl
 
 		return dossierFilePersistence.fetchByOid(oid);
 	}
-	
+
 	/**
 	 * Ham chuyen ten file nguoi dung upload len thanh ten do he thong quy dinh
 	 * 
@@ -1207,19 +1277,20 @@ public class DossierFileLocalServiceImpl
 	 * @return
 	 */
 	private String getFileName(String sourceFileName) {
+
 		String ext = FileUtil.getExtension(sourceFileName);
-		
+
 		StringBuilder sbFileName = new StringBuilder(5);
-		
+
 		sbFileName.append(PortalUUIDUtil.generate());
 		sbFileName.append(StringPool.DASH);
 		sbFileName.append(System.nanoTime());
-		
-		if(Validator.isNotNull(ext)) {
+
+		if (Validator.isNotNull(ext)) {
 			sbFileName.append(StringPool.PERIOD);
 			sbFileName.append(ext);
 		}
-		
+
 		return sbFileName.toString();
 	}
 }

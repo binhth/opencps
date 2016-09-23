@@ -102,6 +102,7 @@
 		<c:choose>
 			<c:when test="<%=employee != null %>">
 				<portlet:actionURL var="updateProfileURL" name="updateProfile"/>
+				
 				<liferay-util:buffer var="htmlTop">
 					<c:if test="<%= user != null %>">
 						<div class="user-info">
@@ -171,20 +172,23 @@
 					
 					<aui:model-context bean="<%=employee %>" model="<%=Employee.class %>" />
 					
-					<aui:input name="returnURL" type="hidden" value="<%= currentURL%>"/>
+					<aui:input name="backURL" type="hidden" value="<%= currentURL%>"/>
 					
 					<aui:input name="<%=EmployeeDisplayTerm.EMPLOYEE_ID %>" type="hidden"/>
 					<aui:input name="<%=EmployeeDisplayTerm.GROUP_ID %>" type="hidden" value="<%= scopeGroupId%>"/>
 					<aui:input name="<%=EmployeeDisplayTerm.COMPANY_ID %>" type="hidden" value="<%= company.getCompanyId()%>"/>
-				
-					<liferay-ui:form-navigator
-						backURL="<%= StringPool.BLANK %>"
-						categoryNames="<%= UserMgtUtil._EMPLOYESS_CATEGORY_NAMES %>"
-						categorySections="<%= categorySections %>"
-						htmlBottom="<%= htmlBottom %>"
-						htmlTop="<%= htmlTop %>"
-						jspPath='<%="/html/portlets/usermgt/admin/employees/" %>'
-					/>
+					
+					<div class="opencps-form-navigator-container radius8">
+						<liferay-ui:form-navigator
+							backURL="<%= StringPool.BLANK %>"
+							categoryNames="<%= UserMgtUtil._EMPLOYESS_CATEGORY_NAMES %>"
+							categorySections="<%= categorySections %>"
+							htmlBottom="<%= htmlBottom %>"
+							htmlTop="<%= htmlTop %>"
+							jspPath='<%="/html/portlets/usermgt/admin/employees/" %>'
+							displayStyle="left-navigator"
+						/>
+					</div>
 				</aui:form>
 			</c:when>
 			

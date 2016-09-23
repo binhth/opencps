@@ -278,7 +278,6 @@ public class BackOfficeProcessEngine implements MessageListener {
 				}
 
 				toBackOffice.setActionInfo(processWorkflow.getActionName());
-				toBackOffice.setMessageInfo(toEngineMsg.getActionNote());
 				toBackOffice.setSendResult(0);
 
 				if (changeStatus.equals(PortletConstants.DOSSIER_STATUS_PAYING)) {
@@ -370,9 +369,21 @@ public class BackOfficeProcessEngine implements MessageListener {
 					toBackOffice.setRequestCommand(WebKeys.DOSSIER_LOG_PAYMENT_REQUEST);
 					toBackOffice.setPaymentFile(paymentFile);
 					
+					
+					//setPayment message in pattern in message Info
+					
+					StringBuffer sb = new StringBuffer();
+					
+					sb.append(paymentMessages.get(0));
+					sb.append(StringPool.SEMICOLON);
+					sb.append(toEngineMsg.getActionNote());
+					
+					toBackOffice.setMessageInfo(sb.toString());
+
 				}
 				else {
 					toBackOffice.setRequestPayment(0);
+					toBackOffice.setMessageInfo(toEngineMsg.getActionNote());
 				}
 				
 				

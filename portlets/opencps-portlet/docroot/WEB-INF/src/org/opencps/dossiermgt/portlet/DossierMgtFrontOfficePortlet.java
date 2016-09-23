@@ -1514,7 +1514,7 @@ public class DossierMgtFrontOfficePortlet extends MVCPortlet {
 
 		// HttpSession session = request.getSession();
 
-		validatePermission(renderRequest, renderResponse);
+		// validatePermission(renderRequest, renderResponse);
 
 		if (_hasPermission) {
 
@@ -2492,13 +2492,16 @@ public class DossierMgtFrontOfficePortlet extends MVCPortlet {
 			MessageBusUtil.sendMessage(
 				"opencps/frontoffice/out/destination", message);
 
-			ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest
-					.getAttribute(WebKeys.THEME_DISPLAY);
+			ThemeDisplay themeDisplay =
+				(ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
 			// add default message success
-			SessionMessages.add(actionRequest, 
-					MessageKeys.DEFAULT_SUCCESS_KEY_X, 
-					LanguageUtil.format(themeDisplay.getLocale(), MessageKeys.DEFAULT_SUCCESS_KEY_X, String.valueOf(dossier.getDossierId())));
+			SessionMessages.add(
+				actionRequest, MessageKeys.DEFAULT_SUCCESS_KEY_X,
+				LanguageUtil.format(
+					themeDisplay.getLocale(),
+					MessageKeys.DEFAULT_SUCCESS_KEY_X,
+					String.valueOf(dossier.getDossierId())));
 
 		}
 		catch (Exception e) {
@@ -3383,7 +3386,7 @@ public class DossierMgtFrontOfficePortlet extends MVCPortlet {
 			obj.put("counter", String.valueOf(counterVal));
 			jsonArray.put(obj);
 		}
-		
+
 		jsonObject.put("badge", jsonArray);
 		PortletUtil.writeJSON(actionRequest, actionResponse, jsonObject);
 	}

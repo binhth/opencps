@@ -1,19 +1,19 @@
 /**
-* OpenCPS is the open source Core Public Services software
-* Copyright (C) 2016-present OpenCPS community
+ * OpenCPS is the open source Core Public Services software
+ * Copyright (C) 2016-present OpenCPS community
 
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Affero General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
 
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU Affero General Public License for more details.
-* You should have received a copy of the GNU Affero General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>
-*/
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
+ */
 
 package org.opencps.accountmgt.portlet;
 
@@ -26,6 +26,7 @@ import javax.portlet.ActionResponse;
 import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+import javax.servlet.http.HttpServletRequest;
 
 import org.opencps.accountmgt.InvalidCityCodeException;
 import org.opencps.accountmgt.InvalidDistricCodeException;
@@ -46,6 +47,7 @@ import org.opencps.accountmgt.service.CitizenLocalServiceUtil;
 import org.opencps.datamgt.model.DictItem;
 import org.opencps.datamgt.service.DictItemLocalServiceUtil;
 import org.opencps.usermgt.search.EmployeeDisplayTerm;
+import org.opencps.util.AccountUtil;
 import org.opencps.util.MessageKeys;
 import org.opencps.util.PortletPropsValues;
 import org.opencps.util.WebKeys;
@@ -62,22 +64,21 @@ import com.liferay.portal.model.UserGroup;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.theme.ThemeDisplay;
+import com.liferay.portal.util.PortalUtil;
 import com.liferay.util.bridges.mvc.MVCPortlet;
-
 
 /**
  * @author trungnt
- *
  */
 public class AccountProfilePortlet extends MVCPortlet {
 
 	@Override
 	public void render(
-	    RenderRequest renderRequest, RenderResponse renderResponse)
-	    throws PortletException, IOException {
+		RenderRequest renderRequest, RenderResponse renderResponse)
+		throws PortletException, IOException {
 
 		ThemeDisplay themeDisplay =
-		    (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+			(ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		String accountType = StringPool.BLANK;
 
 		if (themeDisplay.isSignedIn()) {
@@ -91,9 +92,9 @@ public class AccountProfilePortlet extends MVCPortlet {
 				if (!userGroups.isEmpty()) {
 					for (UserGroup userGroup : userGroups) {
 						if (userGroup.getName().equals(
-						    PortletPropsValues.USERMGT_USERGROUP_NAME_CITIZEN) ||
-						    userGroup.getName().equals(
-						        PortletPropsValues.USERMGT_USERGROUP_NAME_BUSINESS)) {
+							PortletPropsValues.USERMGT_USERGROUP_NAME_CITIZEN) ||
+							userGroup.getName().equals(
+								PortletPropsValues.USERMGT_USERGROUP_NAME_BUSINESS)) {
 							accountType = userGroup.getName();
 							break;
 						}
@@ -105,18 +106,18 @@ public class AccountProfilePortlet extends MVCPortlet {
 
 				if (accountType.equals(PortletPropsValues.USERMGT_USERGROUP_NAME_CITIZEN)) {
 					Citizen citizen =
-					    CitizenLocalServiceUtil.getCitizen(user.getUserId());
+						CitizenLocalServiceUtil.getCitizen(user.getUserId());
 					renderRequest.setAttribute(WebKeys.CITIZEN_ENTRY, citizen);
 				}
 				else if (accountType.equals(PortletPropsValues.USERMGT_USERGROUP_NAME_BUSINESS)) {
 
 					Business business =
-					    BusinessLocalServiceUtil.getBusiness(user.getUserId());
+						BusinessLocalServiceUtil.getBusiness(user.getUserId());
 					renderRequest.setAttribute(WebKeys.BUSINESS_ENTRY, business);
 				}
 
 				renderRequest.setAttribute(
-				    WebKeys.ACCOUNTMGT_VIEW_PROFILE, true);
+					WebKeys.ACCOUNTMGT_VIEW_PROFILE, true);
 			}
 			catch (Exception e) {
 				_log.error(e);
@@ -127,32 +128,36 @@ public class AccountProfilePortlet extends MVCPortlet {
 	}
 
 	public void updateCitizenProfile(
-	    ActionRequest actionRequest, ActionResponse actionResponse) throws IOException {
+		ActionRequest actionRequest, ActionResponse actionResponse)
+		throws IOException {
 
 		long citizenId =
-		    ParamUtil.getLong(actionRequest, CitizenDisplayTerms.CITIZEN_ID);
-		String returnURL = ParamUtil.getString(actionRequest, "returnURL");
-		String address =
-		    ParamUtil.getString(
-		        actionRequest, CitizenDisplayTerms.CITIZEN_ADDRESS);
-		String telNo =
-		    ParamUtil.getString(actionRequest, EmployeeDisplayTerm.TEL_NO);
-		String curPass =
-		    ParamUtil.getString(
-		        actionRequest, CitizenDisplayTerms.CURRENT_PASSWORD);
-		String newPass =
-		    ParamUtil.getString(actionRequest, CitizenDisplayTerms.NEW_PASSWORD);
-		String rePass =
-		    ParamUtil.getString(actionRequest, CitizenDisplayTerms.RE_PASSWORD);
+			ParamUtil.getLong(actionRequest, CitizenDisplayTerms.CITIZEN_ID);
+
 		long cityId =
-		    ParamUtil.getLong(
-		        actionRequest, CitizenDisplayTerms.CITIZEN_CITY_ID);
+			ParamUtil.getLong(
+				actionRequest, CitizenDisplayTerms.CITIZEN_CITY_ID);
 		long districtId =
-		    ParamUtil.getLong(
-		        actionRequest, CitizenDisplayTerms.CITIZEN_DISTRICT_ID);
+			ParamUtil.getLong(
+				actionRequest, CitizenDisplayTerms.CITIZEN_DISTRICT_ID);
 		long wardId =
-		    ParamUtil.getLong(
-		        actionRequest, CitizenDisplayTerms.CITIZEN_WARD_ID);
+			ParamUtil.getLong(
+				actionRequest, CitizenDisplayTerms.CITIZEN_WARD_ID);
+
+		String address =
+			ParamUtil.getString(
+				actionRequest, CitizenDisplayTerms.CITIZEN_ADDRESS);
+		String telNo =
+			ParamUtil.getString(actionRequest, EmployeeDisplayTerm.TEL_NO);
+		String curPass =
+			ParamUtil.getString(
+				actionRequest, CitizenDisplayTerms.CURRENT_PASSWORD);
+		String newPass =
+			ParamUtil.getString(actionRequest, CitizenDisplayTerms.NEW_PASSWORD);
+		String rePass =
+			ParamUtil.getString(actionRequest, CitizenDisplayTerms.RE_PASSWORD);
+
+		String backURL = ParamUtil.getString(actionRequest, "backURL");
 
 		DictItem city = null;
 
@@ -160,20 +165,23 @@ public class AccountProfilePortlet extends MVCPortlet {
 
 		DictItem ward = null;
 
-		boolean isChangePassWord = false;
+		boolean isChangePassword = false;
+
 		if (Validator.isNotNull(curPass) && Validator.isNotNull(newPass) &&
-		    Validator.isNotNull(rePass)) {
-			isChangePassWord = true;
+			Validator.isNotNull(rePass)) {
+			isChangePassword = true;
 		}
 
+		boolean updated = false;
+
 		try {
-			AccountRegPortlet
-		    .validateCitizen(
-		        citizenId, StringPool.BLANK, StringPool.BLANK, address,
-		        StringPool.BLANK, telNo, 1, StringPool.BLANK, cityId, districtId, wardId,
-		        StringPool.BLANK);
+			AccountRegPortlet.validateCitizen(
+				citizenId, StringPool.BLANK, StringPool.BLANK, address,
+				StringPool.BLANK, telNo, 1, StringPool.BLANK, cityId,
+				districtId, wardId, StringPool.BLANK);
 			ServiceContext serviceContext =
-			    ServiceContextFactory.getInstance(actionRequest);
+				ServiceContextFactory.getInstance(actionRequest);
+
 			city = DictItemLocalServiceUtil.getDictItem(cityId);
 
 			district = DictItemLocalServiceUtil.getDictItem(districtId);
@@ -182,206 +190,239 @@ public class AccountProfilePortlet extends MVCPortlet {
 
 			if (citizenId > 0) {
 				CitizenLocalServiceUtil.updateCitizen(
-				    citizenId, address, city.getItemCode(),
-				    district.getItemCode(), ward.getItemCode(),
-				    city.getItemName(serviceContext.getLocale(), true),
-				    district.getItemName(serviceContext.getLocale(), true),
-				    ward.getItemName(serviceContext.getLocale(), true), telNo,
-				    isChangePassWord, newPass, rePass,
-				    serviceContext.getScopeGroupId(), serviceContext);
+					citizenId, address, city.getItemCode(),
+					district.getItemCode(), ward.getItemCode(),
+					city.getItemName(serviceContext.getLocale(), true),
+					district.getItemName(serviceContext.getLocale(), true),
+					ward.getItemName(serviceContext.getLocale(), true), telNo,
+					isChangePassword, newPass, rePass,
+					serviceContext.getScopeGroupId(), serviceContext);
 
+				HttpServletRequest request =
+					PortalUtil.getHttpServletRequest(actionRequest);
+				AccountUtil.destroy(request);
+
+				updated = true;
 			}
 		}
 		catch (Exception e) {
+			_log.error(e);
+
 			if (e instanceof UserPasswordException) {
 				SessionErrors.add(actionRequest, UserPasswordException.class);
 			}
 			else if (e instanceof OutOfLengthCitizenAddressException) {
 				SessionErrors.add(
-				    actionRequest, OutOfLengthCitizenAddressException.class);
+					actionRequest, OutOfLengthCitizenAddressException.class);
 			}
 			else if (e instanceof OutOfLengthCitizenNameException) {
 				SessionErrors.add(
-				    actionRequest, OutOfLengthCitizenNameException.class);
+					actionRequest, OutOfLengthCitizenNameException.class);
 			}
-			else if(e instanceof InvalidCityCodeException) {
-				SessionErrors.add(
-				    actionRequest, InvalidCityCodeException.class);
+			else if (e instanceof InvalidCityCodeException) {
+				SessionErrors.add(actionRequest, InvalidCityCodeException.class);
 			}
-			else if(e instanceof InvalidDistricCodeException) {
+			else if (e instanceof InvalidDistricCodeException) {
 				SessionErrors.add(
-				    actionRequest, InvalidDistricCodeException.class);
+					actionRequest, InvalidDistricCodeException.class);
 			}
-			else if(e instanceof InvalidWardCodeException) {
-				SessionErrors.add(
-				    actionRequest, InvalidWardCodeException.class);
+			else if (e instanceof InvalidWardCodeException) {
+				SessionErrors.add(actionRequest, InvalidWardCodeException.class);
 			}
 			else {
 				SessionErrors.add(
-				    actionRequest,
-				    MessageKeys.DATAMGT_SYSTEM_EXCEPTION_OCCURRED);
+					actionRequest,
+					MessageKeys.DATAMGT_SYSTEM_EXCEPTION_OCCURRED);
 			}
-
-			if (Validator.isNotNull(returnURL)) {
-				actionResponse.sendRedirect(returnURL);
+		}
+		finally {
+			if (updated) {
+				if (Validator.isNotNull(backURL)) {
+					actionResponse.sendRedirect(backURL);
+				}
+			}
+			else {
+				actionResponse.setRenderParameter(
+					"mvcPath",
+					"/html/portlets/accountmgt/profile/edit_profile.jsp");
 			}
 		}
 	}
 
 	public void updateBusinessProfile(
-	    ActionRequest actionRequest, ActionResponse actionResponse)
-	    throws IOException {
+		ActionRequest actionRequest, ActionResponse actionResponse)
+		throws IOException {
 
 		long businessId =
-		    ParamUtil.getLong(
-		        actionRequest, BusinessDisplayTerms.BUSINESS_BUSINESSID);
+			ParamUtil.getLong(
+				actionRequest, BusinessDisplayTerms.BUSINESS_BUSINESSID);
 
 		long cityId =
-		    ParamUtil.getLong(
-		        actionRequest, BusinessDisplayTerms.BUSINESS_CITY_ID);
+			ParamUtil.getLong(
+				actionRequest, BusinessDisplayTerms.BUSINESS_CITY_ID);
 		long districtId =
-		    ParamUtil.getLong(
-		        actionRequest, BusinessDisplayTerms.BUSINESS_DISTRICT_ID);
+			ParamUtil.getLong(
+				actionRequest, BusinessDisplayTerms.BUSINESS_DISTRICT_ID);
 		long wardId =
-		    ParamUtil.getLong(
-		        actionRequest, BusinessDisplayTerms.BUSINESS_WARD_ID);
-		String returnURL = ParamUtil.getString(actionRequest, "returnURL");
+			ParamUtil.getLong(
+				actionRequest, BusinessDisplayTerms.BUSINESS_WARD_ID);
+
+		long type =
+			ParamUtil.getLong(
+				actionRequest, BusinessDisplayTerms.BUSINESS_BUSINESSTYPE);
+
+		String backURL = ParamUtil.getString(actionRequest, "backURL");
 
 		String name =
-		    ParamUtil.getString(
-		        actionRequest, BusinessDisplayTerms.BUSINESS_NAME);
+			ParamUtil.getString(
+				actionRequest, BusinessDisplayTerms.BUSINESS_NAME);
 		String enName =
-		    ParamUtil.getString(
-		        actionRequest, BusinessDisplayTerms.BUSINESS_ENNAME);
+			ParamUtil.getString(
+				actionRequest, BusinessDisplayTerms.BUSINESS_ENNAME);
 		String idNumber =
-		    ParamUtil.getString(
-		        actionRequest, BusinessDisplayTerms.BUSINESS_IDNUMBER);
+			ParamUtil.getString(
+				actionRequest, BusinessDisplayTerms.BUSINESS_IDNUMBER);
 		String shortName =
-		    ParamUtil.getString(
-		        actionRequest, BusinessDisplayTerms.BUSINESS_SHORTNAME);
-		long type =
-		    ParamUtil.getLong(
-		        actionRequest, BusinessDisplayTerms.BUSINESS_BUSINESSTYPE);
+			ParamUtil.getString(
+				actionRequest, BusinessDisplayTerms.BUSINESS_SHORTNAME);
+
 		String address =
-		    ParamUtil.getString(
-		        actionRequest, BusinessDisplayTerms.BUSINESS_ADDRESS);
+			ParamUtil.getString(
+				actionRequest, BusinessDisplayTerms.BUSINESS_ADDRESS);
 		String telNo =
-		    ParamUtil.getString(
-		        actionRequest, BusinessDisplayTerms.BUSINESS_TELNO);
+			ParamUtil.getString(
+				actionRequest, BusinessDisplayTerms.BUSINESS_TELNO);
 		String representativeName =
-		    ParamUtil.getString(
-		        actionRequest, BusinessDisplayTerms.BUSINESS_REPRESENTATIVENAME);
+			ParamUtil.getString(
+				actionRequest, BusinessDisplayTerms.BUSINESS_REPRESENTATIVENAME);
 		String representativeRole =
-		    ParamUtil.getString(
-		        actionRequest, BusinessDisplayTerms.BUSINESS_REPRESENTATIVEROLE);
-		String[] domain =
-		    ParamUtil.getParameterValues(
-		        actionRequest, BusinessDisplayTerms.BUSINESS_DOMAIN);
-		String [] listBussinessDomains = ParamUtil
-						.getParameterValues(actionRequest, "listBussinessDomains");
+			ParamUtil.getString(
+				actionRequest, BusinessDisplayTerms.BUSINESS_REPRESENTATIVEROLE);
+		// String[] domain =
+		// ParamUtil.getParameterValues(
+		// actionRequest, BusinessDisplayTerms.BUSINESS_DOMAIN);
+
+		String[] listBussinessDomains =
+			ParamUtil.getParameterValues(actionRequest, "listBussinessDomains");
 		String curPass =
-		    ParamUtil.getString(
-		        actionRequest, BusinessDisplayTerms.CURRENT_PASSWORD);
+			ParamUtil.getString(
+				actionRequest, BusinessDisplayTerms.CURRENT_PASSWORD);
 		String newPass =
-		    ParamUtil.getString(
-		        actionRequest, BusinessDisplayTerms.NEW_PASSWORD);
+			ParamUtil.getString(
+				actionRequest, BusinessDisplayTerms.NEW_PASSWORD);
 		String rePass =
-		    ParamUtil.getString(actionRequest, BusinessDisplayTerms.RE_PASSWORD);
-		boolean isChangePassWord = false;
+			ParamUtil.getString(actionRequest, BusinessDisplayTerms.RE_PASSWORD);
+
+		boolean isChangePassword = false;
+
 		if (Validator.isNotNull(curPass) && Validator.isNotNull(newPass) &&
-		    Validator.isNotNull(rePass)) {
-			isChangePassWord = true;
+			Validator.isNotNull(rePass)) {
+			isChangePassword = true;
 		}
+
+		boolean updated = false;
 
 		DictItem city = null;
 
 		DictItem district = null;
 
 		DictItem ward = null;
-		
+
 		DictItem busType = null;
 
 		try {
-			AccountRegPortlet
-		    .validateBusiness(
-		        businessId, StringPool.BLANK, StringPool.BLANK, enName, shortName,
-		        address, representativeName, representativeRole, cityId, districtId, wardId,
-		        1 , StringPool.BLANK);
+			AccountRegPortlet.validateBusiness(
+				businessId, StringPool.BLANK, StringPool.BLANK, enName,
+				shortName, address, representativeName, representativeRole,
+				cityId, districtId, wardId, 1, StringPool.BLANK);
 			city = DictItemLocalServiceUtil.getDictItem(cityId);
 
 			district = DictItemLocalServiceUtil.getDictItem(districtId);
 
 			ward = DictItemLocalServiceUtil.getDictItem(wardId);
-			
+
 			busType = DictItemLocalServiceUtil.getDictItem(type);
 			ServiceContext serviceContext =
-			    ServiceContextFactory.getInstance(actionRequest);
+				ServiceContextFactory.getInstance(actionRequest);
 			if (businessId > 0) {
-				
+
 				district.getItemName(serviceContext.getLocale(), true);
 				BusinessLocalServiceUtil.updateBusiness(
-				    businessId, name, enName, shortName, busType.getItemCode(), idNumber,
-				    address, city.getItemCode(), district.getItemCode(),
-				    ward.getItemCode(),
-				    city.getItemName(serviceContext.getLocale(), true),
-				    district.getItemName(serviceContext.getLocale(), true),
-				    ward.getItemName(serviceContext.getLocale(), true), telNo,
-				    representativeName, representativeRole, listBussinessDomains,
-				    isChangePassWord, curPass, rePass,
-				    serviceContext.getScopeGroupId(), serviceContext);
+					businessId, name, enName, shortName, busType.getItemCode(),
+					idNumber, address, city.getItemCode(),
+					district.getItemCode(), ward.getItemCode(),
+					city.getItemName(serviceContext.getLocale(), true),
+					district.getItemName(serviceContext.getLocale(), true),
+					ward.getItemName(serviceContext.getLocale(), true), telNo,
+					representativeName, representativeRole,
+					listBussinessDomains, isChangePassword, curPass, rePass,
+					serviceContext.getScopeGroupId(), serviceContext);
+
+				HttpServletRequest request =
+					PortalUtil.getHttpServletRequest(actionRequest);
+				AccountUtil.destroy(request);
+
+				updated = true;
 
 			}
 
 		}
 		catch (Exception e) {
+			_log.error(e);
 			if (e instanceof UserPasswordException) {
 				SessionErrors.add(actionRequest, UserPasswordException.class);
 			}
 			else if (e instanceof OutOfLengthBusinessNameException) {
 				SessionErrors.add(
-				    actionRequest, OutOfLengthBusinessNameException.class);
+					actionRequest, OutOfLengthBusinessNameException.class);
 			}
 			else if (e instanceof OutOfLengthBusinessEnNameException) {
 				SessionErrors.add(
-				    actionRequest, OutOfLengthBusinessEnNameException.class);
+					actionRequest, OutOfLengthBusinessEnNameException.class);
 			}
 			else if (e instanceof OutOfLengthBusinessShortNameException) {
 				SessionErrors.add(
-				    actionRequest, OutOfLengthBusinessShortNameException.class);
+					actionRequest, OutOfLengthBusinessShortNameException.class);
 			}
 			else if (e instanceof OutOfLengthBusinessRepresentativeNameException) {
 				SessionErrors.add(
-				    actionRequest,
-				    OutOfLengthBusinessRepresentativeNameException.class);
+					actionRequest,
+					OutOfLengthBusinessRepresentativeNameException.class);
 			}
 			else if (e instanceof OutOfLengthBusinessRepresentativeRoleException) {
 				SessionErrors.add(
-				    actionRequest,
-				    OutOfLengthBusinessRepresentativeRoleException.class);
+					actionRequest,
+					OutOfLengthBusinessRepresentativeRoleException.class);
 			}
-			else if(e instanceof InvalidCityCodeException) {
-				SessionErrors.add(
-				    actionRequest, InvalidCityCodeException.class);
+			else if (e instanceof InvalidCityCodeException) {
+				SessionErrors.add(actionRequest, InvalidCityCodeException.class);
 			}
-			else if(e instanceof InvalidDistricCodeException) {
+			else if (e instanceof InvalidDistricCodeException) {
 				SessionErrors.add(
-				    actionRequest, InvalidDistricCodeException.class);
+					actionRequest, InvalidDistricCodeException.class);
 			}
-			else if(e instanceof InvalidWardCodeException) {
-				SessionErrors.add(
-				    actionRequest, InvalidWardCodeException.class);
+			else if (e instanceof InvalidWardCodeException) {
+				SessionErrors.add(actionRequest, InvalidWardCodeException.class);
 			}
 			else {
 				SessionErrors.add(
-				    actionRequest,
-				    MessageKeys.DATAMGT_SYSTEM_EXCEPTION_OCCURRED);
+					actionRequest,
+					MessageKeys.DATAMGT_SYSTEM_EXCEPTION_OCCURRED);
 			}
-
-			if (Validator.isNotNull(returnURL)) {
-				actionResponse.sendRedirect(returnURL);
+		}
+		finally {
+			if (updated) {
+				if (Validator.isNotNull(backURL)) {
+					actionResponse.sendRedirect(backURL);
+				}
+			}
+			else {
+				actionResponse.setRenderParameter(
+					"mvcPath",
+					"/html/portlets/accountmgt/profile/edit_profile.jsp");
 			}
 		}
 	}
 	private Log _log =
-	    LogFactoryUtil.getLog(AccountProfilePortlet.class.getName());
+		LogFactoryUtil.getLog(AccountProfilePortlet.class.getName());
 }

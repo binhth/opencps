@@ -1,11 +1,4 @@
 
-<%@page import="com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil"%>
-<%@page import="org.opencps.servicemgt.service.TemplateFileLocalServiceUtil"%>
-<%@page import="org.opencps.servicemgt.model.TemplateFile"%>
-<%@page import="com.liferay.portlet.documentlibrary.model.DLFileEntry"%>
-<%@page import="org.opencps.dossiermgt.service.DossierPartLocalServiceUtil"%>
-<%@page import="org.opencps.dossiermgt.model.DossierPart"%>
-<%@page import="com.liferay.portal.kernel.util.HtmlUtil"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -25,6 +18,8 @@
  */
 %>
 
+<%@page import="org.opencps.dossiermgt.model.DossierPart"%>
+<%@page import="org.opencps.dossiermgt.service.DossierPartLocalServiceUtil"%>
 <%@page import="org.opencps.dossiermgt.service.DossierFileLocalServiceUtil"%>
 <%@page import="org.opencps.dossiermgt.model.DossierFile"%>
 <%@page import="org.opencps.util.DateTimeUtil"%>

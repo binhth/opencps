@@ -55,11 +55,15 @@ public class ConfigurationImpl implements ConfigurationAction{
 		
 		long itemsToDisplay = ParamUtil.getLong(actionRequest, "itemsToDisplay");
 		
+		long timeToReLoad = ParamUtil.getLong(actionRequest, "timeToReLoad", 0);
+		
 		String templatesToDisplay = ParamUtil.getString(actionRequest, "templatesToDisplay", "default");
 
 		boolean displayDossierNo = ParamUtil.getBoolean(actionRequest, "displayDossierNo");
 		
 		boolean displayRecentlyResultWhenSearch = ParamUtil.getBoolean(actionRequest, "displayRecentlyResultWhenSearch");
+		
+		boolean showVersionItem = ParamUtil.getBoolean(actionRequest, "showVersionItem");
 		
 		PortletURL redirectURL =
 		    PortletURLFactoryUtil.create(
@@ -83,6 +87,9 @@ public class ConfigurationImpl implements ConfigurationAction{
 		
 		preferences.setValue("itemsToDisplay", String.valueOf(itemsToDisplay));
 		preferences.setValue("templatesToDisplay", String.valueOf(templatesToDisplay));
+		preferences.setValue("timeToReLoad", String.valueOf(timeToReLoad));
+		
+		preferences.setValue("showVersionItem", String.valueOf(showVersionItem));
 		
 		preferences.store();
 

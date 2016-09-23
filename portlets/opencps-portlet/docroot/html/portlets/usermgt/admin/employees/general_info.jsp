@@ -58,6 +58,7 @@
 %>
 
 <aui:model-context bean="<%=employee%>" model="<%=Employee.class%>" />
+
 <liferay-ui:error-marker key="errorSection" value="general_info" />
 
 <liferay-ui:error exception="<%= EmptyEmployeeEmailException.class %>" 

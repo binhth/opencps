@@ -33,7 +33,7 @@ public class DossierNoGenerator {
 	
 	public static void main(String[] args) {
 
-	    String numberString = genaratorNoReception("{yyyy}{dd}{mm}{%-ABC1111/%}{nnnnnnnnnnnnnnnn}", 1);
+	    String numberString = genaratorNoReception("{%-BCT%}-{nnnnnn}/{yyyy}", 1);
 	    
 	    System.out.println(numberString);
     }
@@ -100,8 +100,10 @@ public class DossierNoGenerator {
 			
 			sbNoReception.replace(pattern.indexOf('n') - 1 , pattern.lastIndexOf('n') + 2, serialNumber);
 			
+			pattern = sbNoReception.toString();
+			
 			try {
-				sbNoReception.replace(pattern.indexOf('%') - 1, pattern.lastIndexOf('%') + 3, specialChar);
+				sbNoReception.replace(pattern.indexOf('%') - 1, pattern.lastIndexOf('%') + 2, specialChar);
 
 			} catch (Exception e) {
 				

@@ -24,6 +24,8 @@ import javax.jms.JMSException;
 import javax.naming.NamingException;
 
 import org.opencps.backend.message.SendToBackOfficeMsg;
+import org.opencps.backend.message.SendToCallbackMsg;
+import org.opencps.backend.util.BackendUtils;
 import org.opencps.dossiermgt.model.Dossier;
 import org.opencps.dossiermgt.model.DossierFile;
 import org.opencps.dossiermgt.model.DossierPart;
@@ -44,6 +46,7 @@ import org.opencps.util.WebKeys;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.Message;
+import com.liferay.portal.kernel.messaging.MessageBusUtil;
 import com.liferay.portal.kernel.messaging.MessageListener;
 import com.liferay.portal.kernel.messaging.MessageListenerException;
 
@@ -61,55 +64,79 @@ public class MsgOutBackOffice implements MessageListener {
 		SendToBackOfficeMsg toBackOffice =
 			(SendToBackOfficeMsg) message.get("toBackOffice");
 
-		if (toBackOffice != null && toBackOffice.getCompanyId() > 0) {
+		boolean trustServiceMode =
+			BackendUtils.checkServiceMode(toBackOffice.getDossierId());
+
+		if (toBackOffice != null && toBackOffice.getCompanyId() > 0 &&
+			!trustServiceMode) {
 
 			JMSHornetqContext context = null;
+
+			boolean statusUpdate = false;
 
 			try {
 
 				Dossier dossier =
 					DossierLocalServiceUtil.fetchDossier(toBackOffice.getDossierId());
 
+				List<DossierFile> dossierFiles = new ArrayList<DossierFile>();
+
+				statusUpdate =
+					DossierLocalServiceUtil.updateDossierStatus(
+						toBackOffice.getDossierId(),
+						toBackOffice.getFileGroupId(),
+						toBackOffice.getDossierStatus(),
+						toBackOffice.getReceptionNo(),
+						toBackOffice.getEstimateDatetime(),
+						toBackOffice.getSubmitDateTime(),
+						toBackOffice.getReceiveDatetime(),
+						toBackOffice.getFinishDatetime(),
+						toBackOffice.getActor(), toBackOffice.getActorId(),
+						toBackOffice.getActorName(),
+						toBackOffice.getRequestCommand(),
+						toBackOffice.getActionInfo(),
+						toBackOffice.getMessageInfo());
+
 				List<WorkflowOutput> workflowOutputs =
 					WorkflowOutputLocalServiceUtil.getByProcessWFPostback(
 						toBackOffice.getProcessWorkflowId(), true);
 
-				_log.info("////////////////WORKFLOW OUTPUT SIZE " +
-					workflowOutputs.size());
-
-				List<DossierFile> dossierFiles = new ArrayList<DossierFile>();
-
 				// Check file return
 				for (WorkflowOutput workflowOutput : workflowOutputs) {
 
-					DossierFile dossierFile = null;
+					List<DossierFile> dossierFilesTemp = null;
 					try {
 						DossierPart dossierPart =
 
 							DossierPartLocalServiceUtil.getDossierPart(workflowOutput.getDossierPartId());
-						dossierFile =
-							DossierFileLocalServiceUtil.getDossierFileInUse(
+						dossierFilesTemp =
+							DossierFileLocalServiceUtil.getDossierFileByDID_SS_DPID_R(
 								toBackOffice.getDossierId(),
-								dossierPart.getDossierpartId());
+								PortletConstants.DOSSIER_FILE_SYNC_STATUS_REQUIREDSYNC,
+								dossierPart.getDossierpartId(), 0);
 
-						dossierFile.setSyncStatus(PortletConstants.DOSSIER_FILE_SYNC_STATUS_SYNCSUCCESS);
-						dossierFiles.add(dossierFile);
+						dossierFiles.addAll(dossierFilesTemp);
 					}
 					catch (Exception e) {
 						_log.error(e);
 					}
 				}
 
+				DossierFileLocalServiceUtil.updateDossierFileSyncStatus(
+					0, toBackOffice.getDossierId(),
+					PortletConstants.DOSSIER_FILE_SYNC_STATUS_SYNCSUCCESS,
+					workflowOutputs);
+
 				List<DossierFileMsgBody> lstDossierFileMsgBody =
 					JMSMessageBodyUtil.getDossierFileMsgBody(dossierFiles);
 
-				/*
-				 * JMSContext context = JMSMessageUtil.createProducer(
-				 * toBackOffice.getCompanyId(), toBackOffice.getGovAgencyCode(),
-				 * true, WebKeys.JMS_QUEUE_OPENCPS_FRONTOFFICE.toLowerCase(),
-				 * WebKeys.JMS_QUEUE_OPENCPS_FRONTOFFICE.toLowerCase(),
-				 * "remote", "jmscore");
-				 */
+				// JMSContext context =
+				// JMSMessageUtil.createProducer(
+				// toBackOffice.getCompanyId(),
+				// toBackOffice.getGovAgencyCode(), true,
+				// WebKeys.JMS_QUEUE_OPENCPS_FRONTOFFICE.toLowerCase(),
+				// WebKeys.JMS_QUEUE_OPENCPS_FRONTOFFICE.toLowerCase(),
+				// "remote", "jmscore");
 
 				context =
 					JMSMessageUtil.createHornetqProducer(
@@ -132,13 +159,11 @@ public class MsgOutBackOffice implements MessageListener {
 					dossier.getReceptionNo() +
 					"--Time--" +
 					System.currentTimeMillis());
-				
+
 				_log.info("################################## toBackOffice.getReceptionNo()" +
-								toBackOffice.getReceptionNo() +
-								"--Time--" +
-								System.currentTimeMillis());
-				
-				
+					toBackOffice.getReceptionNo() +
+					"--Time--" +
+					System.currentTimeMillis());
 
 				msgBody.setOid(dossier.getOid());
 				msgBody.setReceptionNo(toBackOffice.getReceptionNo());
@@ -157,7 +182,19 @@ public class MsgOutBackOffice implements MessageListener {
 				msgBody.setFileGroupId(toBackOffice.getFileGroupId());
 				msgBody.setRequestCommand(toBackOffice.getRequestCommand());
 				syncFromBackoffice.sendMessageByHornetq(msgBody);
-				
+
+				// Send to Callback
+				SendToCallbackMsg toCallBack = new SendToCallbackMsg();
+
+				toCallBack.setProcessOrderId(toBackOffice.getProcessOrderId());
+				toCallBack.setSyncStatus(statusUpdate ? "ok" : "error");
+				toCallBack.setDossierStatus(toBackOffice.getDossierStatus());
+				Message sendToCallBack = new Message();
+
+				sendToCallBack.put("toCallback", toCallBack);
+
+				MessageBusUtil.sendMessage(
+					"opencps/backoffice/engine/callback", sendToCallBack);
 
 			}
 			catch (Exception e) {

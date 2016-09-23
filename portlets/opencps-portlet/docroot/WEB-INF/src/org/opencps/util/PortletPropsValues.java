@@ -72,12 +72,6 @@ public class PortletPropsValues {
 	            .get(
 	                PortletPropsKeys.DATAMGT_MASTERDATA_ADMINISTRATIVE_REGION));
 	
-	public static final String DATAMGT_MASTERDATA_ADMINISTRATION_REGION = 
-			 GetterUtil
-		        .getString(PortletProps
-		            .get(
-		                PortletPropsKeys.DATAMGT_MASTERDATA_ADMINISTRATION_REGION));
-	
 	public static final String DATAMGT_MASTERDATA_DOSSIER_STATUS = 
 			 GetterUtil
 		        .getString(PortletProps

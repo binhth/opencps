@@ -1,4 +1,3 @@
-
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -44,6 +43,9 @@
 <%@page import="org.opencps.dossiermgt.model.Dossier"%>
 <%@page import="org.opencps.dossiermgt.model.FileGroup"%>
 <%@page import="org.opencps.processmgt.model.ProcessOrder"%>
+<%@page import="org.opencps.processmgt.model.ProcessStepDossierPart"%>
+<%@page import="org.opencps.processmgt.util.ProcessUtils"%>
+<%@page import="com.liferay.portal.kernel.process.ProcessUtil"%>
 
 <%@ include file="../../init.jsp"%>
 
@@ -51,190 +53,341 @@
 	<portlet:param name="mvcPath" value='<%=templatePath + "upload_dossier_file.jsp" %>'/>
 </portlet:renderURL>
 
-
 <%
-	ProcessOrder processOrder = (ProcessOrder)request.getAttribute(WebKeys.PROCESS_ORDER_ENTRY);
-	ProcessStep processStep = (ProcessStep)request.getAttribute(WebKeys.PROCESS_STEP_ENTRY);
-	FileGroup fileGroup = (FileGroup) request.getAttribute(WebKeys.FILE_GROUP_ENTRY);
-	Dossier dossier = (Dossier)request.getAttribute(WebKeys.DOSSIER_ENTRY);
-	ServiceProcess serviceProcess = (ServiceProcess)request.getAttribute(WebKeys.SERVICE_PROCESS_ENTRY);
-	ServiceInfo serviceInfo = (ServiceInfo)request.getAttribute(WebKeys.SERVICE_INFO_ENTRY);
-	ServiceConfig serviceConfig = (ServiceConfig)request.getAttribute(WebKeys.SERVICE_CONFIG_ENTRY);
-	DossierTemplate dossierTemplate = (DossierTemplate) request.getAttribute(WebKeys.DOSSIER_TEMPLATE_ENTRY);
-	ProcessWorkflow processWorkflow = (ProcessWorkflow) request.getAttribute(WebKeys.PROCESS_WORKFLOW_ENTRY);
+	ProcessOrder processOrder =
+		(ProcessOrder) request.getAttribute(WebKeys.PROCESS_ORDER_ENTRY);
+	ProcessStep processStep =
+		(ProcessStep) request.getAttribute(WebKeys.PROCESS_STEP_ENTRY);
+	FileGroup fileGroup =
+		(FileGroup) request.getAttribute(WebKeys.FILE_GROUP_ENTRY);
+	Dossier dossier =
+		(Dossier) request.getAttribute(WebKeys.DOSSIER_ENTRY);
+	ServiceProcess serviceProcess =
+		(ServiceProcess) request.getAttribute(WebKeys.SERVICE_PROCESS_ENTRY);
+	ServiceInfo serviceInfo =
+		(ServiceInfo) request.getAttribute(WebKeys.SERVICE_INFO_ENTRY);
+	ServiceConfig serviceConfig =
+		(ServiceConfig) request.getAttribute(WebKeys.SERVICE_CONFIG_ENTRY);
+	DossierTemplate dossierTemplate =
+		(DossierTemplate) request.getAttribute(WebKeys.DOSSIER_TEMPLATE_ENTRY);
+	ProcessWorkflow processWorkflow =
+		(ProcessWorkflow) request.getAttribute(WebKeys.PROCESS_WORKFLOW_ENTRY);
 	
-	boolean isEditDossier = ParamUtil.getBoolean(request, "isEditDossier");
-	
-	String cssRequired = StringPool.BLANK;
-	
-	/* if(accountRoles != null && processStep != null){
-		for(int r = 0; r < accountRoles.size(); r++){
-			try{
-				StepAllowance stepAllowance = 
-								StepAllowanceLocalServiceUtil.getStepAllowance(processStep.getProcessStepId(), ((Role)accountRoles.get(r)).getRoleId());
-				
-				if(!stepAllowance.isReadOnly()){
-					isEditDossier = true;
-					break;
-				}
-			}catch(Exception e){
-				continue;
-			}
-		}
-	} */
+	long processStepId =
+			Validator.isNotNull(processStep)
+				? processStep.getProcessStepId() : 0l;
+
+	boolean isEditDossier =
+		ParamUtil.getBoolean(request, "isEditDossier");
 	
 	String backURL = ParamUtil.getString(request, "backURL");
-	
-	ActionHistory latestWorkflowActionHistory = null;
-	
-	
-	
-	try{
-		if(processWorkflow != null){
-			
-			latestWorkflowActionHistory = ActionHistoryLocalServiceUtil.
-					getLatestActionHistory(processOrder.getProcessOrderId(), processOrder.getProcessWorkflowId());
-		}
-	}catch(Exception e){}
-	
-	
-	List<ProcessWorkflow> postProcessWorkflows = new ArrayList<ProcessWorkflow>();
-	
-	try{
-		postProcessWorkflows = ProcessWorkflowLocalServiceUtil.getPostProcessWorkflow(processOrder.getServiceProcessId(), processWorkflow.getPostProcessStepId());
-	}catch(Exception e){}
-	
-	List<WorkflowOutput> workflowOutputs = null;
-	
-	if(processWorkflow != null){
-		try{
-			workflowOutputs = WorkflowOutputLocalServiceUtil.getByProcessWF(processWorkflow.getProcessWorkflowId());
-			
-		}catch(Exception e){
-			//Nothing todo
+
+	String cssRequired = StringPool.BLANK;
+
+	/* if (accountRoles != null && processStep != null) {
+		for (int r = 0; r < accountRoles.size(); r++) {
+	try {
+		StepAllowance stepAllowance =
+			StepAllowanceLocalServiceUtil.getStepAllowance(
+				processStep.getProcessStepId(),
+				((Role) accountRoles.get(r)).getRoleId());
+
+		if (!stepAllowance.isReadOnly()) {
+			isEditDossier = true;
+			break;
 		}
 	}
+	catch (Exception e) {
+		continue;
+	}
+		}
+	} */
+
+	//Get ActionHistory
+	ActionHistory latestWorkflowActionHistory = null;
+
+	try {
+		if (processWorkflow != null) {
+
+	latestWorkflowActionHistory =
+		ActionHistoryLocalServiceUtil.getLatestActionHistory(
+			processOrder.getProcessOrderId(),
+			processOrder.getProcessWorkflowId());
+		}
+	}
+	catch (Exception e) {
+	}
+
+	//Get list ProcessWorkflow
+	List<ProcessWorkflow> postProcessWorkflows =
+		new ArrayList<ProcessWorkflow>();
+
+	try {
+		postProcessWorkflows =
+	ProcessWorkflowLocalServiceUtil.getPostProcessWorkflow(
+		processOrder.getServiceProcessId(),
+		processWorkflow.getPostProcessStepId());
+	}
+	catch (Exception e) {
+	}
+
 	
+	//Get list ProcessStepDossierPart
+	List<ProcessStepDossierPart> processStepDossierParts =
+		new ArrayList<ProcessStepDossierPart>();
+
+	if (processStepId > 0) {
+		processStepDossierParts =
+	ProcessUtils.getDossierPartByStep(processStepId);
+	}
+	
+	//Get list DossierPart
+	List<DossierPart> dossierParts = new ArrayList<DossierPart>();
+	
+	if (processStepDossierParts != null) {
+		for (ProcessStepDossierPart processStepDossierPart : processStepDossierParts) {
+			DossierPart dossierPart = null;
+			
+			if(processStepDossierPart.getDossierPartId() > 0){
+				try{
+					dossierPart = DossierPartLocalServiceUtil.getDossierPart(processStepDossierPart.getDossierPartId());
+				}catch(Exception e){}
+			}
+			
+			if(dossierPart != null){
+				dossierParts.add(dossierPart);
+			}
+			
+		}
+	}
 %>
 <div class="ocps-dossier-process">
-<table class="process-workflow-info">
-  <tr class="odd">
-    <td width="20%" class="opcs-dosier-process-key"><liferay-ui:message key="step-name"/></td>
-    <td width="30%"><%=processStep != null ? processStep.getStepName() : StringPool.BLANK %></td>
-    <td width="20%" class="opcs-dosier-process-key"><liferay-ui:message key="assign-to-user"/></td>
-    <td width="30%"><%=processOrder != null ? new ProcessOrderBean().getAssignToUserName(processOrder.getAssignToUserId()) : StringPool.BLANK %></td>
-  </tr>
-  
-  <tr class="even">
-    <td width="20%" class="opcs-dosier-process-key"><liferay-ui:message key="pre-action-user"/></td>
-    <td width="30%"><%=latestWorkflowActionHistory != null ? new ProcessOrderBean().getAssignToUserName(latestWorkflowActionHistory.getActionUserId()) : StringPool.BLANK %></td>
-    <td width="20%" class="opcs-dosier-process-key"><liferay-ui:message key="pre-action-date"/></td>
-    <td width="30%"><%=latestWorkflowActionHistory != null ? DateTimeUtil.convertDateToString(latestWorkflowActionHistory.getActionDatetime(), DateTimeUtil._VN_DATE_TIME_FORMAT) : StringPool.BLANK %></td>
-  </tr>
-  
-  
-  <tr class="odd">
-    <td width="20%" class="opcs-dosier-process-key"><liferay-ui:message key="pre-action"/></td>
-    <td width="80%" colspan="3"><%=latestWorkflowActionHistory != null ? latestWorkflowActionHistory.getActionName() : StringPool.BLANK %></td>
-  </tr>
-  
-  <tr class="even">
-    <td width="20%" class="opcs-dosier-process-key"><liferay-ui:message key="pre-action-note"/></td>
-  	<td width="80%" colspan="3"><%=latestWorkflowActionHistory != null ? latestWorkflowActionHistory.getActionNote() : StringPool.BLANK %></td>
-  </tr>
-</table>
 
+	<table class="process-workflow-info">
+	  <tr class="odd">
+	    <td width="20%" class="opcs-dosier-process-key"><liferay-ui:message key="step-name"/></td>
+	    <td width="30%"><%=processStep != null ? processStep.getStepName() : StringPool.BLANK %></td>
+	    <td width="20%" class="opcs-dosier-process-key"><liferay-ui:message key="assign-to-user"/></td>
+	    <td width="30%"><%=processOrder != null ? new ProcessOrderBean().getAssignToUserName(processOrder.getAssignToUserId()) : StringPool.BLANK %></td>
+	  </tr>
+	  
+	  <tr class="even">
+	    <td width="20%" class="opcs-dosier-process-key"><liferay-ui:message key="pre-action-user"/></td>
+	    <td width="30%"><%=latestWorkflowActionHistory != null ? new ProcessOrderBean().getAssignToUserName(latestWorkflowActionHistory.getActionUserId()) : StringPool.BLANK %></td>
+	    <td width="20%" class="opcs-dosier-process-key"><liferay-ui:message key="pre-action-date"/></td>
+	    <td width="30%"><%=latestWorkflowActionHistory != null ? DateTimeUtil.convertDateToString(latestWorkflowActionHistory.getActionDatetime(), DateTimeUtil._VN_DATE_TIME_FORMAT) : StringPool.BLANK %></td>
+	  </tr>
+	  
+	  
+	  <tr class="odd">
+	    <td width="20%" class="opcs-dosier-process-key"><liferay-ui:message key="pre-action"/></td>
+	    <td width="80%" colspan="3"><%=latestWorkflowActionHistory != null ? latestWorkflowActionHistory.getActionName() : StringPool.BLANK %></td>
+	  </tr>
+	  
+	  <tr class="even">
+	    <td width="20%" class="opcs-dosier-process-key"><liferay-ui:message key="pre-action-note"/></td>
+	  	<td width="80%" colspan="3"><%=latestWorkflowActionHistory != null ? latestWorkflowActionHistory.getActionNote() : StringPool.BLANK %></td>
+	  </tr>
+	</table>
 
 <%
-
-	List<DossierPart> dossierPartsLevel1 = new ArrayList<DossierPart>();
-	
-	if(dossierTemplate != null){
-		try{
-			List<DossierPart> lstTmp1 = DossierPartLocalServiceUtil.getDossierPartsByT_P_PT(dossierTemplate.getDossierTemplateId(), 0, PortletConstants.DOSSIER_PART_TYPE_RESULT);
-			if(lstTmp1 != null){
-				dossierPartsLevel1.addAll(lstTmp1);
-			}
-		}catch(Exception e){}
+	if(dossierParts != null){
 		
-		try{
-			List<DossierPart> lstTmp2 = DossierPartLocalServiceUtil.getDossierPartsByT_P_PT(dossierTemplate.getDossierTemplateId(), 0, PortletConstants.DOSSIER_PART_TYPE_MULTIPLE_RESULT);
-			if(lstTmp2 != null){
-				dossierPartsLevel1.addAll(lstTmp2);
-			}
-		}catch(Exception e){}
-	}
-	
-	int index = 0; 
-	
-	if(dossierPartsLevel1 != null){
-		for (DossierPart dossierPartLevel1 : dossierPartsLevel1){
-			
-			int partType = dossierPartLevel1.getPartType();
+		int index = 0;
 		
-			List<DossierPart> dossierParts = DossierMgtUtil.getTreeDossierPart(dossierPartLevel1.getDossierpartId());
+		for (DossierPart dossierPart : dossierParts){
 			
-			if(dossierParts != null){
-				%>
-				<div class="opencps dossiermgt dossier-part-tree" id='<%= renderResponse.getNamespace() + "tree" + dossierParts.get(0).getDossierpartId()%>'>
-					<c:choose>
+			int partType = dossierPart.getPartType();
+			
+			%>
+                <div class="opencps dossiermgt dossier-part-tree" id='<%= renderResponse.getNamespace() + "tree" + dossierPart.getDossierpartId()%>'>
+				    <c:choose>
 						<c:when test="<%=partType == PortletConstants.DOSSIER_PART_TYPE_RESULT%>">
 							<%
-							for(DossierPart dossierPart : dossierParts){
 								boolean isDynamicForm = false;
-								
-								if(Validator.isNotNull(dossierPart.getFormReport()) && Validator.isNotNull(dossierPart.getFormScript())){
+	
+								if (Validator.isNotNull(dossierPart.getFormReport()) &&
+									Validator.isNotNull(dossierPart.getFormScript())) {
 									isDynamicForm = true;
 								}
-								
-								//Toi uu thuat toan tim kiem sau
-								boolean hasProcecssOrderResult = true;
-								if(workflowOutputs != null){
-									for(WorkflowOutput workflowOutput : workflowOutputs){
-										if(workflowOutput.getDossierPartId() == dossierPart.getDossierpartId()){
-											hasProcecssOrderResult = true;
-											break;
-										}
+	
+								int level = 1;
+	
+								String treeIndex = dossierPart.getTreeIndex();
+	
+								if (Validator.isNotNull(treeIndex)) {
+									level =
+										StringUtil.count(
+											treeIndex, StringPool.PERIOD);
+								}
+	
+								DossierFile dossierFile = null;
+	
+								if (dossier != null) {
+									try {
+										dossierFile =
+											DossierFileLocalServiceUtil.getDossierFileInUse(
+												dossier.getDossierId(),
+												dossierPart.getDossierpartId());
+									}
+									catch (Exception e) {
 									}
 								}
-								if(hasProcecssOrderResult){
-									int level = 1;
-									
-									String treeIndex = dossierPart.getTreeIndex();
-									
-									if(Validator.isNotNull(treeIndex)){
-										level = StringUtil.count(treeIndex, StringPool.PERIOD);
-									}
-									
-									DossierFile dossierFile = null;
-									
-									if(dossier != null){
-										try{
-											dossierFile = DossierFileLocalServiceUtil.getDossierFileInUse(dossier.getDossierId(), 
-													dossierPart.getDossierpartId());
-										}catch(Exception e){}
-									}
-									
-									cssRequired = dossierPart.getRequired() ? "cssRequired" : StringPool.BLANK;
-									
-									%>
-										<div 
-											id='<%=renderResponse.getNamespace() + "row-" + dossierPart.getDossierpartId() + StringPool.DASH + index %>' 
-											index="<%=index %>"
-											dossier-part="<%=dossierPart.getDossierpartId() %>"
-											class="opencps dossiermgt dossier-part-row"
+	
+								cssRequired =
+									dossierPart.getRequired()
+										? "cssRequired" : StringPool.BLANK;
+							%>
+							<div 
+								id='<%=renderResponse.getNamespace() + "row-" + dossierPart.getDossierpartId() + StringPool.DASH + index %>' 
+								index="<%=index %>"
+								dossier-part="<%=dossierPart.getDossierpartId() %>"
+								class="opencps dossiermgt dossier-part-row"
+							>
+								<span class='<%="level-" + level + " opencps dossiermgt dossier-part"%>'>
+									<span class="row-icon">
+										<i 
+											id='<%="rowcheck" + dossierPart.getDossierpartId() + StringPool.DASH + index %>' 
+											class='<%=dossierFile != null ? "fa fa-check-square-o" : "fa fa-square-o" %>' 
+											aria-hidden="true"
 										>
-											<span class='<%="level-" + level + " opencps dossiermgt dossier-part"%>'>
+										</i>
+									</span>
+									<span class="opencps dossiermgt dossier-part-name <%=cssRequired %>">
+										<%=dossierPart.getPartName() %>
+									</span>
+								</span>
+							
+								<span class="opencps dossiermgt dossier-part-control">
+									<liferay-util:include 
+										page="/html/common/portlet/dossier_actions.jsp" 
+										servletContext="<%=application %>"
+									>
+										<portlet:param 
+											name="<%=DossierDisplayTerms.DOSSIER_ID %>" 
+											value="<%=String.valueOf(dossier != null ? dossier.getDossierId() : 0) %>"
+										/>
+										
+										<portlet:param 
+											name="isDynamicForm" 
+											value="<%=String.valueOf(isDynamicForm) %>"
+										/>
+										
+										<portlet:param 
+											name="<%=DossierFileDisplayTerms.DOSSIER_PART_ID %>" 
+											value="<%=String.valueOf(dossierPart.getDossierpartId()) %>"
+										/>
+										<portlet:param 
+											name="<%=DossierFileDisplayTerms.FILE_ENTRY_ID %>" 
+											value="<%=String.valueOf(dossierFile != null ? dossierFile.getFileEntryId() : 0) %>"
+										/>
+										<portlet:param 
+											name="<%=DossierFileDisplayTerms.DOSSIER_FILE_ID %>" 
+											value="<%=String.valueOf(dossierFile != null ? dossierFile.getDossierFileId() : 0) %>"
+										/>
+										<portlet:param 
+											name="<%=DossierFileDisplayTerms.LEVEL %>" 
+											value="<%=String.valueOf(level) %>"
+										/>
+										<portlet:param 
+											name="<%=DossierFileDisplayTerms.GROUP_NAME %>" 
+											value="<%=StringPool.BLANK%>"
+										/>
+										<portlet:param 
+											name="<%=DossierFileDisplayTerms.PART_TYPE %>" 
+											value="<%=String.valueOf(dossierPart.getPartType()) %>"
+										/>
+										<portlet:param 
+											name="isEditDossier" 
+											value="<%=String.valueOf(isEditDossier) %>"
+										/>
+									</liferay-util:include>
+								</span>
+							</div>
+						</c:when>
+					
+                        <c:when test="<%=partType == PortletConstants.DOSSIER_PART_TYPE_MULTIPLE_RESULT %>">
+						<%
+		
+							cssRequired = dossierPart.getRequired() ? "cssRequired" : StringPool.BLANK;
+								
+						%>
+							<div 
+								id='<%=renderResponse.getNamespace() + "row-" + dossierPart.getDossierpartId() + StringPool.DASH + index %>' 
+								index="<%=index %>"
+								dossier-part="<%=dossierPart.getDossierpartId() %>"
+								class="opencps dossiermgt dossier-part-row"
+							>
+								<span class='<%="level-0 opencps dossiermgt dossier-part"%>'>
+									<span class="row-icon">
+										<i class="fa fa-circle" aria-hidden="true"></i>
+									</span>
+									<span class="opencps dossiermgt dossier-part-name <%=cssRequired %>">
+										<%=dossierPart.getPartName() %>
+									</span>
+								</span>
+							
+								<span class="opencps dossiermgt dossier-part-control">
+									<liferay-util:include 
+										page="/html/common/portlet/dossier_actions.jsp" 
+										servletContext="<%=application %>"
+									>
+										<portlet:param 
+											name="<%=DossierDisplayTerms.DOSSIER_ID %>" 
+											value="<%=String.valueOf(dossier != null ? dossier.getDossierId() : 0) %>"
+										/>
+										
+										<portlet:param 
+											name="<%=DossierFileDisplayTerms.DOSSIER_PART_ID %>" 
+											value="<%=String.valueOf(dossierPart.getDossierpartId()) %>"
+										/>
+										<portlet:param 
+											name="<%=DossierFileDisplayTerms.FILE_ENTRY_ID %>" 
+											value="<%=String.valueOf(0) %>"
+										/>
+										<portlet:param 
+											name="<%=DossierFileDisplayTerms.DOSSIER_FILE_ID %>" 
+											value="<%=String.valueOf(0) %>"
+										/>
+										<portlet:param 
+											name="<%=DossierFileDisplayTerms.LEVEL %>" 
+											value="<%=String.valueOf(0) %>"
+										/>
+										<portlet:param 
+											name="<%=DossierFileDisplayTerms.GROUP_NAME %>" 
+											value="<%=StringPool.BLANK%>"
+										/>
+										<portlet:param 
+											name="<%=DossierFileDisplayTerms.PART_TYPE %>" 
+											value="<%=String.valueOf(dossierPart.getPartType()) %>"
+										/>
+										<portlet:param 
+											name="isEditDossier" 
+											value="<%=String.valueOf(isEditDossier) %>"
+										/>
+									</liferay-util:include>
+								</span>
+							</div>
+						    <%
+								List<DossierFile> dossierFiles = DossierFileLocalServiceUtil.
+								getDossierFileByD_DP(dossier.getDossierId(), dossierPart.getDossierpartId());
+								
+								if(dossierFiles != null){
+									for(DossierFile dossierFileOther : dossierFiles){
+									index ++;
+									%>
+										<div class='<%="opencps dossiermgt dossier-part-row r-" + index%>'>
+											<span class='<%="level-1 opencps dossiermgt dossier-part"%>'>
 												<span class="row-icon">
 													<i 
-														id='<%="rowcheck" + dossierPart.getDossierpartId() + StringPool.DASH + index %>' 
-														class='<%=dossierFile != null ? "fa fa-check-square-o" : "fa fa-square-o" %>' 
+														id='<%="rowcheck" + dossierFileOther.getDossierPartId() + StringPool.DASH + index %>' 
+														class='<%=dossierFileOther.getFileEntryId() > 0 ? "fa fa-check-square-o" : "fa fa-square-o" %>' 
 														aria-hidden="true"
 													>
 													</i>
 												</span>
-												<span class="opencps dossiermgt dossier-part-name <%=cssRequired %>">
-													<%=dossierPart.getPartName() %>
+												<span class="opencps dossiermgt dossier-part-name">
+													<%=dossierFileOther.getDisplayName() %>
 												</span>
 											</span>
 										
@@ -247,27 +400,21 @@
 														name="<%=DossierDisplayTerms.DOSSIER_ID %>" 
 														value="<%=String.valueOf(dossier != null ? dossier.getDossierId() : 0) %>"
 													/>
-													
-													<portlet:param 
-														name="isDynamicForm" 
-														value="<%=String.valueOf(isDynamicForm) %>"
-													/>
-													
 													<portlet:param 
 														name="<%=DossierFileDisplayTerms.DOSSIER_PART_ID %>" 
-														value="<%=String.valueOf(dossierPart.getDossierpartId()) %>"
+														value="<%=String.valueOf(dossierFileOther.getDossierPartId()) %>"
 													/>
 													<portlet:param 
 														name="<%=DossierFileDisplayTerms.FILE_ENTRY_ID %>" 
-														value="<%=String.valueOf(dossierFile != null ? dossierFile.getFileEntryId() : 0) %>"
+														value="<%=String.valueOf(dossierFileOther.getFileEntryId()) %>"
 													/>
 													<portlet:param 
 														name="<%=DossierFileDisplayTerms.DOSSIER_FILE_ID %>" 
-														value="<%=String.valueOf(dossierFile != null ? dossierFile.getDossierFileId() : 0) %>"
+														value="<%=String.valueOf(dossierFileOther.getDossierFileId()) %>"
 													/>
 													<portlet:param 
 														name="<%=DossierFileDisplayTerms.LEVEL %>" 
-														value="<%=String.valueOf(level) %>"
+														value="<%=String.valueOf(1) %>"
 													/>
 													<portlet:param 
 														name="<%=DossierFileDisplayTerms.GROUP_NAME %>" 
@@ -275,7 +422,7 @@
 													/>
 													<portlet:param 
 														name="<%=DossierFileDisplayTerms.PART_TYPE %>" 
-														value="<%=String.valueOf(dossierPart.getPartType()) %>"
+														value="<%=String.valueOf(partType) %>"
 													/>
 													<portlet:param 
 														name="isEditDossier" 
@@ -285,163 +432,14 @@
 											</span>
 										</div>
 									<%
-									index++;
 								}
-							}
-							%>
-						</c:when>
-						
-						<c:when test="<%=partType == PortletConstants.DOSSIER_PART_TYPE_MULTIPLE_RESULT %>">
-							<%
-								
-								//Toi uu thuat toan tim kiem sau
-
-								boolean hasProcecssOrderResult = true;
-
-								if(workflowOutputs != null){
-									for(WorkflowOutput workflowOutput : workflowOutputs){
-										if(workflowOutput.getDossierPartId() == dossierPartLevel1.getDossierpartId()){
-											hasProcecssOrderResult = true;
-											break;
-										}
-									}
-								}
-								
-								if(hasProcecssOrderResult){
-									
-									cssRequired = dossierPartLevel1.getRequired() ? "cssRequired" : StringPool.BLANK;
-									
-									%>
-										<div 
-											id='<%=renderResponse.getNamespace() + "row-" + dossierPartLevel1.getDossierpartId() + StringPool.DASH + index %>' 
-											index="<%=index %>"
-											dossier-part="<%=dossierPartLevel1.getDossierpartId() %>"
-											class="opencps dossiermgt dossier-part-row"
-										>
-											<span class='<%="level-0 opencps dossiermgt dossier-part"%>'>
-												<span class="row-icon">
-													<i class="fa fa-circle" aria-hidden="true"></i>
-												</span>
-												<span class="opencps dossiermgt dossier-part-name <%=cssRequired %>">
-													<%=dossierPartLevel1.getPartName() %>
-												</span>
-											</span>
-										
-											<span class="opencps dossiermgt dossier-part-control">
-												<liferay-util:include 
-													page="/html/common/portlet/dossier_actions.jsp" 
-													servletContext="<%=application %>"
-												>
-													<portlet:param 
-														name="<%=DossierDisplayTerms.DOSSIER_ID %>" 
-														value="<%=String.valueOf(dossier != null ? dossier.getDossierId() : 0) %>"
-													/>
-													
-													<portlet:param 
-														name="<%=DossierFileDisplayTerms.DOSSIER_PART_ID %>" 
-														value="<%=String.valueOf(dossierPartLevel1.getDossierpartId()) %>"
-													/>
-													<portlet:param 
-														name="<%=DossierFileDisplayTerms.FILE_ENTRY_ID %>" 
-														value="<%=String.valueOf(0) %>"
-													/>
-													<portlet:param 
-														name="<%=DossierFileDisplayTerms.DOSSIER_FILE_ID %>" 
-														value="<%=String.valueOf(0) %>"
-													/>
-													<portlet:param 
-														name="<%=DossierFileDisplayTerms.LEVEL %>" 
-														value="<%=String.valueOf(0) %>"
-													/>
-													<portlet:param 
-														name="<%=DossierFileDisplayTerms.GROUP_NAME %>" 
-														value="<%=StringPool.BLANK%>"
-													/>
-													<portlet:param 
-														name="<%=DossierFileDisplayTerms.PART_TYPE %>" 
-														value="<%=String.valueOf(dossierPartLevel1.getPartType()) %>"
-													/>
-													<portlet:param 
-														name="isEditDossier" 
-														value="<%=String.valueOf(isEditDossier) %>"
-													/>
-												</liferay-util:include>
-											</span>
-										</div>
-										<%
-											List<DossierFile> dossierFiles = DossierFileLocalServiceUtil.
-											getDossierFileByD_DP(dossier.getDossierId(), dossierPartLevel1.getDossierpartId());
-												
-											if(dossierFiles != null){
-												for(DossierFile dossierFileOther : dossierFiles){
-												index ++;
-												%>
-													<div class='<%="opencps dossiermgt dossier-part-row r-" + index%>'>
-														<span class='<%="level-1 opencps dossiermgt dossier-part"%>'>
-															<span class="row-icon">
-																<i 
-																	id='<%="rowcheck" + dossierFileOther.getDossierPartId() + StringPool.DASH + index %>' 
-																	class='<%=dossierFileOther.getFileEntryId() > 0 ? "fa fa-check-square-o" : "fa fa-square-o" %>' 
-																	aria-hidden="true"
-																>
-																</i>
-															</span>
-															<span class="opencps dossiermgt dossier-part-name">
-																<%=dossierFileOther.getDisplayName() %>
-															</span>
-														</span>
-													
-														<span class="opencps dossiermgt dossier-part-control">
-															<liferay-util:include 
-																page="/html/common/portlet/dossier_actions.jsp" 
-																servletContext="<%=application %>"
-															>
-																<portlet:param 
-																	name="<%=DossierDisplayTerms.DOSSIER_ID %>" 
-																	value="<%=String.valueOf(dossier != null ? dossier.getDossierId() : 0) %>"
-																/>
-																<portlet:param 
-																	name="<%=DossierFileDisplayTerms.DOSSIER_PART_ID %>" 
-																	value="<%=String.valueOf(dossierFileOther.getDossierPartId()) %>"
-																/>
-																<portlet:param 
-																	name="<%=DossierFileDisplayTerms.FILE_ENTRY_ID %>" 
-																	value="<%=String.valueOf(dossierFileOther.getFileEntryId()) %>"
-																/>
-																<portlet:param 
-																	name="<%=DossierFileDisplayTerms.DOSSIER_FILE_ID %>" 
-																	value="<%=String.valueOf(dossierFileOther.getDossierFileId()) %>"
-																/>
-																<portlet:param 
-																	name="<%=DossierFileDisplayTerms.LEVEL %>" 
-																	value="<%=String.valueOf(1) %>"
-																/>
-																<portlet:param 
-																	name="<%=DossierFileDisplayTerms.GROUP_NAME %>" 
-																	value="<%=StringPool.BLANK%>"
-																/>
-																<portlet:param 
-																	name="<%=DossierFileDisplayTerms.PART_TYPE %>" 
-																	value="<%=String.valueOf(partType) %>"
-																/>
-																<portlet:param 
-																	name="isEditDossier" 
-																	value="<%=String.valueOf(isEditDossier) %>"
-																/>
-															</liferay-util:include>
-														</span>
-													</div>
-												<%
-											}
-										}
-									}
-								%>
-						</c:when>
-					</c:choose>
-				</div>
-				
+							}	
+						%>
+					</c:when>
+				</c:choose>
+			</div>
 			<%
-			}
+			index++;
 		}
 	}
 %>

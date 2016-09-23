@@ -157,7 +157,7 @@
     color: white;
 }
 
-.searchcontainer-content .readonly td input{
+.searchcontainer-content .readonly td input[type="checkbox"]{
     display: none !important;
 }
 

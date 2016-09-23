@@ -1,4 +1,6 @@
 
+<%@page import="com.liferay.portal.kernel.servlet.SessionErrors"%>
+<%@page import="com.liferay.portal.kernel.servlet.SessionMessages"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -32,6 +34,18 @@
 <liferay-ui:success  key="<%=MessageKeys.DEFAULT_SUCCESS_KEY %>" message="<%=MessageKeys.DEFAULT_SUCCESS_KEY %>"/>
 
 <%
+	boolean success = false;
+	boolean stopRefresh = false;
+	
+	success = ParamUtil.getBoolean(request, "success");
+	stopRefresh = ParamUtil.getBoolean(request, "stopRefresh");
+	
+	//TODO
+	//loading portlet 1 time
+	if(stopRefresh){
+		success = false;
+	}
+	
 	PortletURL iteratorURL = renderResponse.createRenderURL();
 	iteratorURL.setParameter("mvcPath", templatePath + "processordertodolist.jsp");
 	iteratorURL.setParameter("tabs1", ProcessUtils.TOP_TABS_PROCESS_ORDER_WAITING_PROCESS);
@@ -44,12 +58,18 @@
 	
 	List<String> headerNames = new ArrayList<String>();
 	
-	headerNames.add("col1");
-	headerNames.add("col2");
-	headerNames.add("col3");
+	headerNames.add("general");
+	headerNames.add("detail");
+	headerNames.add("action");
 	
 	String headers = StringUtil.merge(headerNames, StringPool.COMMA);
 %>
+
+<c:if test="<%=stopRefresh %>">
+	<div class="alert alert-success">
+		<liferay-ui:message key="<%=MessageKeys.DEFAULT_SUCCESS_KEY %>" />
+	</div>
+</c:if>
 
 <aui:form name="fm">
 	<div class="opencps-searchcontainer-wrapper">
@@ -84,60 +104,63 @@
 						pageContext.setAttribute("total", total);
 					%>
 				</liferay-ui:search-container-results>	
-					<liferay-ui:search-container-row 
-						className="org.opencps.dossiermgt.bean.ProcessOrderBean" 
-						modelVar="processOrder" 
-						keyProperty="processOrderId"
-						rowVar="row"
-						stringKey="<%=true%>"
+				
+				<liferay-ui:search-container-row 
+					className="org.opencps.dossiermgt.bean.ProcessOrderBean" 
+					modelVar="processOrder" 
+					keyProperty="processOrderId"
+					rowVar="row"
+					stringKey="<%=true%>"
+					
+				>
+					<%
+						PortletURL processURL = renderResponse.createRenderURL();
+						processURL.setParameter("mvcPath", templatePath + "process_order_detail.jsp");
+						processURL.setParameter(ProcessOrderDisplayTerms.PROCESS_ORDER_ID, String.valueOf(processOrder.getProcessOrderId()));
+						processURL.setParameter("backURL", currentURL);
+						processURL.setParameter("isEditDossier", (processOrder.isReadOnly() || (processOrder.getAssignToUsesrId() != 0 &&  processOrder.getAssignToUsesrId() != user.getUserId())) ? String.valueOf(false) : String.valueOf(true));
+					
+						String deadLine = Validator.isNotNull(processOrder.getDealine()) ? processOrder.getDealine() : StringPool.DASH;
 						
-					>
-						<%
-							PortletURL processURL = renderResponse.createRenderURL();
-							processURL.setParameter("mvcPath", templatePath + "process_order_detail.jsp");
-							processURL.setParameter(ProcessOrderDisplayTerms.PROCESS_ORDER_ID, String.valueOf(processOrder.getProcessOrderId()));
-							processURL.setParameter("backURL", currentURL);
-							processURL.setParameter("isEditDossier", (processOrder.isReadOnly() || (processOrder.getAssignToUsesrId() != 0 &&  processOrder.getAssignToUsesrId() != user.getUserId())) ? String.valueOf(false) : String.valueOf(true));
+						String href = "location.href='" + processURL.toString()+"'";
 						
-							String deadlineVal = Validator.isNotNull(processOrder.getDealine()) ? processOrder.getDealine() : StringPool.DASH;
-							
-							String hrefFix = "location.href='" + processURL.toString()+"'";
-							String cssStatusColor = "status-color-" + processOrder.getDossierStatus();
-						%>
-						
-						<liferay-util:buffer var="boundcol1">
-							<div class="row-fluid">	
-								<div class="row-fluid">
-									<div class='<%= "text-align-right span1 " + cssStatusColor%>'>
-										<i class='<%="fa fa-circle sx10 " + processOrder.getDossierStatus()%>'></i>
-									</div>
-									<div class="span2 bold">
-										<liferay-ui:message key="reception-no"/>
-									</div>
-									<div class="span9">
-										<%=processOrder.getReceptionNo() %>
-									</div>
+						String cssStatusColor = "status-color-" + processOrder.getDossierStatus();
+					%>
+					
+					<liferay-util:buffer var="generalInfo">
+						<div class="row-fluid">	
+							<div class="row-fluid">
+								<div class='<%= "text-align-right span1 " + cssStatusColor%>'>
+									<i class='<%="fa fa-circle sx10 " + processOrder.getDossierStatus()%>'></i>
 								</div>
-								
-								<div class="row-fluid">
-									<div class='<%= "text-align-right span1 " + cssStatusColor%>'>
-									</div>
-									<div class="span2 bold">
-										<liferay-ui:message key="service-name"/>
-									</div>
-									<div class="span9">
-										<%=processOrder.getServiceName() %>
-									</div>
+								<div class="span2 bold">
+									<liferay-ui:message key="reception-no"/>
+								</div>
+								<div class="span9">
+									<%=processOrder.getReceptionNo() %>
 								</div>
 							</div>
-						</liferay-util:buffer>
-						
-						
-						<liferay-util:buffer var="boundcol2">
+							
+							<div class="row-fluid">
+								<div class='<%= "text-align-right span1 " + cssStatusColor%>'>
+								</div>
+								<div class="span2 bold">
+									<liferay-ui:message key="service-name"/>
+								</div>
+								<div class="span9">
+									<%=processOrder.getServiceName() %>
+								</div>
+							</div>
+						</div>
+					</liferay-util:buffer>
+					
+					
+					<liferay-util:buffer var="detail">
 						<div class="row-fluid min-width340">
 							<div class="span5 bold">
 								<liferay-ui:message key="subject-name"/>	
 							</div>
+							
 							<div class="span7">
 								<%=processOrder.getSubjectName() %>
 							</div>
@@ -157,39 +180,61 @@
 							<div class="span5 bold">
 								<liferay-ui:message key="step-name"/>
 							</div>
+							
 							<div class='<%="span7 " + cssStatusColor %>'>
 								<%=processOrder.getStepName() %>
 							</div>
 						</div>
 						
 						<div class="row-fluid min-width340">
-								<div class="span5 bold">
-									<liferay-ui:message key="dealine"/>
-								</div>
-								
-								<div class='<%="span7"%>'>
-									<%= deadlineVal %>
-								</div>
+							<div class="span5 bold">
+								<liferay-ui:message key="dealine"/>
 							</div>
-						</liferay-util:buffer>
-						<%
 							
-							
-							String actionButt = LanguageUtil.get(portletConfig, themeDisplay.getLocale(), "action");
-							row.setClassName("opencps-searchcontainer-row");
-							row.addText(boundcol1);
-							row.addText(boundcol2);
-							row.addButton(actionButt, hrefFix);
-							row.setClassName((processOrder.isReadOnly() || (processOrder.getAssignToUsesrId() != 0 &&  processOrder.getAssignToUsesrId() != user.getUserId())) ? "readonly" : StringPool.BLANK);
-							
-							//row.setClassHoverName("");
-						%>	
-					</liferay-ui:search-container-row> 
+							<div class='<%="span7"%>'>
+								<%= deadLine %>
+							</div>
+						</div>
+					</liferay-util:buffer>
+					<%
+						
+						String actionBtn = LanguageUtil.get(portletConfig, themeDisplay.getLocale(), "action");
+						row.setClassName("opencps-searchcontainer-row");
+						row.addText(generalInfo);
+						row.addText(detail);
+						row.addButton(actionBtn, href);
+						row.setClassName((processOrder.isReadOnly() || (processOrder.getAssignToUsesrId() != 0 &&  processOrder.getAssignToUsesrId() != user.getUserId())) ? "readonly" : StringPool.BLANK);
+						
+						//row.setClassHoverName("");
+					%>	
+				</liferay-ui:search-container-row> 
 				
-				<liferay-ui:search-iterator type="opencs_page_iterator"/>
-			</liferay-ui:search-container>
+			<liferay-ui:search-iterator type="opencs_page_iterator"/>
+		</liferay-ui:search-container>
 	</div>
 </aui:form>
+
+<aui:script use="aui-base">
+
+AUI().ready(function(A){
+
+	var success = '<%=success%>';
+	
+	if(success == 'true'){
+
+		var data = {
+
+		 <portlet:namespace />stopRefresh: true,
+		 
+		};
+
+		Liferay.Portlet.refresh('#p_p_id<portlet:namespace />', data);
+	
+	}
+	
+});
+</aui:script>
+
 <%!
-	private Log _log = LogFactoryUtil.getLog("html.portlets.processmgt.processorder.processordertodolist.jsp");
+	private Log _log = LogFactoryUtil.getLog("html.portlets.processmgt.processorder.disolay.default.jsp");
 %>

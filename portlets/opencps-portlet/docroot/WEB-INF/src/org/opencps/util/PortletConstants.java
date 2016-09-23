@@ -179,4 +179,8 @@ public class PortletConstants {
 	public static final int TREE_VIEW_LEVER_2 = 2;
 	
 	public static final String TREE_VIEW_DEFAULT_ITEM_CODE = "0";
+	
+	public static final String REQUEST_COMMAND_PAYMENT = "paymentRequest";
+	
+	public static final String REQUEST_COMMAND_RESUBMIT = "resubmitRequest";
 }

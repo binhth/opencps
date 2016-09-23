@@ -1,22 +1,22 @@
-
 <%
-	/**
-	 * OpenCPS is the open source Core Public Services software
-	 * Copyright (C) 2016-present OpenCPS community
-	 * 
-	 * This program is free software: you can redistribute it and/or modify
-	 * it under the terms of the GNU Affero General Public License as published by
-	 * the Free Software Foundation, either version 3 of the License, or
-	 * any later version.
-	 * 
-	 * This program is distributed in the hope that it will be useful,
-	 * but WITHOUT ANY WARRANTY; without even the implied warranty of
-	 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-	 * GNU Affero General Public License for more details.
-	 * You should have received a copy of the GNU Affero General Public License
-	 * along with this program. If not, see <http://www.gnu.org/licenses/>.
-	 */
+/**
+ * OpenCPS is the open source Core Public Services software
+ * Copyright (C) 2016-present OpenCPS community
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 %>
+
 <%@page import="org.opencps.accountmgt.service.BusinessDomainLocalServiceUtil"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
@@ -36,80 +36,129 @@
 <%@page import="com.liferay.portal.kernel.repository.model.FileEntry"%>
 <%@page import="com.liferay.portlet.documentlibrary.util.DLUtil"%>
 <%@page import="org.opencps.accountmgt.search.CitizenDisplayTerms"%>
+
 <%@ include file="/init.jsp"%>
-<%
-	DictItem dictItemCity = null;
-	DictItem dictItemDistrict = null;
-	DictItem dictItemWard = null;
-	DictItem dicBusinessType = null;
-	List<BusinessDomain> businessDomains = new ArrayList<BusinessDomain>();
-	
-	String url = StringPool.BLANK;
-	String cityName = StringPool.BLANK;
-	String districtName = StringPool.BLANK;
-	String wardName = StringPool.BLANK;
-	String businessTypeName = StringPool.BLANK;
-	PortletURL editProFile = renderResponse.createRenderURL();
-	editProFile.setParameter("mvcPath", templatePath + "viewprofile.jsp");
-	if(citizen!=null) {
-		try {
-			long fileEntryId = citizen.getAttachFile();
-			if(fileEntryId > 0) {
-				FileEntry fileEntry = DLFileEntryUtil.getFileEntry(fileEntryId);
-				url = DLUtil.getPreviewURL(fileEntry,
-					fileEntry.getFileVersion(), themeDisplay,
-					StringPool.BLANK);
-			}
-		} catch(Exception e){}
-		editProFile.setParameter(CitizenDisplayTerms.CITIZEN_ID, String.valueOf(citizen.getCitizenId()));
-		dictItemCity = PortletUtil.getDictItem("ADMINISTRATIVE_REGION", citizen.getCityCode(), scopeGroupId);
-		dictItemDistrict = PortletUtil.getDictItem("ADMINISTRATIVE_REGION", citizen.getDistrictCode(), scopeGroupId);
-		dictItemWard = PortletUtil.getDictItem("ADMINISTRATIVE_REGION", citizen.getWardCode(), scopeGroupId);
-		
-		cityName = dictItemCity.getItemName(themeDisplay.getLocale(), true);
-		districtName = dictItemDistrict.getItemName(themeDisplay.getLocale(), true);
-		wardName = dictItemWard.getItemName(themeDisplay.getLocale(), true);
-	} else if (business!=null) {
-		long fileEntryId = business.getAttachFile();
-		if(fileEntryId > 0) {
-			FileEntry fileEntry = DLFileEntryUtil.getFileEntry(fileEntryId);
-			url = DLUtil.getPreviewURL(fileEntry,
-				fileEntry.getFileVersion(), themeDisplay,
-				StringPool.BLANK);
-		}
-		
-		try {
-			businessDomains = BusinessDomainLocalServiceUtil
-							.getBusinessDomains(business.getBusinessId());
-		} catch(Exception e) {
-			_log.error(e);
-		}
-		
-		editProFile.setParameter(BusinessDisplayTerms.BUSINESS_BUSINESSID, String.valueOf(business.getBusinessId()));
-		dictItemCity = PortletUtil.getDictItem("ADMINISTRATIVE_REGION", business.getCityCode(), scopeGroupId);
-		dictItemDistrict = PortletUtil.getDictItem("ADMINISTRATIVE_REGION", business.getDistrictCode(), scopeGroupId);
-		dictItemWard = PortletUtil.getDictItem("ADMINISTRATIVE_REGION", business.getWardCode(), scopeGroupId);
-		dicBusinessType = PortletUtil.getDictItem("BUSINESS_TYPE", business.getBusinessType(), scopeGroupId);
-		if(Validator.isNotNull(dictItemCity)) {
-			cityName = dictItemCity.getItemName(themeDisplay.getLocale(), true);
-		}
-		if(Validator.isNotNull(dictItemDistrict)) {
-			districtName = dictItemDistrict.getItemName(themeDisplay.getLocale(), true);
-		}
-		if(Validator.isNotNull(dictItemWard)) {
-			wardName = dictItemWard.getItemName(themeDisplay.getLocale(), true);
-		}
-		
-		if(Validator.isNotNull(dicBusinessType)) {
-			businessTypeName = dicBusinessType.getItemName(locale,true);
-		}
-	
-	}
-%>
+
 <c:choose>
 	<c:when test="<%=themeDisplay.isSignedIn() %>">
 		<c:choose>
 			<c:when test="<%=citizen != null || business != null%>">
+				<%
+					List<BusinessDomain> businessDomains = new ArrayList<BusinessDomain>();
+					
+					DictItem dictItemCity = null;
+					DictItem dictItemDistrict = null;
+					DictItem dictItemWard = null;
+					DictItem dictBusinessType = null;
+					
+					String cityName = StringPool.BLANK;
+					String districtName = StringPool.BLANK;
+					String wardName = StringPool.BLANK;
+					String businessTypeName = StringPool.BLANK;
+			
+					long fileEntryId = 0;
+			
+					String url = StringPool.BLANK;
+			
+					PortletURL editProfile = renderResponse.createRenderURL();
+					editProfile.setParameter("mvcPath", templatePath + "edit_profile.jsp");
+					editProfile.setParameter("backURL", currentURL);
+					
+					if (citizen != null) {
+						editProfile.setParameter(
+							CitizenDisplayTerms.CITIZEN_ID,
+							String.valueOf(citizen.getCitizenId()));
+						fileEntryId = citizen.getAttachFile();
+			
+						dictItemCity =
+							PortletUtil.getDictItem(
+								PortletPropsValues.DATAMGT_MASTERDATA_ADMINISTRATIVE_REGION,
+								citizen.getCityCode(), scopeGroupId);
+						dictItemDistrict =
+							PortletUtil.getDictItem(
+								PortletPropsValues.DATAMGT_MASTERDATA_ADMINISTRATIVE_REGION,
+								citizen.getDistrictCode(), scopeGroupId);
+						dictItemWard =
+							PortletUtil.getDictItem(
+								PortletPropsValues.DATAMGT_MASTERDATA_ADMINISTRATIVE_REGION,
+								citizen.getWardCode(), scopeGroupId);
+			
+					}
+					else if (business != null) {
+						fileEntryId = business.getAttachFile();
+			
+						try {
+							businessDomains =
+								BusinessDomainLocalServiceUtil.getBusinessDomains(business.getBusinessId());
+						}
+						catch (Exception e) {
+							_log.error(e);
+						}
+			
+						editProfile.setParameter(
+							BusinessDisplayTerms.BUSINESS_BUSINESSID,
+							String.valueOf(business.getBusinessId()));
+						dictItemCity =
+							PortletUtil.getDictItem(
+								PortletPropsValues.DATAMGT_MASTERDATA_ADMINISTRATIVE_REGION,
+								business.getCityCode(), scopeGroupId);
+						dictItemDistrict =
+							PortletUtil.getDictItem(
+								PortletPropsValues.DATAMGT_MASTERDATA_ADMINISTRATIVE_REGION,
+								business.getDistrictCode(), scopeGroupId);
+						dictItemWard =
+							PortletUtil.getDictItem(
+								PortletPropsValues.DATAMGT_MASTERDATA_ADMINISTRATIVE_REGION,
+								business.getWardCode(), scopeGroupId);
+						dictBusinessType =
+							PortletUtil.getDictItem(
+								PortletPropsValues.DATAMGT_MASTERDATA_BUSINESS_TYPE,
+								business.getBusinessType(), scopeGroupId);
+			
+					}
+			
+					
+
+					cityName =
+						dictItemCity != null
+							? (Validator.isNotNull(dictItemCity.getItemName(locale))
+								? dictItemCity.getItemName(locale)
+								: dictItemCity.getItemName())
+							: StringPool.BLANK;
+
+					districtName =
+						dictItemDistrict != null
+							? (Validator.isNotNull(dictItemDistrict.getItemName(locale))
+								? dictItemDistrict.getItemName(locale)
+								: dictItemDistrict.getItemName())
+							: StringPool.BLANK;
+					wardName =
+						dictItemWard != null
+							? (Validator.isNotNull(dictItemWard.getItemName(locale))
+								? dictItemWard.getItemName(locale)
+								: dictItemWard.getItemName())
+							: StringPool.BLANK;
+					businessTypeName =
+						dictBusinessType != null
+							? (Validator.isNotNull(dictBusinessType.getItemName(locale))
+								? dictBusinessType.getItemName(locale)
+								: dictBusinessType.getItemName())
+							: StringPool.BLANK;
+					
+					try {
+						if (fileEntryId > 0) {
+							FileEntry fileEntry =
+								DLFileEntryUtil.getFileEntry(fileEntryId);
+							url =
+								DLUtil.getPreviewURL(
+									fileEntry, fileEntry.getFileVersion(),
+									themeDisplay, StringPool.BLANK);
+						}
+					}
+					catch (Exception e) {
+						_log.error(e);
+					}
+				%>
 				<div class="opencps-accountinfo-wrapper">
 					<div class="header">
 						<p>
@@ -133,7 +182,7 @@
 											<div><%=citizen.getFullName()%></div>
 										</aui:col>
 										<aui:col width="20">
-											<a href="<%=editProFile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
+											<a href="<%=editProfile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
 										</aui:col>
 									</aui:row>
 									
@@ -145,7 +194,7 @@
 											<div><%=citizen.getEmail() %></div>
 										</aui:col>
 										<aui:col width="20">
-											<a href="<%=editProFile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
+											<a href="<%=editProfile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
 										</aui:col>
 									</aui:row>
 									
@@ -157,7 +206,7 @@
 											<div>*******</div>
 										</aui:col>
 										<aui:col width="20">
-											<a href="<%=editProFile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
+											<a href="<%=editProfile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
 										</aui:col>
 									</aui:row>
 									
@@ -170,7 +219,7 @@
 												, DateTimeUtil._VN_DATE_FORMAT) : StringPool.BLANK  %></div>
 										</aui:col>
 										<aui:col width="20">
-											<a href="<%=editProFile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
+											<a href="<%=editProfile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
 										</aui:col>
 									</aui:row>
 									
@@ -182,7 +231,7 @@
 											<div><%=citizen.getTelNo() %></div>
 										</aui:col>
 										<aui:col width="20">
-											<a href="<%=editProFile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
+											<a href="<%=editProfile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
 										</aui:col>
 									</aui:row>
 									
@@ -194,7 +243,7 @@
 											<div><%=citizen.getPersonalId() %></div>
 										</aui:col>
 										<aui:col width="20">
-											<a href="<%=editProFile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
+											<a href="<%=editProfile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
 										</aui:col>
 									</aui:row>
 									
@@ -206,7 +255,7 @@
 											<div><a href="<%=url %>"><liferay-ui:message key="click-to-view-file"/></a></div>
 										</aui:col>
 										<aui:col width="20">
-											<a href="<%=editProFile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
+											<a href="<%=editProfile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
 										</aui:col>
 									</aui:row>
 								</c:when>
@@ -219,7 +268,7 @@
 											<div><%=business.getName() %></div>
 										</aui:col>
 										<aui:col width="20">
-											<a href="<%=editProFile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
+											<a href="<%=editProfile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
 										</aui:col>
 									</aui:row>
 									
@@ -231,7 +280,7 @@
 											<div><%=business.getIdNumber() %></div>
 										</aui:col>
 										<aui:col width="20">
-											<a href="<%=editProFile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
+											<a href="<%=editProfile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
 										</aui:col>
 									</aui:row>
 									
@@ -243,7 +292,7 @@
 											<div><%=business.getEnName() %></div>
 										</aui:col>
 										<aui:col width="20">
-											<a href="<%=editProFile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
+											<a href="<%=editProfile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
 										</aui:col>
 									</aui:row>
 									
@@ -255,7 +304,7 @@
 											<div><%= business.getShortName() %></div>
 										</aui:col>
 										<aui:col width="20">
-											<a href="<%=editProFile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
+											<a href="<%=editProfile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
 										</aui:col>
 									</aui:row>
 									
@@ -267,7 +316,7 @@
 											<div><%= businessTypeName %></div>
 										</aui:col>
 										<aui:col width="20">
-											<a href="<%=editProFile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
+											<a href="<%=editProfile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
 										</aui:col>
 									</aui:row>
 									
@@ -302,7 +351,7 @@
 					                         
 										</aui:col>
 										<aui:col width="30">
-											<a href="<%=editProFile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
+											<a href="<%=editProfile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
 										</aui:col>
 									
 				                     </aui:row>
@@ -315,7 +364,7 @@
 											<div><a href="<%=url %>"><liferay-ui:message key="click-to-view-file"/></a></div>
 										</aui:col>
 										<aui:col width="20">
-											<a href="<%=editProFile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
+											<a href="<%=editProfile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
 										</aui:col>
 									</aui:row>
 								</c:otherwise>
@@ -339,7 +388,7 @@
 											<div><%=citizen.getAddress() %></div>
 										</aui:col>
 										<aui:col width="20">
-											<a href="<%=editProFile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
+											<a href="<%=editProfile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
 										</aui:col>
 									</aui:row>
 									
@@ -348,10 +397,10 @@
 											<label><liferay-ui:message key="city-name" /></label>
 										</aui:col>
 										<aui:col width="50">
-											<div><%=cityName %></div>
+											<div><%=cityName%></div>
 										</aui:col>
 										<aui:col width="20">
-											<a href="<%=editProFile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
+											<a href="<%=editProfile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
 										</aui:col>
 									</aui:row>
 									
@@ -363,7 +412,7 @@
 											<div><%=districtName %></div>
 										</aui:col>
 										<aui:col width="20">
-											<a href="<%=editProFile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
+											<a href="<%=editProfile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
 										</aui:col>
 									</aui:row>
 									
@@ -375,7 +424,7 @@
 											<div><%=wardName %></div>
 										</aui:col>
 										<aui:col width="20">
-											<a href="<%=editProFile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
+											<a href="<%=editProfile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
 										</aui:col>
 									</aui:row>
 								</c:when>
@@ -388,7 +437,7 @@
 											<div><%=business.getAddress() %></div>
 										</aui:col>
 										<aui:col width="20">
-											<a href="<%=editProFile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
+											<a href="<%=editProfile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
 										</aui:col>
 									</aui:row>
 									
@@ -400,7 +449,7 @@
 											<div><%=cityName %></div>
 										</aui:col>
 										<aui:col width="20">
-											<a href="<%=editProFile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
+											<a href="<%=editProfile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
 										</aui:col>
 									</aui:row>
 									
@@ -412,7 +461,7 @@
 											<div><%=districtName %></div>
 										</aui:col>
 										<aui:col width="20">
-											<a href="<%=editProFile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
+											<a href="<%=editProfile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
 										</aui:col>
 									</aui:row>
 									
@@ -424,7 +473,7 @@
 											<div><%=wardName %></div>
 										</aui:col>
 										<aui:col width="20">
-											<a href="<%=editProFile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
+											<a href="<%=editProfile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
 										</aui:col>
 									</aui:row>
 									
@@ -436,7 +485,7 @@
 											<div><%=business.getEmail() %></div>
 										</aui:col>
 										<aui:col width="20">
-											<a href="<%=editProFile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
+											<a href="<%=editProfile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
 										</aui:col>
 									</aui:row>
 									
@@ -448,7 +497,7 @@
 											<div><%=business.getTelNo() %></div>
 										</aui:col>
 										<aui:col width="20">
-											<a href="<%=editProFile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
+											<a href="<%=editProfile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
 										</aui:col>
 									</aui:row>
 									
@@ -460,7 +509,7 @@
 											<div><%=business.getRepresentativeName() %></div>
 										</aui:col>
 										<aui:col width="20">
-											<a href="<%=editProFile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
+											<a href="<%=editProfile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
 										</aui:col>
 									</aui:row>
 									
@@ -473,7 +522,7 @@
 										</aui:col>
 										<aui:col width="20">
 											
-											<a href="<%=editProFile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
+											<a href="<%=editProfile.toString() %>" class="fix"><liferay-ui:message key="edit"/></a>
 										</aui:col>
 									</aui:row>
 								</c:otherwise>
@@ -495,5 +544,5 @@
 </c:choose>
 
 <%!
-	private Log _log = LogFactoryUtil.getLog(".html.portlets.accountmgt.citizenprofile.jsp");
+	private Log _log = LogFactoryUtil.getLog(".html.portlets.accountmgt.profile.viewprofile-ux.jsp");
 %>

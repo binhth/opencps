@@ -35,6 +35,7 @@
 		label='<%=StringPool.BLANK %>' 
 		onChange='<%=renderResponse.getNamespace() + "getJobPosByWorkingUnitId(this)" %>'
 		showEmptyOption='<%=true %>'
+		cssClass="input100"
 	>
 		
 		<%
@@ -54,6 +55,7 @@
 		name='<%=EmployeeDisplayTerm.JOBPOS_ID + 0 %>' 
 		label='<%=StringPool.BLANK %>' 
 		showEmptyOption='<%=true %>'
+		cssClass="input100"
 	>
 	</aui:select>
 </aui:col>

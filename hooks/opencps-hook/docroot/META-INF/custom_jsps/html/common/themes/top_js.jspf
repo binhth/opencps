@@ -265,6 +265,9 @@
 		String javaScriptRootPath = themeDisplay.getPathContext() + "/html/js";
 
 		String alloyComboPath = PortalUtil.getStaticResourceURL(request, themeDisplay.getCDNDynamicResourcesHost() + themeDisplay.getPathContext() + "/combo/", "minifierType=", javaScriptLastModified);
+		
+		long extensionLastModified = ServletContextUtil.getLastModified(application, "/html/extensions/", true);
+
 		%>
 
 		Liferay.AUI = {
@@ -461,7 +464,9 @@ for (String analyticsType : analyticsTypes) {
 <script type="text/javascript" src="<%= themeDisplay.getCDNHost() %>/html/extensions/jquery.min.js"></script>
 <script type="text/javascript" src="<%= themeDisplay.getCDNHost() %>/html/extensions/moment-with-locales.min.js"></script>
 <script type="text/javascript" src="<%= themeDisplay.getCDNHost() %>/html/extensions/bootstrap-datetimepicker.min.js"></script>
-<script type="text/javascript" src="<%= themeDisplay.getCDNHost() %>/html/extensions/opencps-tree-view.js"></script>
+<script type="text/javascript" src='<%= PortalUtil.getStaticResourceURL(request, themeDisplay.getCDNHost() + "/html/extensions/opencps-tree-view.js", extensionLastModified) %>'></script>
+<script type="text/javascript" src='<%= PortalUtil.getStaticResourceURL(request, themeDisplay.getCDNHost() + "/html/extensions/bootstrap-multiselect.js", extensionLastModified) %>'></script>
+<script type="text/javascript" src="<%= themeDisplay.getCDNHost() %>/html/extensions/jquery-ui.min.js"></script>
 <!-- bootstrap -->
 <!-- <link type="text/css" rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
 <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script> -->
