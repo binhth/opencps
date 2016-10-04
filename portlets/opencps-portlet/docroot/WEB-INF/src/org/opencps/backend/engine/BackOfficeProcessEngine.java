@@ -18,9 +18,11 @@
 
 package org.opencps.backend.engine;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.opencps.backend.message.SendToBackOfficeMsg;
 import org.opencps.backend.message.SendToEngineMsg;
@@ -30,7 +32,9 @@ import org.opencps.backend.util.KeypayUrlGenerator;
 import org.opencps.backend.util.PaymentRequestGenerator;
 import org.opencps.dossiermgt.model.Dossier;
 import org.opencps.dossiermgt.model.ServiceConfig;
+import org.opencps.dossiermgt.service.DossierLogLocalServiceUtil;
 import org.opencps.dossiermgt.service.ServiceConfigLocalServiceUtil;
+import org.opencps.dossiermgt.util.ActorBean;
 import org.opencps.paymentmgt.model.PaymentFile;
 import org.opencps.paymentmgt.service.PaymentFileLocalServiceUtil;
 import org.opencps.processmgt.model.ProcessOrder;
@@ -40,6 +44,7 @@ import org.opencps.processmgt.service.ProcessOrderLocalServiceUtil;
 import org.opencps.processmgt.service.ProcessStepLocalServiceUtil;
 import org.opencps.processmgt.service.ProcessWorkflowLocalServiceUtil;
 import org.opencps.processmgt.service.SchedulerJobsLocalServiceUtil;
+import org.opencps.processmgt.util.ProcessMgtUtil;
 import org.opencps.util.PortletConstants;
 import org.opencps.util.WebKeys;
 
@@ -72,6 +77,7 @@ public class BackOfficeProcessEngine implements MessageListener {
 		
 		SendToEngineMsg toEngineMsg =
 					    (SendToEngineMsg) message.get("msgToEngine");
+		
 
 		Date now = new Date();
 		String actionName = StringPool.BLANK;
@@ -114,10 +120,17 @@ public class BackOfficeProcessEngine implements MessageListener {
 				actorId = 0;
 				actorName = WebKeys.DOSSIER_ACTOR_SYSTEM_NAME;
 			}
+			
+/*			DossierLogLocalServiceUtil.addDossierLog(
+			    0, 0, 0, toEngineMsg.getDossierId(), toEngineMsg.getFileGroupId(), toEngineMsg.getDossierStatus(),
+			    "send-to-engine", "send-to-engine", new Date(), 0, 0, actor,
+			    actorId, actorName, BackOfficeProcessEngine.class.getName());
+*/
         }
         catch (Exception e) {
 	        _log.error(e);
         }
+		
 		
 		if (Validator.isNotNull(dossier)) {
 			serviceInfoId = dossier.getServiceInfoId();
@@ -125,7 +138,6 @@ public class BackOfficeProcessEngine implements MessageListener {
 			govAgencyCode = dossier.getGovAgencyCode();
 			govAgencyName = dossier.getGovAgencyName();
 			govAgencyOrganizationId = dossier.getGovAgencyOrganizationId();
-			
 			
 			try {
 
@@ -141,12 +153,6 @@ public class BackOfficeProcessEngine implements MessageListener {
 			}
 		}
 
-		// Set Dossier
-		/*setExtraInfoDossier(
-		    serviceInfoId, dossierTemplateId, govAgencyCode, govAgencyName,
-		    govAgencyOrganizationId, serviceProcessId,
-		    toEngineMsg.getGroupId(), dossier);
-*/
 		SendToBackOfficeMsg toBackOffice = new SendToBackOfficeMsg();
 		
 		toBackOffice.setSubmitDateTime(now);
@@ -182,6 +188,22 @@ public class BackOfficeProcessEngine implements MessageListener {
 					        toEngineMsg.getActionDatetime(), StringPool.BLANK,
 					        StringPool.BLANK, StringPool.BLANK, 0, 0, 0,
 					        PortletConstants.DOSSIER_STATUS_SYSTEM);
+					
+					//Add DossierLog for create ProcessOrder
+					
+					ActorBean actorBean = new ActorBean(0, 0);
+
+					DossierLogLocalServiceUtil.addDossierLog(
+					    toEngineMsg.getUserId(), toEngineMsg.getGroupId(),
+					    toEngineMsg.getCompanyId(), toEngineMsg.getDossierId(),
+					    toEngineMsg.getFileGroupId(),
+					    PortletConstants.DOSSIER_STATUS_SYSTEM,
+					    PortletConstants.DOSSIER_ACTION_CREATE_PROCESS_ORDER,
+					    PortletConstants.DOSSIER_ACTION_CREATE_PROCESS_ORDER,
+					    new Date(), 0, 0, actorBean.getActor(),
+					    actorBean.getActorId(), actorBean.getActorName(),
+					    BackOfficeProcessEngine.class.getName() +
+					        ".createProcessOrder()");
 				}
 
 				processOrderId = processOrder.getProcessOrderId();
@@ -197,7 +219,7 @@ public class BackOfficeProcessEngine implements MessageListener {
 				curStepId = processOrder.getProcessStepId();
 			}
 			
-			
+			long assignToUserId = toEngineMsg.getAssignToUserId();
 			
 			ProcessWorkflow processWorkflow = null;
 
@@ -206,18 +228,19 @@ public class BackOfficeProcessEngine implements MessageListener {
 				processWorkflow =
 				    ProcessWorkflowLocalServiceUtil.getProcessWorkflowByEvent(
 				        serviceProcessId, toEngineMsg.getEvent(), curStepId);
-				
-				_log.info("#############################serviceProcessId " + serviceProcessId);
-				_log.info("#############################toEngineMsg.getEvent() " + toEngineMsg.getEvent());
-				_log.info("#############################curStepId " + curStepId);
-				
-				_log.info("######################## CREATE WORKFLOW ###############");
 			}
 			else {
 				processWorkflow =
 				    ProcessWorkflowLocalServiceUtil.fetchProcessWorkflow(processWorkflowId);
-				_log.info("######################## GET WORKFLOW ###############");
+				
+			}
+			
+			if (Validator.isNull(assignToUserId)) {
 
+				assignToUserId =
+				    ProcessMgtUtil.getAssignUser(
+				        processWorkflow.getProcessWorkflowId(), processOrderId,
+				        processWorkflow.getPostProcessStepId());
 			}
 
 			// Do Workflow
@@ -253,6 +276,13 @@ public class BackOfficeProcessEngine implements MessageListener {
 				} else {
 					changeStatus = PortletConstants.DOSSIER_STATUS_DONE;
 				}
+				
+				int syncStatus = 0;
+				
+				
+				if (!changeStatus.contentEquals(toEngineMsg.getDossierStatus())) {
+					syncStatus = 2;
+				} 
 
 				// Update process order to SYSTEM
 				ProcessOrderLocalServiceUtil.updateProcessOrderStatus(
@@ -265,13 +295,14 @@ public class BackOfficeProcessEngine implements MessageListener {
 				    toEngineMsg.getActionUserId(),
 				    toEngineMsg.getActionDatetime(),
 				    toEngineMsg.getActionNote(),
-				    toEngineMsg.getAssignToUserId(), stepName, actionName, 0,
+				    assignToUserId, stepName, actionName, 0,
 				    0, PortletConstants.DOSSIER_STATUS_SYSTEM);
 				
 				toBackOffice.setProcessOrderId(processOrderId);
 				toBackOffice.setDossierId(toEngineMsg.getDossierId());
 				toBackOffice.setFileGroupId(toEngineMsg.getFileGroupId());
 				toBackOffice.setDossierStatus(changeStatus);
+				toBackOffice.setSyncStatus(syncStatus);
 
 				if (changeStatus.equals(PortletConstants.DOSSIER_STATUS_WAITING)) {
 					toBackOffice.setRequestCommand(WebKeys.DOSSIER_LOG_RESUBMIT_REQUEST);
@@ -291,22 +322,20 @@ public class BackOfficeProcessEngine implements MessageListener {
 
 				if (Validator.isNull(toEngineMsg.getReceptionNo())) {
 					String pattern = processWorkflow.getReceptionNoPattern();
-					if (Validator.isNotNull(pattern) && StringUtil.trim(pattern).length() != 0) {
-						
-						toBackOffice.setReceptionNo(DossierNoGenerator.genaratorNoReception(pattern, toEngineMsg.getDossierId())); 
-						
-						_log.info("################################## genaratorNoReception" +
-										+ System.currentTimeMillis());
-					} else {
+					if (Validator.isNotNull(pattern) &&
+					    StringUtil.trim(pattern).length() != 0) {
+
+						toBackOffice.setReceptionNo(DossierNoGenerator.genaratorNoReception(
+						    pattern, toEngineMsg.getDossierId()));
+
+					}
+					else {
 						toBackOffice.setReceptionNo(dossier.getReceptionNo());
-						_log.info("################################## genaratorNoReception" +
-										+ System.currentTimeMillis());
 					}
 				}
 				else {
 					toBackOffice.setReceptionNo(toEngineMsg.getReceptionNo());
 				}
-
 
 				toBackOffice.setEstimateDatetime(toEngineMsg.getEstimateDatetime());
 
@@ -370,11 +399,18 @@ public class BackOfficeProcessEngine implements MessageListener {
 					toBackOffice.setPaymentFile(paymentFile);
 					
 					
+					Locale vnLocale = new Locale("vi", "VN");
+
+					NumberFormat vnFormat = NumberFormat.getCurrencyInstance(vnLocale);
+
 					//setPayment message in pattern in message Info
 					
 					StringBuffer sb = new StringBuffer();
 					
 					sb.append(paymentMessages.get(0));
+					sb.append(StringPool.OPEN_PARENTHESIS);
+					sb.append(vnFormat.format(totalPayment));
+					sb.append(StringPool.CLOSE_PARENTHESIS);
 					sb.append(StringPool.SEMICOLON);
 					sb.append(toEngineMsg.getActionNote());
 					
@@ -386,15 +422,12 @@ public class BackOfficeProcessEngine implements MessageListener {
 					toBackOffice.setMessageInfo(toEngineMsg.getActionNote());
 				}
 				
-				
-				
 				Message sendToBackOffice = new Message();
 
 				sendToBackOffice.put("toBackOffice", toBackOffice);
 
 				MessageBusUtil.sendMessage(
 				    "opencps/backoffice/out/destination", sendToBackOffice);
-				
 				
 			}
 			else {
@@ -451,75 +484,6 @@ public class BackOfficeProcessEngine implements MessageListener {
 		catch (Exception e) {
 
 		}
-	}
-	
-	/**
-	 * @param actor
-	 * @param actorId
-	 * @param actorName
-	 * @param userActionId
-	 */
-	private void setActor(int actor, long actorId, String actorName, long userActionId) {
-		
-		try {
-			if (userActionId != 0) {
-				User user = UserLocalServiceUtil.fetchUser(userActionId);
-				
-				actor = WebKeys.DOSSIER_ACTOR_EMPLOYEE;
-				
-				actorId = userActionId;
-				
-				actorName = user.getFullName();
-			} else {
-				actor = 0;
-				actorId = 0;
-				actorName = WebKeys.DOSSIER_ACTOR_SYSTEM_NAME;
-			}
-        }
-        catch (Exception e) {
-	        _log.error(e);
-        }
-		
-	}
-	
-	
-	/**
-	 * @param serviceInfoId
-	 * @param dossierTemplateId
-	 * @param govAgencyCode
-	 * @param govAgencyName
-	 * @param govAgencyOrganizationId
-	 * @param serviceProcessId
-	 * @param groupId
-	 * @param dossier
-	 */
-	private void setExtraInfoDossier(
-	    long serviceInfoId, long dossierTemplateId, String govAgencyCode,
-	    String govAgencyName, long govAgencyOrganizationId,
-	    long serviceProcessId, long groupId, Dossier dossier) {
-
-		if (Validator.isNotNull(dossier)) {
-			serviceInfoId = dossier.getServiceInfoId();
-			dossierTemplateId = dossier.getDossierTemplateId();
-			govAgencyCode = dossier.getGovAgencyCode();
-			govAgencyName = dossier.getGovAgencyName();
-			govAgencyOrganizationId = dossier.getGovAgencyOrganizationId();
-			
-			
-			try {
-
-				ServiceConfig serviceConfig =
-				    ServiceConfigLocalServiceUtil.getServiceConfigByG_S_G(
-				        groupId, serviceInfoId, govAgencyCode);
-				serviceProcessId = serviceConfig.getServiceProcessId();
-				
-
-			}
-			catch (Exception e) {
-				_log.error(e);
-			}
-		}
-
 	}
 
 	/**

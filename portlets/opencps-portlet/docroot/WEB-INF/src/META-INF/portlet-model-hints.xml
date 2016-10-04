@@ -9,6 +9,13 @@
 		<hint name="display-width">500</hint>
 		<hint name="max-length">4000</hint>
 	</hint-collection>
+	<model name="org.opencps.datamgt.model.AdministrationServicedomain">
+		<field name="administrationCode" type="String" />
+		<field name="administrationCollectionCode" type="String" />
+		<field name="serviceDomainCode" type="String" />
+		<field name="serviceDomainCollectionCode" type="String" />
+		<field name="groupId" type="long" />
+	</model>
 	<model name="org.opencps.datamgt.model.DictCollection">
 		<default-hints>
 			<hint name="display-width">150</hint>
@@ -519,6 +526,7 @@
 		<field name="updateDatetime" type="Date" />
 		<field name="level" type="int" />
 		<field name="actor" type="int" />
+		<field name="className" type="String" />
 		<field name="actorId" type="long" />
 		<field name="actorName" type="String" />
 		<field name="syncStatus" type="int" />

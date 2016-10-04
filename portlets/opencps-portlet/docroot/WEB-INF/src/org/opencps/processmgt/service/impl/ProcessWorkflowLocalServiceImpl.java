@@ -296,7 +296,22 @@ public class ProcessWorkflowLocalServiceImpl
 	 * @throws PortalException
 	 * @throws SystemException
 	 */
-	public ProcessWorkflow getByActionCode(String actionCode) throws PortalException, SystemException {
+	public ProcessWorkflow findByActionCode(String actionCode) 
+			throws PortalException, SystemException {
+		
+		return processWorkflowPersistence.findByActionCode(actionCode);
+	}
+	
+	/**
+	 * 
+	 * @param actionCode
+	 * @return
+	 * @throws PortalException
+	 * @throws SystemException
+	 */
+	public ProcessWorkflow getByActionCode(String actionCode) 
+			throws SystemException {
+		
 		return processWorkflowPersistence.fetchByActionCode(actionCode);
 	}
 	
@@ -309,7 +324,24 @@ public class ProcessWorkflowLocalServiceImpl
 	 * @throws PortalException
 	 * @throws SystemException
 	 */
-	public ProcessWorkflow getByS_PreP_AN(long serviceProcessId, long preProcessStepId, String actionName) throws PortalException, SystemException {
+	public ProcessWorkflow findByS_PreP_AN(long serviceProcessId, long preProcessStepId, String actionName) 
+			throws PortalException, SystemException {
+		
+		return processWorkflowPersistence.findByS_PreP_AN(serviceProcessId, preProcessStepId, actionName);
+	}
+	
+	/**
+	 * 
+	 * @param serviceProcessId
+	 * @param preProcessStepId
+	 * @param actionName
+	 * @return
+	 * @throws PortalException
+	 * @throws SystemException
+	 */
+	public ProcessWorkflow getByS_PreP_AN(long serviceProcessId, long preProcessStepId, String actionName) 
+			throws SystemException {
+		
 		return processWorkflowPersistence.fetchByS_PreP_AN(serviceProcessId, preProcessStepId, actionName);
-}	
+	}	
 }

@@ -355,6 +355,7 @@
         <column name="updateDatetime" type="Date"/>
         <column name="level" type="int"/>
         <column name="actor" type="int"></column>
+        <column name="className" type="String"/>
         <column name="actorId" type="long"></column>
         <column name="actorName" type="String"></column>
         <column name="syncStatus" type="int"></column>
@@ -454,7 +455,7 @@
         <column name="syncStatus" type="int"/>
         <column name="version" type="int"></column>
         <column name="signed" type="boolean"></column>
-        <finder name="D_DP" return-type="Collection">
+        <finder name="D_DP" return-type="Collection" where="removed=0">
             <finder-column name="dossierId"></finder-column>
             <finder-column name="dossierPartId"></finder-column>
         </finder>
@@ -465,9 +466,16 @@
             <finder-column name="dossierId"></finder-column>
             <finder-column name="groupFileId"></finder-column>
         </finder>
-        <finder name="DossierFileInUse" return-type="DossierFile" where="removed=0 AND syncStatus=2">
+        <finder name="DossierFileInUse" return-type="DossierFile">
             <finder-column name="dossierId"></finder-column>
             <finder-column name="dossierPartId"></finder-column>
+            <finder-column name="removed"></finder-column>
+        </finder>
+        <finder name="DossierFileInUseSyncStatus" return-type="DossierFile">
+            <finder-column name="dossierId"></finder-column>
+            <finder-column name="dossierPartId"></finder-column>
+            <finder-column name="removed"></finder-column>
+            <finder-column name="syncStatus"></finder-column>
         </finder>
 
         <finder name="D_DP_GF" return-type="Collection">

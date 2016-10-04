@@ -17,8 +17,11 @@
 
 package org.opencps.processmgt.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.opencps.dossiermgt.model.Dossier;
 import org.opencps.dossiermgt.service.DossierLocalServiceUtil;
@@ -531,10 +534,22 @@ public class ProcessOrderLocalServiceImpl
 	public List searchProcessOrder(
 		long serviceInfoId, long processStepId, long loginUserId,
 		long actionUserId, int start, int end, OrderByComparator orderByComparator) {
+/*		
+		List<ProcessOrder> al = new ArrayList<ProcessOrder>();
+		// add elements to al, including duplicates
+		
+		Set<ProcessOrder> hs = new HashSet<ProcessOrder>();		
+		
+		hs.addAll(processOrderFinder
+			.searchProcessOrder(serviceInfoId, processStepId, loginUserId,
+				actionUserId, start, end, orderByComparator));
+		
+		al.clear();
+		al.addAll(hs);*/
 		
 		return processOrderFinder
-			.searchProcessOrder(serviceInfoId, processStepId, loginUserId,
-				actionUserId, start, end, orderByComparator);
+						.searchProcessOrder(serviceInfoId, processStepId, loginUserId,
+							actionUserId, start, end, orderByComparator);
 	}
 
 	/**

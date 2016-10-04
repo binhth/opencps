@@ -22,14 +22,24 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Stack;
 
+import org.opencps.dossiermgt.comparator.DossierFileDossierFileDateComparator;
 import org.opencps.dossiermgt.comparator.DossierTemplateNameComparator;
 import org.opencps.dossiermgt.comparator.DossierTemplateNoComparator;
+import org.opencps.dossiermgt.model.Dossier;
+import org.opencps.dossiermgt.model.DossierFile;
 import org.opencps.dossiermgt.model.DossierPart;
+import org.opencps.dossiermgt.model.ServiceConfig;
+import org.opencps.dossiermgt.search.DossierFileDisplayTerms;
 import org.opencps.dossiermgt.search.DossierTemplateDisplayTerms;
+import org.opencps.dossiermgt.service.DossierLocalServiceUtil;
 import org.opencps.dossiermgt.service.DossierPartLocalServiceUtil;
+import org.opencps.dossiermgt.service.ServiceConfigLocalServiceUtil;
+import org.opencps.servicemgt.model.ServiceInfo;
 import org.opencps.servicemgt.model.TemplateFile;
+import org.opencps.servicemgt.service.ServiceInfoLocalServiceUtil;
 import org.opencps.servicemgt.service.TemplateFileLocalServiceUtil;
 import org.opencps.util.PortletConstants;
+import org.opencps.util.WebKeys;
 
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -102,6 +112,44 @@ public class DossierMgtUtil {
 		}
 
 		return orderByComparator;
+	}
+	
+	/**
+	 * @param orderByType
+	 * @param dossierFiles
+	 * @return
+	 */
+	public static List<DossierFile> orderDossierFileByDossierFileDate(String orderByType, List<DossierFile> dossierFiles) {
+		int value = 0;
+		DossierFile dossierFileTemp = null;
+		
+		if(orderByType.equals(WebKeys.ORDER_BY_ASC)) {
+			for(int i=0; i<dossierFiles.size()-1; i++) {
+				for(int j=i+1; j<dossierFiles.size(); j++) {
+					value = dossierFiles.get(i).getDossierFileDate().compareTo(dossierFiles.get(j).getDossierFileDate());
+					if(value >= 0) {
+						dossierFileTemp = dossierFiles.get(i);
+						dossierFiles.set(i, dossierFiles.get(j));
+						dossierFiles.set(j, dossierFileTemp);
+					}
+				}
+			}
+			return dossierFiles;
+		} else if (orderByType.equals(WebKeys.ORDER_BY_DESC)){
+			for(int i=0; i<dossierFiles.size()-1; i++) {
+				for(int j=i+1; j<dossierFiles.size(); j++) {
+					value = dossierFiles.get(i).getDossierFileDate().compareTo(dossierFiles.get(j).getDossierFileDate());
+					if(value < 0) {
+						dossierFileTemp = dossierFiles.get(i);
+						dossierFiles.set(i, dossierFiles.get(j));
+						dossierFiles.set(j, dossierFileTemp);
+					}
+				}
+			}
+			return dossierFiles;
+		}
+		
+		return dossierFiles;
 	}
 
 	/**
@@ -319,6 +367,37 @@ public class DossierMgtUtil {
 		return dossierLog;
 	}
 
+	/**
+	 * Get service name by dossierId
+	 * 
+	 * @param dossierId maso ho so
+	 * @return (String) serviceName
+	 */
+	public static String getServiceName(long dossierId) {
+
+		String serviceName = StringPool.BLANK;
+
+		if (Validator.isNotNull(dossierId) && dossierId != 0) {
+			try {
+				Dossier dossier =
+				    DossierLocalServiceUtil.fetchDossier(dossierId);
+
+				ServiceConfig serviceConfig =
+				    ServiceConfigLocalServiceUtil.fetchServiceConfig(dossier.getServiceConfigId());
+
+				ServiceInfo serviceInfo =
+				    ServiceInfoLocalServiceUtil.fetchServiceInfo(serviceConfig.getServiceInfoId());
+
+				serviceName = serviceInfo.getServiceName();
+			}
+			catch (Exception e) {
+				_log.error("dossierId is not validator");
+			}
+		}
+
+		return serviceName;
+	}
+	
 	private static Log _log =
 		LogFactoryUtil.getLog(DossierMgtUtil.class.getName());
 }
