@@ -33,6 +33,8 @@ import org.opencps.util.PortletConstants;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
@@ -837,6 +839,7 @@ public class DossierFileLocalServiceImpl
 
 		DossierFile dossierFile =
 			DossierFileLocalServiceUtil.getDossierFile(dossierFileId);
+		
 
 		dossierFile.setRemoved(1);
 		dossierFile.setModifiedDate(new Date());
@@ -844,6 +847,10 @@ public class DossierFileLocalServiceImpl
 		indexer.reindex(dossierFile);
 
 		dossierFilePersistence.update(dossierFile);
+		
+		dossierFilePersistence.clearCache();
+		
+		dossierFilePersistence.clearCache(dossierFile);
 	}
 
 	/**
@@ -883,6 +890,36 @@ public class DossierFileLocalServiceImpl
 
 		return dossierFilePersistence.findByD_DP(dossierId, dossierPartId);
 	}
+	
+	/**
+	 * @param dossierId
+	 * @param dossierPartId
+	 * @param byComparator
+	 * @return
+	 * @throws NoSuchDossierFileException
+	 * @throws SystemException
+	 */
+	public List<DossierFile> getDossierFileByD_DP_Config(
+		long dossierId, long dossierPartId, OrderByComparator byComparator, int start, int end)
+		throws NoSuchDossierFileException, SystemException {
+
+		return dossierFilePersistence.findByD_DP(dossierId, dossierPartId, start, end, byComparator);
+	}
+	
+	/**
+	 * @param dossierId
+	 * @param dossierPartId
+	 * @return
+	 * @throws NoSuchDossierFileException
+	 * @throws SystemException
+	 */
+	public int countDossierFileByD_DP_Config(
+		long dossierId, long dossierPartId)
+		throws NoSuchDossierFileException, SystemException {
+
+		return dossierFilePersistence.countByD_DP(dossierId, dossierPartId);
+	}
+	
 
 	/**
 	 * @param fileGroupId
@@ -964,14 +1001,29 @@ public class DossierFileLocalServiceImpl
 	 * @param dossierId
 	 * @param dossierPartId
 	 * @return DossierFile
-	 * @throws NoSuchDossierFileException
+	 * @throws PortalException
 	 * @throws SystemException
 	 */
 	public DossierFile getDossierFileInUse(long dossierId, long dossierPartId)
-		throws NoSuchDossierFileException, SystemException {
+		throws PortalException, SystemException {
 
 		return dossierFilePersistence.findByDossierFileInUse(
-			dossierId, dossierPartId);
+			dossierId, dossierPartId, 0);
+	}
+	
+	/**
+	 * @param dossierId
+	 * @param dossierPartId
+	 * @param syncStatus
+	 * @return DossierFile
+	 * @throws PortalException
+	 * @throws SystemException
+	 */
+	public DossierFile getDossierFileInUse(long dossierId, long dossierPartId, int syncStatus)
+		throws PortalException, SystemException {
+
+		return dossierFilePersistence.findByDossierFileInUseSyncStatus(
+			dossierId, dossierPartId, 0, syncStatus);
 	}
 
 	/**
@@ -1206,19 +1258,24 @@ public class DossierFileLocalServiceImpl
 		Date now = new Date();
 
 		for (WorkflowOutput output : worklows) {
+			try {
+				DossierFile dossierFile =
+				    dossierFileLocalService.getDossierFileInUse(
+				        dossierId, output.getDossierPartId());
 
-			DossierFile dossierFile =
-				dossierFileLocalService.getDossierFileInUse(
-					dossierId, output.getDossierPartId());
+				dossierFile.setSyncStatus(syncStatus);
+				dossierFile.setModifiedDate(now);
 
-			dossierFile.setSyncStatus(syncStatus);
-			dossierFile.setModifiedDate(now);
+				if (userId != 0) {
+					dossierFile.setUserId(userId);
+				}
 
-			if (userId != 0) {
-				dossierFile.setUserId(userId);
-			}
+				dossierFileLocalService.updateDossierFile(dossierFile);
 
-			dossierFileLocalService.updateDossierFile(dossierFile);
+            }
+            catch (Exception e) {
+	            _log.error("NO FILE RESULT UPLOAD..............");
+            }
 
 		}
 	}
@@ -1293,4 +1350,6 @@ public class DossierFileLocalServiceImpl
 
 		return sbFileName.toString();
 	}
+	
+	private static Log _log = LogFactoryUtil.getLog(DossierFileLocalServiceImpl.class.getName());
 }

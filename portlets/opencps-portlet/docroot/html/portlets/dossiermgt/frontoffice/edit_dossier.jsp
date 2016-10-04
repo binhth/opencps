@@ -1,4 +1,4 @@
-
+<%@page import="com.liferay.portal.kernel.language.LanguageUtil"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -49,6 +49,9 @@
 <%@page import="org.opencps.processmgt.service.ProcessOrderLocalServiceUtil"%>
 <%@page import="org.opencps.processmgt.model.ProcessWorkflow"%>
 <%@page import="org.opencps.processmgt.model.ProcessOrder"%>
+<%@page import="org.opencps.dossiermgt.NoSuchDossierException"%>
+<%@page import="org.opencps.dossiermgt.NoSuchDossierTemplateException"%>
+<%@page import="org.opencps.dossiermgt.RequiredDossierPartException"%>
 
 <%@ include file="../init.jsp"%>
 
@@ -68,6 +71,10 @@
 		new String[]{"dossier_part", "dossier_info", "result", "history"} : 
 		new String[]{"dossier_info"};
 	
+	// show only 2 tab dossier_part & info on create new dossier
+	if(cmd.equals(Constants.ADD)){
+		dossierSections = new String[]{"dossier_part", "dossier_info"};
+	}
 	String[][] categorySections = {dossierSections};
 	
 	boolean isEditDossier = ParamUtil.getBoolean(request, "isEditDossier");
@@ -77,7 +84,10 @@
 	try {
 		if(Validator.isNotNull(dossier)) {
 			processOrder = ProcessOrderLocalServiceUtil.getProcessOrder(dossier.getDossierId(), 0);
-			workFlow = ProcessWorkflowLocalServiceUtil.getByS_PreP_AN(processOrder.getServiceProcessId(), processOrder.getProcessStepId(), "Thông báo hủy hồ sơ");
+			
+			if(processOrder != null) {
+				workFlow = ProcessWorkflowLocalServiceUtil.getProcessWorkflowByEvent(processOrder.getServiceProcessId(), WebKeys.PRE_CONDITION_CANCEL, processOrder.getProcessStepId());
+			}
 		}
 	}
 	catch (Exception e) {
@@ -87,9 +97,28 @@
 	boolean quickCreateDossier = dossier == null ? true : false;
 %>
 
+<liferay-ui:error 
+	exception="<%= NoSuchDossierException.class %>" 
+	message="<%=NoSuchDossierException.class.getName() %>"
+/>
+<liferay-ui:error 
+	exception="<%= NoSuchDossierTemplateException.class %>" 
+	message="<%=NoSuchDossierTemplateException.class.getName() %>"
+/>
+<liferay-ui:error 
+	exception="<%= RequiredDossierPartException.class %>" 
+	message="<%=RequiredDossierPartException.class.getName() %>"
+/>
+
 <liferay-portlet:renderURL var="backDossierList">
 	<portlet:param name="mvcPath" value="/html/portlets/dossiermgt/frontoffice/frontofficedossierlist.jsp"/>
 </liferay-portlet:renderURL>
+
+<portlet:actionURL var="updateDossierStatusURL" name="updateDossierStatus">
+	<portlet:param name="<%=DossierDisplayTerms.DOSSIER_ID %>" value='<%=dossier != null ? String.valueOf(dossier.getDossierId()) : "" %>'/>
+	<portlet:param name="<%=DossierDisplayTerms.DOSSIER_STATUS %>" value="<%=String.valueOf(PortletConstants.DOSSIER_STATUS_NEW) %>"/>
+	<portlet:param name="backURL" value="<%=currentURL %>"/>
+</portlet:actionURL>
 
 <c:choose>
 	<c:when test="<%=DossierPermission.contains(permissionChecker, scopeGroupId, ActionKeys.UPDATE) && Validator.isNotNull(accountType) &&
@@ -125,16 +154,14 @@
 				 			dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_WAITING)%>">
 			 			
 					 		<c:if test="<%=dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_NEW) %>">
-						 		<portlet:actionURL var="updateDossierStatusURL" name="updateDossierStatus">
-									<portlet:param name="<%=DossierDisplayTerms.DOSSIER_ID %>" value="<%=String.valueOf(dossier.getDossierId()) %>"/>
-									<portlet:param name="<%=DossierDisplayTerms.DOSSIER_STATUS %>" value="<%=String.valueOf(PortletConstants.DOSSIER_STATUS_NEW) %>"/>
-									<portlet:param name="backURL" value="<%=currentURL %>"/>
-								</portlet:actionURL> 
+								<%
+									String jsUpdateDossierStatus = "javascript:" + renderResponse.getNamespace() + "updateDossierStatus()";
+								%>
 						 		<liferay-ui:icon
 						 			cssClass="search-container-action fa forward"
 						 			image="forward"
 						 			message="send" 
-						 			url="<%=updateDossierStatusURL.toString() %>" 
+						 			url="<%=jsUpdateDossierStatus %>" 
 						 		/>
 					 		</c:if>
 					 		
@@ -146,7 +173,7 @@
 									<portlet:param name="redirectURL" value="<%=backDossierList %>"/>
 								</portlet:actionURL> 
 						 		<liferay-ui:icon
-						 			cssClass="search-container-action fa forward"
+						 			cssClass="search-container-action fa forward input100"
 						 			image="reply"
 						 			message="resend" 
 						 			url="<%=updateDossierStatusURL.toString() %>" 
@@ -154,12 +181,14 @@
 					 		</c:if>
 					 	</c:if>
 					 	
-					 	<liferay-ui:icon
+					 	<c:if test="<%=showBackToListButton %>">
+					 		<liferay-ui:icon
 								image="back"
 								cssClass="search-container-action fa forward"
 								message="back-dossier-list"  
 								url="<%= backDossierList.toString() %>" 
-						/>
+							/>
+						</c:if>
 			 		</c:if>
 			  		<c:if test="<%= (dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_PROCESSING) && workFlow != null) %>">
 					 		<portlet:actionURL var="cancelDossierURL" name="cancelDossier" >
@@ -178,7 +207,7 @@
 			  		<c:if test="<%=DossierPermission.contains(permissionChecker, scopeGroupId, ActionKeys.DELETE) && dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_NEW) %>">
 				 		<portlet:actionURL var="deleteDossierURL" name="deleteDossier" >
 							<portlet:param name="<%=DossierDisplayTerms.DOSSIER_ID %>" value="<%=String.valueOf(dossier.getDossierId()) %>"/>
-							<portlet:param name="redirectURL" value="<%=currentURL %>"/>
+							<portlet:param name="redirectURL" value="<%=backURL %>"/>
 							<portlet:param name="dossierStatus" value="<%=dossier.getDossierStatus() %>"/>
 						</portlet:actionURL> 
 						<liferay-ui:icon-delete 
@@ -340,6 +369,28 @@
 	</c:otherwise>
  
 </c:choose>
+
+<aui:script>
+Liferay.provide(
+	window,
+	'<portlet:namespace/>updateDossierStatus',
+	function(actionURL) {
+		var A = AUI(); 
+		// validate dossier part required
+		
+		var cnt = A.all('#<portlet:namespace/>fm .dossierPartRequired').size();
+		
+		if(cnt > 0) {
+			A.all('#<portlet:namespace/>fm .dossierPartRequired').addClass('dossierPartRequired-error');
+			alert('<%= LanguageUtil.get(themeDisplay.getLocale(), "please-upload-dossier-part-required-before-send") %>');
+		} else {
+			location.href = '<%= updateDossierStatusURL %>';
+		}
+	},
+	['aui-base']
+);
+</aui:script>
+
 <%!
 	private Log _log = LogFactoryUtil.getLog("html.portlets.dossiermgt.frontoffice.edit_dossier.jsp");
 %>
