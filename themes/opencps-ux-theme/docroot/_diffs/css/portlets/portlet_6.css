@@ -36,17 +36,25 @@
 	vertical-align: top;
 }
 
-@media screen and (min-width: 760px) {
-	.opencps-theme.ux .opencps-accountinfo-wrapper .content {
-		display: flex;
-	}
-	.opencps-theme.ux .opencps-accountinfo-wrapper .content .left {
-		width: 43%;
-		border-right: 1px solid #ccc;
-	}
-	.opencps-theme.ux .opencps-accountinfo-wrapper .content .right {
-		width: 44%;
-	}
+
+/* .opencps-theme.ux .opencps-accountinfo-wrapper .content {
+	display: flex;
+} */
+.opencps-theme.ux .opencps-accountinfo-wrapper .content .left {
+	width: 43%;
+}
+.opencps-theme.ux .opencps-accountinfo-wrapper .content .right {
+	width: 44%;
+	position: relative;
+}
+.opencps-theme.ux .opencps-accountinfo-wrapper .content .right:BEFORE {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 1px;
+	height: 100%;
+	background: #ccc;
 }
 
 @media screen and (max-width: 760px) {
