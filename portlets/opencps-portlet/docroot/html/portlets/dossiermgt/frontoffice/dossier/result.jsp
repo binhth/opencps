@@ -465,13 +465,13 @@
 						<%
 							List<DossierFile> dossierFiles = new ArrayList<DossierFile>();
 							if(Validator.isNull(orderFieldDossierFile)) {
-								DossierFileLocalServiceUtil.
-								getDossierFileByD_DP(dossier.getDossierId(), dossierPartLevel1.getDossierpartId());
+								dossierFiles = DossierFileLocalServiceUtil.
+									getDossierFileByD_DP(dossier.getDossierId(), dossierPartLevel1.getDossierpartId());
 							} else {
-								DossierFileLocalServiceUtil.
-								getDossierFileByD_DP_Config(dossier.getDossierId(), dossierPartLevel1.getDossierpartId(),
-									DossierSearchUtil.getDossierFileOrderByComparator(orderFieldDossierFile, orderBydDossierFile),
-									QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+								dossierFiles = DossierFileLocalServiceUtil.
+									getDossierFileByD_DP_Config(dossier.getDossierId(), dossierPartLevel1.getDossierpartId(),
+										DossierSearchUtil.getDossierFileOrderByComparator(orderFieldDossierFile, orderBydDossierFile),
+										QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 							}
 							
 							int index = 0;

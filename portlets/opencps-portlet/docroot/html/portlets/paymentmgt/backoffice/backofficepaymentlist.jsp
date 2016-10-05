@@ -50,10 +50,8 @@
 <%@ include file="../init.jsp"%>
 <liferay-util:include page="/html/portlets/paymentmgt/backoffice/toolbar.jsp" servletContext="<%=application %>" />
 <%
-	String paymentStatus = ParamUtil.getString(request, "paymentStatus");
-	if(Validator.isNull(paymentStatus)){
-		paymentStatus = "-1";	
-	}
+	int paymentStatus = ParamUtil.getInteger(request, "paymentStatus",-1);
+
 	String keywords = ParamUtil.getString(request, "keywords");
 
 	PortletURL iteratorURL = renderResponse.createRenderURL();
@@ -84,7 +82,7 @@
 			}
 			List<PaymentFile> dossierFiles = null;
 			Integer totalCount = 0;
-			if (keywordArrs != null || !paymentStatus.equalsIgnoreCase("-1")) {
+			if (keywordArrs != null || paymentStatus >-1) {
 				try {
 					dossierFiles = PaymentFileLocalServiceUtil.searchPaymentFiles(themeDisplay.getScopeGroupId(), paymentStatus, keywords, searchContainer.getStart(), searchContainer.getEnd());
 					totalCount = PaymentFileLocalServiceUtil.countPaymentFiles(themeDisplay.getScopeGroupId(), paymentStatus, keywords);
@@ -146,24 +144,26 @@
 				if(paymentFile.getPaymentStatus() == PaymentMgtUtil.PAYMENT_STATUS_APPROVED){
 					paymentMothodLabel = LanguageUtil.get(pageContext, PortletUtil.getPaymentMethodLabel(paymentFile.getPaymentMethod(), locale)); 
 				}
-				PortletURL detailURLXem = renderResponse.createRenderURL();
-				detailURLXem.setParameter("mvcPath", templatePath + "backofficepaymentdetail.jsp");
-				detailURLXem.setParameter("paymentFileId", String.valueOf(paymentFile.getPaymentFileId()));
-				detailURLXem.setParameter("redirect", currentURL);
+				PortletURL detailURL = renderResponse.createRenderURL();
+				detailURL.setParameter("mvcPath", templatePath + "backofficepaymentdetail.jsp");
+				detailURL.setParameter("paymentFileId", String.valueOf(paymentFile.getPaymentFileId()));
+				detailURL.setParameter("redirect", currentURL);
 				
 				String classColor = "chothanhtoan";
-				if(paymentFile.getPaymentStatus() == PaymentMgtUtil.PAYMENT_STATUS_REQUESTED || paymentFile.getPaymentStatus() == PaymentMgtUtil.PAYMENT_STATUS_REJECTED){
+				if(paymentFile.getPaymentStatus() == PaymentMgtUtil.PAYMENT_STATUS_REQUESTED ){
 					classColor = "chothanhtoan";
 				}else if(paymentFile.getPaymentStatus() == PaymentMgtUtil.PAYMENT_STATUS_CONFIRMED){
 					classColor = "datiepnhan";
 				}else if(paymentFile.getPaymentStatus() == PaymentMgtUtil.PAYMENT_STATUS_APPROVED){
 					classColor = "hoanthanh";
+				}else if(paymentFile.getPaymentStatus() == PaymentMgtUtil.PAYMENT_STATUS_REJECTED){
+					classColor = "loi";
 				}
 				
 				// no column
 				row.addText(String.valueOf(row.getPos() + 1));		
 			
-				row.addText("<p><b style=\"margin-left: -20px; padding-right: 20px;\" class=\"mamau "+classColor+"\"></b><span style=\"width: 95px; display: inline-block;\">"+LanguageUtil.get(pageContext, "reception-no")+":</span> "+soHoSo+"</p><p><span>"+LanguageUtil.get(pageContext, "payment-name")+":</span> "+paymentFile.getPaymentName()+" <a href=\""+detailURLXem.toString()+"\" class=\"chitiet\">"+LanguageUtil.get(pageContext, "xem-detail")+"</a></p><p><span>"+LanguageUtil.get(pageContext, "subject-name")+":</span>"+chuHoSo+"</p>");
+				row.addText("<p><b style=\"margin-left: -20px; padding-right: 20px;\" class=\"mamau "+classColor+"\"></b><span style=\"width: 95px; display: inline-block;\">"+LanguageUtil.get(pageContext, "reception-no")+":</span> "+soHoSo+"</p><p><span>"+LanguageUtil.get(pageContext, "payment-name")+":</span> "+paymentFile.getPaymentName()+" <a href=\""+detailURL.toString()+"\" class=\"chitiet\">"+LanguageUtil.get(pageContext, "xem-detail")+"</a></p><p><span>"+LanguageUtil.get(pageContext, "subject-name")+":</span>"+chuHoSo+"</p>");
 				
 				row.addText("<p><span>"+LanguageUtil.get(pageContext, "payment-status")+":</span> <span class=\""+classColor+"\">"+LanguageUtil.get(pageContext, PortletUtil.getPaymentStatusLabel(paymentFile.getPaymentStatus(), locale))+"</span></p><p><span>"+LanguageUtil.get(pageContext, "amount")+":</span> <span class=\"sotien\">"+String.valueOf(NumberFormat.getInstance(new Locale("vi", "VN")).format(paymentFile.getAmount()))+"</span></p><p><span>"+LanguageUtil.get(pageContext, "payment-method")+":</span>"+paymentMothodLabel+"</p>");	
 				
