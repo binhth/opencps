@@ -126,14 +126,14 @@ box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.2); width: 58%; float: left; padding: 3
 .detail-left h4 {margin: 0; font-family: 'Roboto-Bold'; font-weight: normal; font-size: 18px; padding-left: 25px}
 .detail-left h4 {margin-bottom: 5px}
 .detail-left h4:first-child {margin-bottom: 20px}
-.detail-left h4.matiepnhan {background: url(/opencps-ux-theme/css/../images/custom/icon_matiepnhan.png) 0 center no-repeat}
-.detail-left h4.thutuc {background: url(/opencps-ux-theme/css/../images/custom/icon_thutuc.png) 0 center no-repeat}
-.detail-left h4.coquanthuchien {background: url(/opencps-ux-theme/css/../images/custom/icon_coquanthuchien.png) 0 center no-repeat}
-.detail-left h4.chuhoso {background: url(/opencps-ux-theme/css/../images/custom/icon_chuhoso.png) 0 center no-repeat}
-.detail-left h4.diachi {background: url(/opencps-ux-theme/css/../images/custom/icon_diachi_2.png) 0 center no-repeat}
-.detail-left h4.ngaytiepnhan {background: url(/opencps-ux-theme/css/../images/custom/icon_ngaythang.png) 0 center no-repeat}
-.detail-left h4.ngayhentra {background: url(/opencps-ux-theme/css/../images/custom/icon_ngaythang.png) 0 center no-repeat}
-.detail-left h4.ngayhoanthanh {background: url(/opencps-ux-theme/css/../images/custom/icon_ngaythang.png) 0 center no-repeat}
+.detail-left h4.matiepnhan {background: url("../images/custom/icon_matiepnhan.png") 0 center no-repeat}
+.detail-left h4.thutuc {background: url("../images/custom/icon_thutuc.png") 0 center no-repeat}
+.detail-left h4.coquanthuchien {background: url("../images/custom/icon_coquanthuchien.png") 0 center no-repeat}
+.detail-left h4.chuhoso {background: url("../images/custom/icon_chuhoso.png") 0 center no-repeat}
+.detail-left h4.diachi {background: url("../images/custom/icon_diachi_2.png") 0 center no-repeat}
+.detail-left h4.ngaytiepnhan {background: url("../images/custom/icon_ngaythang.png") 0 center no-repeat}
+.detail-left h4.ngayhentra {background: url("../images/custom/icon_ngaythang.png") 0 center no-repeat}
+.detail-left h4.ngayhoanthanh {background: url("../images/custom/icon_ngaythang.png") 0 center no-repeat}
 .detail-left p {margin-bottom: 20px}
 .detail-left p:last-child {margin-bottom: 0px}
 
@@ -219,7 +219,7 @@ box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.2); width: 370px; float: right; padding
     margin-right: 20px;
 }
 p.file_manage_title { 																																																																						
-    background: url(/opencps-ux-theme/css/../images/custom/icon_capnhat.png) 0 center no-repeat;
+    background: url("../images/custom/icon_listdossier.png") 0 center no-repeat;
     padding-left: 20px;
     text-transform: uppercase;
     font-family: 'Roboto-Bold';
@@ -230,7 +230,7 @@ p.file_manage_title {
     margin-top: 15px;
 }
 .file_manage_title_new{
-	background: url(/opencps-ux-theme/css/../images/custom/icon_capnhat.png) 0 center no-repeat;
+	background: url("../images/custom/icon_capnhat.png") 0 center no-repeat;
     padding-left: 20px;
     text-transform: uppercase;
     font-family: 'Roboto-Bold';
@@ -381,7 +381,7 @@ p.file_manage_title {
     width: 265px;
     height: 41px;
     overflow: hidden;
-    background: url(/opencps-ux-theme/css/../images/custom/icon_select_gray.png) white no-repeat right;
+    background: url("../images/custom/icon_select_gray.png") white no-repeat right;
     background-position: 93% center;
     border-radius: 20px;
     margin: 0 20px 0 0;
@@ -393,7 +393,7 @@ p.file_manage_title {
     padding: 0;
 }
 .image_placeholder {
-    background: url(/opencps-ux-theme/css/../images/custom/image_placeholder.png);
+    background: url("../images/custom/image_placeholder.png");
     left: 50%;
     transform: translateX(-50%);
     -webkit-transform: translateX(-50%);

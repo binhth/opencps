@@ -25,7 +25,7 @@
 	text-transform: uppercase;
 	margin: 0;
 	/* padding-left: 25px;
-	background: url(../images/custom/icon_ngoinha_blue.png) 0 center no-repeat; */
+	background: url("../images/custom/icon_ngoinha_blue.png") 0 center no-repeat; */
 }
 /* Content */
 .opencps-theme .portlet-boundary_11_WAR_opencpsportlet_ .portlet .portlet-content {
@@ -96,7 +96,7 @@
 	width: 100%;
 	height: 41px;
 	overflow: hidden;
-	background: url(../images/custom/icon_select_gray.png) no-repeat right;
+	background: url("../images/custom/icon_select_gray.png") no-repeat right;
 	background-position: 325px center;
 	margin-bottom: 0;
 }
@@ -157,7 +157,7 @@
 	font-family: 'Roboto-Bold';
 	text-transform: uppercase;
 	padding-left: 25px;
-	background: url(../images/custom/icon_danhsachhoso_blue.png) 0 center no-repeat;
+	background: url("../images/custom/icon_danhsachhoso_blue.png") 0 center no-repeat;
 }
 /* Content */
 .opencps-theme .ocps-bound-service-infodirect .lfr-search-container {
@@ -344,7 +344,7 @@
     display: block;
     margin: 0 -30px 20px;
     padding: 0 30px 0 55px;
-    background: url(../images/custom/icon_dangnhap_hover.png) 30px center no-repeat;
+    background: url("../images/custom/icon_dangnhap_hover.png") 30px center no-repeat;
     text-transform: uppercase;
 }
 .ocps-update-service-bound-all .ocps-update-service-bound-general .ocps-edit-serviceinfo-col-only .control-label, 
@@ -652,7 +652,7 @@ ul.tree-root-container > li:first-child > div.tree-node-content > span {
 
 /*----- Icon download -----*/
 .opencps-theme.ux .opencps-form-navigator-container .opencps.dossiermgt.dossier-part-row .dossier-part-control .opencps.dossiermgt.part-file-ctr.download-dossier-file {
-    background: transparent url(../images/custom/icon_download.png) no-repeat scroll left center;
+    background: transparent url("../images/custom/icon_download.png") no-repeat scroll left center;
 }
 
 
@@ -668,7 +668,7 @@ ul.tree-root-container > li:first-child > div.tree-node-content > span {
 .openCPSTree > ul > li > div > .icon-folder-open:before, 
 .openCPSTree > ul > li > div > .icon-folder-close:before {
 	content: "";
-	background: url(../images/custom/icon_dossierpart_blue.png) 0 0 no-repeat;
+	background: url("../images/custom/icon_dossierpart_blue.png") 0 0 no-repeat;
 	width: 14px;
 	height: 16px;
 }
