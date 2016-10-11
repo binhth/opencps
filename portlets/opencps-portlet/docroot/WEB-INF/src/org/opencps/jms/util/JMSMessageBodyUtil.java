@@ -328,8 +328,9 @@ public class JMSMessageBodyUtil {
 			paymentFileMsgBody.setInvoiceNo(paymentFile.getInvoiceNo());
 			paymentFileMsgBody.setSyncStatus(paymentFile.getSyncStatus());
 			paymentFileMsgBody.setOid(paymentFile.getOid());
+			paymentFileMsgBody.setPaymentStatus(paymentFile.getPaymentStatus());
 
-			if (paymentFile.getConfirmFileEntryId() != 0) {
+			if (paymentFile.getConfirmFileEntryId() > 0) {
 				DLFileEntry dlFileEntry =
 					DLFileEntryUtil.getDLFileEntry(paymentFile.getConfirmFileEntryId());
 
@@ -343,7 +344,7 @@ public class JMSMessageBodyUtil {
 				paymentFileMsgBody.setFileName(dlFileEntry.getName());
 				paymentFileMsgBody.setFileTitle(dlFileEntry.getTitle());
 				paymentFileMsgBody.setMimeType(dlFileEntry.getMimeType());
-
+				
 			}
 
 		}

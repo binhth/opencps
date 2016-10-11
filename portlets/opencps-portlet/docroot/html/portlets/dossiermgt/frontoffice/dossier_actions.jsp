@@ -71,13 +71,30 @@
 		<portlet:param name="<%=Constants.CMD %>" value="<%=Constants.VIEW %>"/>
 		<portlet:param name="isEditDossier" value="<%=String.valueOf(false) %>"/>
 		<portlet:param name="redirectURL" value="<%=currentURL %>"/>
-	</portlet:renderURL> 
-	<liferay-ui:icon 
-		cssClass="search-container-action fa view" 
-		image="view" 
-		message="view" 
-		url="<%=viewDossierURL.toString() %>" 
-	/>
+	</portlet:renderURL>
+	<c:choose>
+		<c:when test="<%=showTabDossierResultFirst %>">
+			<%
+				String viewResultDossierURL = viewDossierURL.toString() + "#" +renderResponse.getNamespace() +"tab="+ renderResponse.getNamespace() + "result";
+			%> 
+			<liferay-ui:icon 
+				cssClass="search-container-action fa view" 
+				image="view" 
+				message="view" 
+				url="<%=viewResultDossierURL.toString()%>" 
+			/>
+		</c:when>
+		<c:otherwise>
+			<liferay-ui:icon 
+				cssClass="search-container-action fa view" 
+				image="view" 
+				message="view" 
+				url="<%=viewDossierURL.toString() %>" 
+			/>
+			<%
+			%>
+		</c:otherwise>
+	</c:choose>
  	<c:choose>
  		<c:when test="<%=dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_NEW) || 
  			dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_WAITING)%>">

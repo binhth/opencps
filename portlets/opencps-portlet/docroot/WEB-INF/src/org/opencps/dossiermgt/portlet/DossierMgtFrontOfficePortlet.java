@@ -25,7 +25,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.portlet.ActionRequest;
@@ -631,106 +630,111 @@ public class DossierMgtFrontOfficePortlet extends MVCPortlet {
 						WebKeys.PRE_CONDITION_CANCEL,
 						processOrder.getProcessStepId());
 
-				Message message = new Message();
-
-				if (Validator.isNotNull(workFlow.getAutoEvent())) {
+				if(workFlow != null) {
+					Message message = new Message();
+	
+					/*if (Validator.isNotNull(workFlow.getAutoEvent())) {
+						message.put(
+							ProcessOrderDisplayTerms.EVENT, workFlow.getAutoEvent());
+					}
+					else {
+						message.put(
+							ProcessOrderDisplayTerms.PROCESS_WORKFLOW_ID,
+							workFlow.getProcessWorkflowId());
+					}
+	
 					message.put(
-						ProcessOrderDisplayTerms.EVENT, workFlow.getAutoEvent());
-				}
-				else {
+						ProcessOrderDisplayTerms.ACTION_NOTE,
+						PortletPropsValues.OPENCPS_PERSON_MAKE_PROCEDURE_CANCEL);
 					message.put(
-						ProcessOrderDisplayTerms.PROCESS_WORKFLOW_ID,
-						workFlow.getProcessWorkflowId());
+						ProcessOrderDisplayTerms.PROCESS_STEP_ID,
+						processOrder.getProcessStepId());
+					message.put(ProcessOrderDisplayTerms.ASSIGN_TO_USER_ID, 0);
+					message.put(
+						ProcessOrderDisplayTerms.SERVICE_PROCESS_ID,
+						processOrder.getServiceProcessId());
+					message.put(ProcessOrderDisplayTerms.PAYMENTVALUE, 0);
+					message.put(
+						ProcessOrderDisplayTerms.GROUP_ID,
+						serviceContext.getScopeGroupId());
+					message.put(
+						ProcessOrderDisplayTerms.ACTION_USER_ID,
+						serviceContext.getUserId());
+	
+					message.put(
+						ProcessOrderDisplayTerms.PROCESS_ORDER_ID,
+						processOrder.getProcessOrderId());
+					message.put(ProcessOrderDisplayTerms.FILE_GROUP_ID, 0);
+					message.put(
+						ProcessOrderDisplayTerms.DOSSIER_ID, dossier.getDossierId());
+	
+					message.put(
+						ProcessOrderDisplayTerms.GROUP_ID, dossier.getGroupId());
+	
+					message.put(
+						ProcessOrderDisplayTerms.COMPANY_ID, dossier.getCompanyId());*/
+	
+					SendToEngineMsg sendToEngineMsg = new SendToEngineMsg();
+	
+					sendToEngineMsg.setActionNote(PortletPropsValues.OPENCPS_PERSON_MAKE_PROCEDURE_CANCEL);
+					sendToEngineMsg.setAssignToUserId(0);
+					sendToEngineMsg.setActionUserId(serviceContext.getUserId());
+					sendToEngineMsg.setDossierId(dossier.getDossierId());
+					sendToEngineMsg.setFileGroupId(0);
+					sendToEngineMsg.setPaymentValue(GetterUtil.getDouble(0));
+					sendToEngineMsg.setProcessOrderId(processOrder.getProcessOrderId());
+					sendToEngineMsg.setReceptionNo(Validator.isNotNull(dossier.getReceptionNo())
+						? dossier.getReceptionNo() : StringPool.BLANK);
+					sendToEngineMsg.setSignature(0);
+					sendToEngineMsg.setDossierStatus(dossier.getDossierStatus());
+	
+					if (Validator.isNotNull(workFlow.getAutoEvent())) {
+						sendToEngineMsg.setEvent(workFlow.getAutoEvent());
+					}
+					else {
+						sendToEngineMsg.setProcessWorkflowId(workFlow.getProcessWorkflowId());
+					}
+	
+					sendToEngineMsg.setGroupId(serviceContext.getScopeGroupId());
+					sendToEngineMsg.setUserId(serviceContext.getUserId());
+	
+					message.put("msgToEngine", sendToEngineMsg);
+	
+					MessageBusUtil.sendMessage(
+						"opencps/backoffice/engine/destination", message);
+	
+					SessionMessages.add(actionRequest, "cancel-dossier-success");
+	
+					// Add DossierLog for cancelDossier
+	
+					int actor = 0;
+	
+					if (accountBean.isEmployee()) {
+						actor = 2;
+					}
+					else if (accountBean.isBusiness() || accountBean.isCitizen()) {
+						actor = 1;
+					}
+	
+					ActorBean actorBean =
+						new ActorBean(actor, serviceContext.getUserId());
+	
+					long fileGroupId = 0;
+	
+					DossierLogLocalServiceUtil.addDossierLog(
+						serviceContext.getUserId(),
+						serviceContext.getScopeGroupId(),
+						serviceContext.getCompanyId(), dossierId, fileGroupId,
+						dossier.getDossierStatus(),
+						PortletConstants.DOSSIER_ACTION_CANCEL_DOSSER_REQUEST,
+						PortletConstants.DOSSIER_ACTION_CANCEL_DOSSER_REQUEST,
+						new Date(), 0, 0, actorBean.getActor(),
+						actorBean.getActorId(), actorBean.getActorName(),
+						ProcessOrderPortlet.class.getName() + ".cancelDossier()");
+				} else {
+					SessionErrors.add(
+						actionRequest, "user-not-have-permission-cancel-dossier");
 				}
-
-				message.put(
-					ProcessOrderDisplayTerms.ACTION_NOTE,
-					PortletPropsValues.OPENCPS_PERSON_MAKE_PROCEDURE_CANCEL);
-				message.put(
-					ProcessOrderDisplayTerms.PROCESS_STEP_ID,
-					processOrder.getProcessStepId());
-				message.put(ProcessOrderDisplayTerms.ASSIGN_TO_USER_ID, 0);
-				message.put(
-					ProcessOrderDisplayTerms.SERVICE_PROCESS_ID,
-					processOrder.getServiceProcessId());
-				message.put(ProcessOrderDisplayTerms.PAYMENTVALUE, 0);
-				message.put(
-					ProcessOrderDisplayTerms.GROUP_ID,
-					serviceContext.getScopeGroupId());
-				message.put(
-					ProcessOrderDisplayTerms.ACTION_USER_ID,
-					serviceContext.getUserId());
-
-				message.put(
-					ProcessOrderDisplayTerms.PROCESS_ORDER_ID,
-					processOrder.getProcessOrderId());
-				message.put(ProcessOrderDisplayTerms.FILE_GROUP_ID, 0);
-				message.put(
-					ProcessOrderDisplayTerms.DOSSIER_ID, dossier.getDossierId());
-
-				message.put(
-					ProcessOrderDisplayTerms.GROUP_ID, dossier.getGroupId());
-
-				message.put(
-					ProcessOrderDisplayTerms.COMPANY_ID, dossier.getCompanyId());
-
-				SendToEngineMsg sendToEngineMsg = new SendToEngineMsg();
-
-				sendToEngineMsg.setActionNote(PortletPropsValues.OPENCPS_PERSON_MAKE_PROCEDURE_CANCEL);
-				sendToEngineMsg.setAssignToUserId(0);
-				sendToEngineMsg.setActionUserId(Long.parseLong(actionRequest.getRemoteUser()));
-				sendToEngineMsg.setDossierId(dossier.getDossierId());
-				sendToEngineMsg.setFileGroupId(0);
-				sendToEngineMsg.setPaymentValue(GetterUtil.getDouble(0));
-				sendToEngineMsg.setProcessOrderId(processOrder.getProcessOrderId());
-				sendToEngineMsg.setReceptionNo(Validator.isNotNull(dossier.getReceptionNo())
-					? dossier.getReceptionNo() : StringPool.BLANK);
-				sendToEngineMsg.setSignature(0);
-
-				if (Validator.isNotNull(workFlow.getAutoEvent())) {
-					sendToEngineMsg.setEvent(workFlow.getAutoEvent());
-				}
-				else {
-					sendToEngineMsg.setProcessWorkflowId(workFlow.getProcessWorkflowId());
-				}
-
-				sendToEngineMsg.setGroupId(serviceContext.getScopeGroupId());
-				sendToEngineMsg.setUserId(serviceContext.getUserId());
-
-				message.put("msgToEngine", sendToEngineMsg);
-
-				MessageBusUtil.sendMessage(
-					"opencps/backoffice/engine/destination", message);
-
-				SessionMessages.add(actionRequest, "cancel-dossier-success");
-
-				// Add DossierLog for cancelDossier
-
-				int actor = 0;
-
-				if (accountBean.isEmployee()) {
-					actor = 2;
-				}
-				else if (accountBean.isBusiness() || accountBean.isCitizen()) {
-					actor = 1;
-				}
-
-				ActorBean actorBean =
-					new ActorBean(actor, serviceContext.getUserId());
-
-				long fileGroupId = 0;
-
-				DossierLogLocalServiceUtil.addDossierLog(
-					serviceContext.getUserId(),
-					serviceContext.getScopeGroupId(),
-					serviceContext.getCompanyId(), dossierId, fileGroupId,
-					dossier.getDossierStatus(),
-					PortletConstants.DOSSIER_ACTION_CANCEL_DOSSER_REQUEST,
-					PortletConstants.DOSSIER_ACTION_CANCEL_DOSSER_REQUEST,
-					new Date(), 0, 0, actorBean.getActor(),
-					actorBean.getActorId(), actorBean.getActorName(),
-					ProcessOrderPortlet.class.getName() + ".cencelDossier()");
-
 			}
 			else {
 				SessionErrors.add(
@@ -2779,7 +2783,17 @@ public class DossierMgtFrontOfficePortlet extends MVCPortlet {
 			
 			String msgInfo = StringPool.BLANK;
 			
-			msgInfo = dossier.getNote();
+			msgInfo =
+			    isSend
+			        ? LanguageUtil.get(
+			            serviceContext.getLocale(), "send-dossier")
+			        : LanguageUtil.get(
+			            serviceContext.getLocale(), "send-dossier") +
+			            StringPool.COLON +
+			            ParamUtil.getString(
+			                actionRequest, DossierDisplayTerms.NOTE);
+			
+			_log.info("SSSSSSSSSSSSSSSSSSSSSSSEND DOSSIER_________________________________________");
 
 			DossierLocalServiceUtil.updateDossierStatus(
 				dossierId, fileGroupId, PortletConstants.DOSSIER_STATUS_SYSTEM,
@@ -2801,9 +2815,7 @@ public class DossierMgtFrontOfficePortlet extends MVCPortlet {
 				serviceContext.getCompanyId(), dossierId, fileGroupId,
 				PortletConstants.DOSSIER_STATUS_SYSTEM, isSend
 					? PortletConstants.DOSSIER_ACTION_SEND
-					: PortletConstants.DOSSIER_ACTION_RESEND, isSend
-					? PortletConstants.DOSSIER_ACTION_SEND
-					: PortletConstants.DOSSIER_ACTION_RESEND, new Date(), 0, 2,
+					: PortletConstants.DOSSIER_ACTION_RESEND,msgInfo, new Date(), 0, 2,
 				actor.getActor(), actor.getActorId(), actor.getActorName(),
 				DossierMgtFrontOfficePortlet.class.getName() +
 					".updateDossierStatus()");
@@ -2876,7 +2888,7 @@ public class DossierMgtFrontOfficePortlet extends MVCPortlet {
 		int dossierFileType = PortletConstants.DOSSIER_FILE_TYPE_INPUT;
 		int syncStatus = PortletConstants.DOSSIER_FILE_SYNC_STATUS_NOSYNC;
 		int original = PortletConstants.DOSSIER_FILE_ORIGINAL;
-
+		
 		String formData =
 			ParamUtil.getString(
 				actionRequest, DossierFileDisplayTerms.FORM_DATA);
