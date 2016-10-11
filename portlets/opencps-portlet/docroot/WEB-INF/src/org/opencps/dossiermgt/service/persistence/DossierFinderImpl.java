@@ -135,7 +135,7 @@ public class DossierFinderImpl extends BasePersistenceImpl<Dossier>
 		}
 
 		return countDossierByKeywordDomainAndStatus(
-			groupId, keywords, domainCode, govAgencyCodes, dossierStatus,
+			groupId, keywords, keyword, domainCode, govAgencyCodes, dossierStatus,
 			andOperator);
 	}
 
@@ -148,7 +148,7 @@ public class DossierFinderImpl extends BasePersistenceImpl<Dossier>
 	 * @return
 	 */
 	private int countDossierByKeywordDomainAndStatus(
-		long groupId, String[] keywords, String domainCode,
+		long groupId, String[] keywords, String keywordStr, String domainCode,
 		List<String> govAgencyCodes, String dossierStatus, boolean andOperator) {
 
 		Session session = null;
@@ -178,6 +178,10 @@ public class DossierFinderImpl extends BasePersistenceImpl<Dossier>
 				sql = CustomSQLUtil
 					.replaceKeywords(sql, "lower(opencps_dossier.subjectName)",
 						StringPool.LIKE, true, keywords);
+				
+				/*sql = CustomSQLUtil
+						.replaceKeywords(sql, "lower(opencps_dossier.dossierId)",
+							StringPool.EQUAL, true, keywords);*/
 			}
 
 			if (keywords == null || keywords.length == 0) {
@@ -199,8 +203,13 @@ public class DossierFinderImpl extends BasePersistenceImpl<Dossier>
 				
 				sql = StringUtil
 					.replace(sql,
-						"OR (lower(opencps_dossier.subjectName) LIKE ? [$AND_OR_NULL_CHECK$]))",
+						"OR (lower(opencps_dossier.subjectName) LIKE ? [$AND_OR_NULL_CHECK$])",
 						StringPool.BLANK);
+				
+				sql = StringUtil
+						.replace(sql,
+							"OR (opencps_dossier.dossierId = ?))",
+							StringPool.BLANK);
 			}
 
 			if (Validator.isNull(domainCode)) {
@@ -225,7 +234,7 @@ public class DossierFinderImpl extends BasePersistenceImpl<Dossier>
 			}
 
 			sql = CustomSQLUtil.replaceAndOperator(sql, andOperator);
-
+			
 			SQLQuery q = session.createSQLQuery(sql);
 
 			q.addScalar(COUNT_COLUMN_NAME, Type.INTEGER);
@@ -243,6 +252,8 @@ public class DossierFinderImpl extends BasePersistenceImpl<Dossier>
 					.add(keywords, 2);
 				qPos
 					.add(keywords, 2);
+				qPos
+					.add(keywordStr);
 			}
 
 			if (Validator.isNotNull(dossierStatus)) {
@@ -505,7 +516,7 @@ public class DossierFinderImpl extends BasePersistenceImpl<Dossier>
 			andOperator = true;
 		}
 		return searchDossierByKeywordDomainAndStatus(
-			groupId, keywords, domainCode, govAgencyCodes, dossierStatus,
+			groupId, keywords , keyword, domainCode, govAgencyCodes, dossierStatus,
 			start, end, obc, andOperator);
 	}
 
@@ -521,7 +532,7 @@ public class DossierFinderImpl extends BasePersistenceImpl<Dossier>
 	 * @return
 	 */
 	private List<Dossier> searchDossierByKeywordDomainAndStatus(
-		long groupId, String[] keywords, String domainCode,
+		long groupId, String[] keywords, String keywordStr, String domainCode,
 		List<String> govAgencyCodes, String dossierStatus, int start, int end,
 		OrderByComparator obc, boolean andOperator) {
 
@@ -552,6 +563,10 @@ public class DossierFinderImpl extends BasePersistenceImpl<Dossier>
 				sql = CustomSQLUtil
 					.replaceKeywords(sql, "lower(opencps_dossier.subjectName)",
 						StringPool.LIKE, true, keywords);
+				
+				/*sql = CustomSQLUtil
+						.replaceKeywords(sql, "lower(opencps_dossier.dossierId)",
+							StringPool.LIKE, true, keywords);*/
 			}
 
 			if (keywords == null || keywords.length == 0) {
@@ -573,8 +588,13 @@ public class DossierFinderImpl extends BasePersistenceImpl<Dossier>
 				
 				sql = StringUtil
 					.replace(sql,
-						"OR (lower(opencps_dossier.subjectName) LIKE ? [$AND_OR_NULL_CHECK$]))",
+						"OR (lower(opencps_dossier.subjectName) LIKE ? [$AND_OR_NULL_CHECK$])",
 						StringPool.BLANK);
+				
+				sql = StringUtil
+						.replace(sql,
+							"OR (opencps_dossier.dossierId = ?))",
+							StringPool.BLANK);
 			}
 
 			if (Validator.isNull(domainCode)) {
@@ -599,6 +619,8 @@ public class DossierFinderImpl extends BasePersistenceImpl<Dossier>
 			}
 
 			sql = CustomSQLUtil.replaceAndOperator(sql, andOperator);
+			
+			sql = CustomSQLUtil.replaceOrderBy(sql, obc);
 
 			SQLQuery q = session.createSQLQuery(sql);
 
@@ -617,6 +639,8 @@ public class DossierFinderImpl extends BasePersistenceImpl<Dossier>
 					.add(keywords, 2);
 				qPos
 					.add(keywords, 2);
+				qPos
+					.add(keywordStr);
 			}
 
 			if (Validator.isNotNull(dossierStatus)) {
@@ -639,10 +663,8 @@ public class DossierFinderImpl extends BasePersistenceImpl<Dossier>
 
 			List<Dossier> results =
 				(List<Dossier>) QueryUtil.list(q, getDialect(), start, end);
-			List<Dossier> clones = new ArrayList<Dossier>(results);
-			Collections.sort(clones, obc);
 
-			return clones;
+			return results;
 		}
 		catch (Exception e) {
 			_log.error(e);

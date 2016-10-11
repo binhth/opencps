@@ -23,12 +23,14 @@ import java.util.Locale;
 import java.util.Stack;
 
 import org.opencps.dossiermgt.comparator.DossierFileDossierFileDateComparator;
+import org.opencps.dossiermgt.comparator.DossierSubmitDateComparator;
 import org.opencps.dossiermgt.comparator.DossierTemplateNameComparator;
 import org.opencps.dossiermgt.comparator.DossierTemplateNoComparator;
 import org.opencps.dossiermgt.model.Dossier;
 import org.opencps.dossiermgt.model.DossierFile;
 import org.opencps.dossiermgt.model.DossierPart;
 import org.opencps.dossiermgt.model.ServiceConfig;
+import org.opencps.dossiermgt.search.DossierDisplayTerms;
 import org.opencps.dossiermgt.search.DossierFileDisplayTerms;
 import org.opencps.dossiermgt.search.DossierTemplateDisplayTerms;
 import org.opencps.dossiermgt.service.DossierLocalServiceUtil;
@@ -109,6 +111,29 @@ public class DossierMgtUtil {
 		}
 		else if (orderByCol.equals(DossierTemplateDisplayTerms.DOSSIERTEMPLATE_TEMPLATENAME)) {
 			orderByComparator = new DossierTemplateNameComparator(orderByAsc);
+		}
+
+		return orderByComparator;
+	}
+	
+	/**
+	 * @param orderByCol
+	 * @param orderByType
+	 * @return
+	 */
+	public static OrderByComparator getDossierOrderByComparator(
+		String orderByCol, String orderByType) {
+
+		boolean orderByAsc = false;
+
+		if (orderByType.equals("asc")) {
+			orderByAsc = true;
+		}
+
+		OrderByComparator orderByComparator = null;
+
+		if (orderByCol.equals(DossierDisplayTerms.SUBMIT_DATETIME)) {
+			orderByComparator = new DossierSubmitDateComparator(orderByAsc);
 		}
 
 		return orderByComparator;

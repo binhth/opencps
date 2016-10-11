@@ -1,10 +1,4 @@
-<%@page import="java.util.Date"%>
-<%@page import="org.opencps.util.PortletConstants"%>
-<%@page import="org.opencps.dossiermgt.util.ActorBean"%>
-<%@page import="org.opencps.dossiermgt.bean.AccountBean"%>
-<%@page import="com.liferay.portal.kernel.mail.Account"%>
-<%@page import="org.opencps.dossiermgt.service.DossierLogLocalServiceUtil"%>
-<%@page import="org.opencps.util.WebKeys"%>
+
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -24,6 +18,17 @@
  */
 %>
 
+<%@page import="java.util.Date"%>
+<%@page import="org.opencps.util.PortletConstants"%>
+<%@page import="org.opencps.dossiermgt.util.ActorBean"%>
+<%@page import="org.opencps.dossiermgt.bean.AccountBean"%>
+<%@page import="com.liferay.portal.kernel.mail.Account"%>
+<%@page import="org.opencps.dossiermgt.service.DossierLogLocalServiceUtil"%>
+<%@page import="org.opencps.util.WebKeys"%>
+<%@page import="com.liferay.portal.kernel.messaging.MessageBusUtil"%>
+<%@page import="com.liferay.portal.kernel.messaging.Message"%>
+<%@page import="org.opencps.backend.message.UserActionMsg"%>
+<%@page import="org.opencps.backend.util.BackendUtils"%>
 <%@ include file="../init.jsp"%>
 
 <%
@@ -64,8 +69,10 @@
 %>
 
 <portlet:renderURL var="backURL">
-	<portlet:param name="mvcPath"
-		value="/html/portlets/paymentmgt/frontoffice/frontofficepaymentlist.jsp" />	
+	<portlet:param 
+		name="mvcPath"
+		value="/html/portlets/paymentmgt/frontoffice/frontofficepaymentlist.jsp" 
+	/>	
 </portlet:renderURL>
 
 <liferay-ui:header
@@ -102,25 +109,63 @@
 					PaymentConfig paymentConfig = PaymentConfigLocalServiceUtil.getPaymentConfigByGovAgency(scopeGroupId, paymentFile.getGovAgencyOrganizationId());
 					if (paymentConfig != null) {
 						if (keyPay.checkSecureHash(secure_hash)) {
+							
+							boolean trustServiceMode =
+								BackendUtils.checkServiceMode(paymentFile.getDossierId());
+
+							if (!trustServiceMode) {
+								UserActionMsg actionMsg =
+									new UserActionMsg();
+
+								actionMsg.setAction(org.opencps.util.WebKeys.ACTION_PAY_VALUE);
+
+								actionMsg.setPaymentFileId(paymentFile.getPaymentFileId());
+
+								actionMsg.setDossierId(paymentFile.getDossierId());
+
+								actionMsg.setCompanyId(dossier.getCompanyId());
+
+								actionMsg.setGovAgencyCode(dossier.getGovAgencyCode());
+
+								Message message = new Message();
+
+								message.put("msgToEngine", actionMsg);
+
+								MessageBusUtil.sendMessage(
+									"opencps/frontoffice/out/destination",
+									message);
+
+							}
+
 							paymentFile.setPaymentStatus(PaymentMgtUtil.PAYMENT_STATUS_APPROVED);
 							paymentFile.setPaymentMethod(WebKeys.PAYMENT_METHOD_KEYPAY);
 							PaymentFileLocalServiceUtil.updatePaymentFile(paymentFile);
-							
-							ActorBean actorBean = new ActorBean(1, themeDisplay.getUserId());
-							
+
+							ActorBean actorBean =
+								new ActorBean(
+									1, themeDisplay.getUserId());
+
 							// Add dossierLog payment confirm
-							
-							DossierLogLocalServiceUtil.addDossierLog(themeDisplay.getUserId(), themeDisplay.getScopeGroupId(),
-								themeDisplay.getCompanyId(), paymentFile.getDossierId(), paymentFile.getFileGroupId(),
-								null, PortletConstants.DOSSIER_ACTION_CONFIRM_PAYMENT, PortletConstants.DOSSIER_ACTION_CONFIRM_PAYMENT,
-								new Date(), 1, 2, actorBean.getActor(), actorBean.getActorId(), actorBean.getActorName(), 
+
+							DossierLogLocalServiceUtil.addDossierLog(
+								themeDisplay.getUserId(),
+								themeDisplay.getScopeGroupId(),
+								themeDisplay.getCompanyId(),
+								paymentFile.getDossierId(),
+								paymentFile.getFileGroupId(),
+								null,
+								PortletConstants.DOSSIER_ACTION_CONFIRM_PAYMENT,
+								PortletConstants.DOSSIER_ACTION_CONFIRM_PAYMENT,
+								new Date(), 1, 2, actorBean.getActor(),
+								actorBean.getActorId(),
+								actorBean.getActorName(),
 								"html/portlet/paymentmgt/frontoffice/frontofficeconfirmkeypay.jsp");
 						}
 					}
 				}
 			}
 			catch (SystemException e) {
-				
+
 			}
 		%>
 		<c:if test="<%= dossier != null && paymentFile != null %>">

@@ -138,7 +138,7 @@
 
 	if (processStepId > 0) {
 		processStepDossierParts =
-	ProcessUtils.getDossierPartByStep(processStepId);
+			ProcessUtils.getDossierPartByStep(processStepId);
 	}
 	
 	//Get list DossierPart
@@ -469,8 +469,7 @@
 />
 
 <aui:input 
-	name="<%=ProcessOrderDisplayTerms.ESTIMATE_DATETIME %>" 
-	
+	name="<%=ProcessOrderDisplayTerms.ESTIMATE_DATE %>" 
 	type="hidden"
 />
 

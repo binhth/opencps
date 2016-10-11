@@ -75,6 +75,8 @@ public class ConfigurationImpl implements ConfigurationAction{
 		
 		boolean hideTabDossierFile = ParamUtil.getBoolean(actionRequest, "hideTabDossierFile");
 		
+		boolean showTabDossierResultFirst = ParamUtil.getBoolean(actionRequest, "showTabDossierResultFirst");
+		
 		PortletURL redirectURL =
 		    PortletURLFactoryUtil.create(
 		        PortalUtil.getHttpServletRequest(actionRequest),
@@ -110,6 +112,8 @@ public class ConfigurationImpl implements ConfigurationAction{
 		preferences.setValue("showServiceDomainIdTree", String.valueOf(showServiceDomainIdTree));
 		
 		preferences.setValue("hideTabDossierFile", String.valueOf(hideTabDossierFile));
+		
+		preferences.setValue("showTabDossierResultFirst", String.valueOf(showTabDossierResultFirst));
 		
 		preferences.store();
 
