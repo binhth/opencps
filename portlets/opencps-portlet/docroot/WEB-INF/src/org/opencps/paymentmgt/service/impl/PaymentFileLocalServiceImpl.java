@@ -180,6 +180,8 @@ public class PaymentFileLocalServiceImpl
 		long dossierId, long fileGroupId, PaymentFile syncPaymentFile)
 		throws SystemException {
 
+		System.out.println("##########################################syncPaymentFile.getKeypayUrl() " +
+			syncPaymentFile.getKeypayUrl());
 		long paymentFileId =
 			counterLocalService.increment(PaymentFile.class.getName());
 		PaymentFile paymentFile = paymentFilePersistence.create(paymentFileId);
@@ -204,7 +206,9 @@ public class PaymentFileLocalServiceImpl
 		paymentFile.setInvoiceNo(syncPaymentFile.getInvoiceNo());
 		paymentFile.setInvoiceTemplateNo(syncPaymentFile.getInvoiceTemplateNo());
 		paymentFile.setKeypayGoodCode(syncPaymentFile.getKeypayGoodCode());
+		paymentFile.setKeypayUrl(syncPaymentFile.getKeypayUrl());
 		paymentFile.setKeypayMerchantCode(syncPaymentFile.getKeypayMerchantCode());
+		paymentFile.setKeypayTransactionId(syncPaymentFile.getKeypayTransactionId());
 		paymentFile.setModifiedDate(now);
 		paymentFile.setOid(syncPaymentFile.getOid());
 		paymentFile.setOwnerOrganizationId(syncPaymentFile.getOwnerOrganizationId());

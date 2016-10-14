@@ -58,6 +58,12 @@ public class SubmitPaymentFileMessage {
 		this.setHornetqContext(hornetqContext);
 	}
 
+	/**
+	 * @param paymentFile
+	 * @param typeUpdate
+	 * @throws JMSException
+	 * @throws NamingException
+	 */
 	public void sendMessageByHornetq(PaymentFile paymentFile, String typeUpdate)
 		throws JMSException, NamingException {
 
@@ -85,15 +91,19 @@ public class SubmitPaymentFileMessage {
 					JMSMessageBodyUtil.getPaymentFileMsgBody(paymentFile);
 
 				paymentFileMsgBody.setServiceContext(syncServiceContext.getServiceContext());
-				
+
 				paymentFileMsgBody.setTypeUpdate(typeUpdate);
 
 				byte[] sender =
 					JMSMessageUtil.convertObjectToByteArray(paymentFileMsgBody);
 
+				_log.info("####################SubmitPaymentFileMessage: Sending byte message");
+
 				bytesMessage.writeBytes(sender);
 
 				_hornetqContext.getMessageProducer().send(bytesMessage);
+
+				_log.info("####################SubmitPaymentFileMessage: Finished sending byte message");
 			}
 		}
 		catch (Exception e) {
@@ -101,6 +111,10 @@ public class SubmitPaymentFileMessage {
 		}
 	}
 
+	/**
+	 * @throws JMSException
+	 * @throws NamingException
+	 */
 	public void receiveMessageByHornetq()
 		throws JMSException, NamingException {
 
@@ -129,6 +143,11 @@ public class SubmitPaymentFileMessage {
 
 	}
 
+	/**
+	 * @param paymentFile
+	 * @throws JMSException
+	 * @throws NamingException
+	 */
 	public void sendMessage(PaymentFile paymentFile)
 		throws JMSException, NamingException {
 
@@ -161,9 +180,13 @@ public class SubmitPaymentFileMessage {
 				byte[] sender =
 					JMSMessageUtil.convertObjectToByteArray(paymentBody);
 
+				_log.info("####################SubmitPaymentFileMessage: Sending byte message");
+
 				bytesMessage.writeBytes(sender);
 
 				_context.getMessageProducer().send(bytesMessage);
+
+				_log.info("####################SubmitPaymentFileMessage: Finished sending byte message");
 			}
 
 		}
@@ -172,6 +195,11 @@ public class SubmitPaymentFileMessage {
 		}
 	}
 
+	/**
+	 * @param paymentFileMsgBody
+	 * @throws SystemException
+	 * @throws PortalException
+	 */
 	public void reviceLocalMessage(PaymentFileMsgBody paymentFileMsgBody)
 		throws SystemException, PortalException {
 

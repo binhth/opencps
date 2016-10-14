@@ -553,8 +553,13 @@ public class PaymentMgtBackOfficePortlet extends MVCPortlet {
 		ActionRequest actionRequest, ActionResponse actionResponse) {
 
 		long paymentFileId = ParamUtil.getLong(actionRequest, "paymentFileId");
+
 		PaymentFile paymentFile = null;
+
+		Message sendToBackOffice = new Message();
+
 		try {
+
 			paymentFile =
 				PaymentFileLocalServiceUtil.getPaymentFile(paymentFileId);
 
@@ -565,8 +570,6 @@ public class PaymentMgtBackOfficePortlet extends MVCPortlet {
 				Dossier dossier =
 					DossierLocalServiceUtil.getDossier(paymentFile.getDossierId());
 				SendToBackOfficeMsg toBackOffice = new SendToBackOfficeMsg();
-
-				Message sendToBackOffice = new Message();
 
 				toBackOffice.setActorName(WebKeys.ACTION_PAY_VALUE);
 
@@ -580,11 +583,8 @@ public class PaymentMgtBackOfficePortlet extends MVCPortlet {
 
 				sendToBackOffice.put("toBackOffice", toBackOffice);
 
-				MessageBusUtil.sendMessage(
-					"opencps/backoffice/out/destination", sendToBackOffice);
-
 			}
-			
+
 			paymentFile.setPaymentStatus(PaymentMgtUtil.PAYMENT_STATUS_APPROVED);
 			paymentFile.setPaymentMethod(PaymentMgtUtil.PAYMENT_METHOD_CASH);
 			paymentFile.setModifiedDate(new Date());
@@ -607,6 +607,9 @@ public class PaymentMgtBackOfficePortlet extends MVCPortlet {
 				actorBean.getActorName(),
 				PaymentMgtBackOfficePortlet.class.getName());
 			SessionMessages.add(actionRequest, "confirm-payment-cash-success");
+
+			MessageBusUtil.sendMessage(
+				"opencps/backoffice/out/destination", sendToBackOffice);
 		}
 		catch (PortalException e) {
 			SessionErrors.add(actionRequest, "confirm-payment-cash-error");

@@ -143,10 +143,17 @@
 	/>
 		<portlet:param 
 		name="<%=DossierDisplayTerms.DOSSIER_STATUS %>" 
-		value="<%=String.valueOf(PortletConstants.DOSSIER_STATUS_NEW) %>"
+		value="<%= (dossier != null && dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_WAITING)) 
+			? String.valueOf(PortletConstants.DOSSIER_STATUS_WAITING) 
+			: String.valueOf(PortletConstants.DOSSIER_STATUS_NEW) %>"
 	/>
 	<portlet:param 
 		name="backURL" 
+		value="<%=backDossierList %>"
+	/>
+	
+	<portlet:param 
+		name="redirectURL" 
 		value="<%=currentURL %>"
 	/>
 </portlet:actionURL>
@@ -188,10 +195,11 @@
 						<c:if test="<%=dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_NEW) || 
 									dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_WAITING)%>">
 
+							<%
+								String jsUpdateDossierStatus = "javascript:" + renderResponse.getNamespace() + "updateDossierStatus()";
+							%>
+
 							<c:if test="<%=dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_NEW) %>">
-								<%
-									String jsUpdateDossierStatus = "javascript:" + renderResponse.getNamespace() + "updateDossierStatus()";
-								%>
 								<liferay-ui:icon 
 									cssClass="search-container-action fa forward"
 									image="forward" message="send"
@@ -203,7 +211,7 @@
 								<liferay-ui:icon
 									cssClass="search-container-action fa forward check-before-send"
 									image="reply" message="resend"
-									url="<%=updateDossierStatusURL.toString() %>"
+									url="<%=jsUpdateDossierStatus %>"
 								/>
 							</c:if>
 						</c:if>
@@ -262,15 +270,13 @@
 				</c:if>
 
 				<div>
-			 		<c:if test="<%=!quickCreateDossier %>">
-				 		<aui:button 
-				 			type="submit"
-				 			cssClass="btn des-sub-button radius20" 
-				 			icon="add"
-				 			value="edit-dossier-btn"
-				 		/>	
-			 		</c:if>
-			 	</div>
+					<aui:button 
+						type="submit" 
+						cssClass="btn des-sub-button radius20"
+						icon="add" 
+						value="edit-dossier-btn" 
+					/>
+				</div>
 			</c:if>
 
 		</liferay-util:buffer>

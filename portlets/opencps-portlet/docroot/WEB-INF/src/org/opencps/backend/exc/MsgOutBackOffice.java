@@ -51,6 +51,7 @@ import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageBusUtil;
 import com.liferay.portal.kernel.messaging.MessageListener;
 import com.liferay.portal.kernel.messaging.MessageListenerException;
+import com.liferay.portal.kernel.util.Validator;
 
 /**
  * @author khoavd
@@ -61,7 +62,7 @@ public class MsgOutBackOffice implements MessageListener {
 	public void receive(Message message)
 		throws MessageListenerException {
 
-		_log.info("///////////////STARTING MsgOutBackOffice");
+		_log.info("####################MsgOutBackOffice: Started receive message bus");
 
 		SendToBackOfficeMsg toBackOffice =
 			(SendToBackOfficeMsg) message.get("toBackOffice");
@@ -83,10 +84,9 @@ public class MsgOutBackOffice implements MessageListener {
 						WebKeys.JMS_QUEUE_OPENCPS.toLowerCase(),
 						WebKeys.JMS_QUEUE_OPENCPS.toLowerCase(), "remote",
 						"hornetq");
-				
+
 				if (toBackOffice.getActorName().equals(WebKeys.ACTION_PAY_VALUE)) {
 					// Sync Payment
-					_log.info("############################################## Send Sync Payment File");
 
 					SubmitPaymentFileMessage submitPaymentFileMessage =
 						new SubmitPaymentFileMessage(context);
@@ -95,6 +95,8 @@ public class MsgOutBackOffice implements MessageListener {
 
 					submitPaymentFileMessage.sendMessageByHornetq(
 						paymentFile, WebKeys.SYNC_PAY_CONFIRM);
+
+					_log.info("####################MsgOutBackOffice: Sended Synchronized JMSPaymentMessage");
 				}
 				else {
 					boolean statusUpdate = false;
@@ -153,32 +155,11 @@ public class MsgOutBackOffice implements MessageListener {
 					List<DossierFileMsgBody> lstDossierFileMsgBody =
 						JMSMessageBodyUtil.getDossierFileMsgBody(dossierFiles);
 
-					// JMSContext context =
-					// JMSMessageUtil.createProducer(
-					// toBackOffice.getCompanyId(),
-					// toBackOffice.getGovAgencyCode(), true,
-					// WebKeys.JMS_QUEUE_OPENCPS_FRONTOFFICE.toLowerCase(),
-					// WebKeys.JMS_QUEUE_OPENCPS_FRONTOFFICE.toLowerCase(),
-					// "remote", "jmscore");
-
-					_log.info("/////////////////////////Dossifile SIZE " +
-						lstDossierFileMsgBody.size());
-
 					SyncFromBackOfficeMessage syncFromBackoffice =
 						new SyncFromBackOfficeMessage(context);
 
 					SyncFromBackOfficeMsgBody syncFromBackOfficeMsgBody =
 						new SyncFromBackOfficeMsgBody();
-
-					_log.info("################################## dossier.getReceptionNo()" +
-						dossier.getReceptionNo() +
-						"--Time--" +
-						System.currentTimeMillis());
-
-					_log.info("################################## toBackOffice.getReceptionNo()" +
-						toBackOffice.getReceptionNo() +
-						"--Time--" +
-						System.currentTimeMillis());
 
 					syncFromBackOfficeMsgBody.setOid(dossier.getOid());
 					syncFromBackOfficeMsgBody.setReceptionNo(toBackOffice.getReceptionNo());
@@ -197,6 +178,13 @@ public class MsgOutBackOffice implements MessageListener {
 					syncFromBackOfficeMsgBody.setMessageInfo(toBackOffice.getMessageInfo());
 					syncFromBackOfficeMsgBody.setFileGroupId(toBackOffice.getFileGroupId());
 					syncFromBackOfficeMsgBody.setRequestCommand(toBackOffice.getRequestCommand());
+					
+					if(Validator.isNotNull(toBackOffice.getDossierLogOId())){
+						
+					}
+					//syncFromBackOfficeMsgBody.setActionHistory(actionHistory);
+					//syncFromBackOfficeMsgBody.setDossierLog(dossierLog);
+					
 					syncFromBackoffice.sendMessageByHornetq(syncFromBackOfficeMsgBody);
 
 					// Send to Callback
@@ -211,6 +199,8 @@ public class MsgOutBackOffice implements MessageListener {
 
 					MessageBusUtil.sendMessage(
 						"opencps/backoffice/engine/callback", sendToCallBack);
+
+					_log.info("####################MsgOutBackOffice: Sended Synchronized JMSSyncFromBackOffice");
 				}
 
 			}
