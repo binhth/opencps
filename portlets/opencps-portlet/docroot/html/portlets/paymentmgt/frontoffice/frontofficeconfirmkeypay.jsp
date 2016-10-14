@@ -62,9 +62,8 @@
 	String desc_5 = PortalUtil.getOriginalServletRequest(r).getParameter("desc_5");
 	String p_p_id = PortalUtil.getOriginalServletRequest(r).getParameter("p_p_id");
 	String p_p_lifecycle = PortalUtil.getOriginalServletRequest(r).getParameter("p_p_id");
-	KeyPay keyPay = new KeyPay(PortalUtil.getOriginalServletRequest(r));
 	
-	long dossierId = GetterUtil.getLong(merchant_trans_id);
+	KeyPay keyPay = new KeyPay(PortalUtil.getOriginalServletRequest(r));
 
 %>
 
@@ -87,33 +86,39 @@
 		</div>
 		<%
 			String receptionNo = good_code;
-			Dossier dossier = null;
-			try {
-				dossier = DossierLocalServiceUtil.fetchDossier(dossierId);
-			}
-			catch (SystemException e) {
-				
-			}
-			ServiceInfo serviceInfo = null;
-			try {
-				if (dossier != null)
-					serviceInfo = ServiceInfoLocalServiceUtil.getServiceInfo(dossier.getServiceInfoId());
-			}
-			catch (NoSuchServiceInfoException e) {
-				
-			}
+
+			
 			PaymentFile paymentFile = null;
+			Dossier dossier = null;
+			ServiceInfo  serviceInfo = null;
+
 			try {
-				paymentFile = PaymentFileLocalServiceUtil.getPaymentFileByMerchantResponse(Long.parseLong(merchant_trans_id), good_code, Double.parseDouble(net_cost));
-				if (paymentFile != null) {
-					PaymentConfig paymentConfig = PaymentConfigLocalServiceUtil.getPaymentConfigByGovAgency(scopeGroupId, paymentFile.getGovAgencyOrganizationId());
+				paymentFile =
+					PaymentFileLocalServiceUtil.getPaymentFileByMerchantResponse(
+						GetterUtil.getLong(merchant_trans_id),
+						good_code, Double.parseDouble(net_cost));
+				if (paymentFile != null &&
+					paymentFile.getPaymentStatus() == PaymentMgtUtil.PAYMENT_STATUS_REQUESTED) {
+
+					dossier =
+						DossierLocalServiceUtil.getDossierByOId(paymentFile.getDossierOId());
+
+					serviceInfo =
+						ServiceInfoLocalServiceUtil.getServiceInfo(dossier.getServiceInfoId());
+
+					PaymentConfig paymentConfig =
+						PaymentConfigLocalServiceUtil.getPaymentConfigByGovAgency(
+							scopeGroupId,
+							paymentFile.getGovAgencyOrganizationId());
 					if (paymentConfig != null) {
+
 						if (keyPay.checkSecureHash(secure_hash)) {
-							
+
 							boolean trustServiceMode =
 								BackendUtils.checkServiceMode(paymentFile.getDossierId());
 
 							if (!trustServiceMode) {
+
 								UserActionMsg actionMsg =
 									new UserActionMsg();
 
@@ -168,7 +173,7 @@
 
 			}
 		%>
-		<c:if test="<%= dossier != null && paymentFile != null %>">
+		<c:if test="<%= dossier != null && paymentFile != null && serviceInfo != null %>">
 		<div class="lookup-result">
 			<table>
 				<tr style="background: #fae5d3;">

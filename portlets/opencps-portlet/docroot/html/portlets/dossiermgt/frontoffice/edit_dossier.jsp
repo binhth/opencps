@@ -1,4 +1,5 @@
 
+<%@page import="org.opencps.backend.util.BackendUtils"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -140,10 +141,17 @@
 	/>
 		<portlet:param 
 		name="<%=DossierDisplayTerms.DOSSIER_STATUS %>" 
-		value="<%=String.valueOf(PortletConstants.DOSSIER_STATUS_NEW) %>"
+		value="<%= (dossier != null && dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_WAITING)) 
+			? String.valueOf(PortletConstants.DOSSIER_STATUS_WAITING) 
+			: String.valueOf(PortletConstants.DOSSIER_STATUS_NEW) %>"
 	/>
 	<portlet:param 
 		name="backURL" 
+		value="<%=backDossierList %>"
+	/>
+	
+	<portlet:param 
+		name="redirectURL" 
 		value="<%=currentURL %>"
 	/>
 </portlet:actionURL>
@@ -183,10 +191,11 @@
 						<c:if test="<%=dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_NEW) || 
 									dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_WAITING)%>">
 
+							<%
+								String jsUpdateDossierStatus = "javascript:" + renderResponse.getNamespace() + "updateDossierStatus()";
+							%>
+
 							<c:if test="<%=dossier.getDossierStatus().equals(PortletConstants.DOSSIER_STATUS_NEW) %>">
-								<%
-									String jsUpdateDossierStatus = "javascript:" + renderResponse.getNamespace() + "updateDossierStatus()";
-								%>
 								<liferay-ui:icon 
 									cssClass="search-container-action fa forward"
 									image="forward" message="send"
@@ -198,7 +207,7 @@
 								<liferay-ui:icon
 									cssClass="search-container-action fa forward check-before-send"
 									image="reply" message="resend"
-									url="<%=updateDossierStatusURL.toString() %>"
+									url="<%=jsUpdateDossierStatus %>"
 								/>
 							</c:if>
 						</c:if>
@@ -364,7 +373,7 @@
 				value="<%= scopeGroupId%>" 
 			/>
 			
-			<aui:input 
+			<aui:input
 				name="<%=DossierDisplayTerms.COMPANY_ID %>" type="hidden"
 				value="<%= company.getCompanyId()%>"
 			/>

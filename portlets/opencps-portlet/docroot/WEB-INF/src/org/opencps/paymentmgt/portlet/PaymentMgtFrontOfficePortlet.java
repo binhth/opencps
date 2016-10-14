@@ -147,7 +147,7 @@ public class PaymentMgtFrontOfficePortlet extends MVCPortlet {
 			boolean updatePaymentFile = false;
 			String merchant_trans_id =
 				String.valueOf(paymentFile.getKeypayTransactionId());
-			if (paymentFile.getKeypayTransactionId() == 0) {
+			if (Validator.isNull(paymentFile.getKeypayTransactionId())) {
 				SimpleDateFormat transFormat = new SimpleDateFormat("HHmmss");
 				paymentFile.setKeypayTransactionId(Integer.parseInt(transFormat.format(curDate)));
 				updatePaymentFile = true;
@@ -340,6 +340,7 @@ public class PaymentMgtFrontOfficePortlet extends MVCPortlet {
 				ServiceContextFactory.getInstance(actionRequest);
 			serviceContext.setAddGroupPermissions(true);
 			serviceContext.setAddGuestPermissions(true);
+
 			DLFolder dlFolder =
 				DLFolderUtil.getPaymentFolder(
 					themeDisplay.getScopeGroupId(),
@@ -354,6 +355,9 @@ public class PaymentMgtFrontOfficePortlet extends MVCPortlet {
 					dlFolder.getFolderId(), actionRequest, serviceContext);
 
 			if (paymentFileId > 0) {
+
+				Message message = new Message();
+				
 				paymentFile =
 					PaymentFileLocalServiceUtil.getPaymentFile(paymentFileId);
 
@@ -376,15 +380,9 @@ public class PaymentMgtFrontOfficePortlet extends MVCPortlet {
 
 					actionMsg.setGovAgencyCode(dossier.getGovAgencyCode());
 
-					Message message = new Message();
-
 					message.put("msgToEngine", actionMsg);
 
-					MessageBusUtil.sendMessage(
-						"opencps/frontoffice/out/destination", message);
-
 				}
-
 
 				paymentFile.setConfirmFileEntryId(fileEntry.getFileEntryId());
 				paymentFile.setPaymentStatus(PaymentMgtUtil.PAYMENT_STATUS_CONFIRMED);
@@ -413,22 +411,24 @@ public class PaymentMgtFrontOfficePortlet extends MVCPortlet {
 					serviceContext.getLocale(), "for-dossier"));
 				msgInforSb.append(StringPool.SPACE);
 				msgInforSb.append(DossierMgtUtil.getServiceName(paymentFile.getDossierId()));
-				
-				Dossier dossier = DossierLocalServiceUtil.fetchDossier(paymentFile.getDossierId());
+
+				Dossier dossier =
+					DossierLocalServiceUtil.fetchDossier(paymentFile.getDossierId());
 
 				DossierLogLocalServiceUtil.addDossierLog(
-				    serviceContext.getUserId(),
-				    serviceContext.getScopeGroupId(),
-				    serviceContext.getCompanyId(), paymentFile.getDossierId(),
-				    paymentFile.getFileGroupId(), dossier.getDossierStatus(),
-				    PortletConstants.DOSSIER_ACTION_REQUEST_PAYMENT,
-				    msgInforSb.toString(), new Date(), 1, 2,
-				    actorBean.getActor(), actorBean.getActorId(),
-				    actorBean.getActorName(),
-				    PaymentMgtFrontOfficePortlet.class.getName() +
-				        ".requestBankPayment()");
-				
+					serviceContext.getUserId(),
+					serviceContext.getScopeGroupId(),
+					serviceContext.getCompanyId(), paymentFile.getDossierId(),
+					paymentFile.getFileGroupId(), dossier.getDossierStatus(),
+					PortletConstants.DOSSIER_ACTION_REQUEST_PAYMENT,
+					msgInforSb.toString(), new Date(), 1, 2,
+					actorBean.getActor(), actorBean.getActorId(),
+					actorBean.getActorName(),
+					PaymentMgtFrontOfficePortlet.class.getName() +
+						".requestBankPayment()");
 
+				MessageBusUtil.sendMessage(
+					"opencps/frontoffice/out/destination", message);
 
 				SessionMessages.add(
 					actionRequest,

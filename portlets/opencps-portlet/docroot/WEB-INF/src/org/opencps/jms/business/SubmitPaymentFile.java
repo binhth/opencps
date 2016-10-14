@@ -43,12 +43,6 @@ public class SubmitPaymentFile {
 
 		String oId = paymentFileMsgBody.getOid();
 
-		System.out.println("###############################################SubmitPaymentFile OID " +
-			oId);
-
-		System.out.println("###############################################paymentFileMsgBody.getTypeUpdate() " +
-			paymentFileMsgBody.getTypeUpdate());
-
 		PaymentFile paymentFile =
 			PaymentFileLocalServiceUtil.getPaymentFileByOID(oId);
 
@@ -62,6 +56,8 @@ public class SubmitPaymentFile {
 				StringPool.DASH + paymentFileMsgBody.getFileTitle() +
 				StringPool.DASH + System.currentTimeMillis() : StringPool.BLANK;
 
+		System.out.println("####################SubmitPaymentFile: Starting synchronize PaymentFile");
+
 		paymentFile =
 			PaymentFileLocalServiceUtil.syncPaymentFile(
 				oId, paymentFileMsgBody.getTypeUpdate(),
@@ -73,6 +69,8 @@ public class SubmitPaymentFile {
 					? paymentFileMsgBody.getFileTitle() : StringPool.BLANK,
 				paymentFileMsgBody.getFileDescription(), StringPool.BLANK,
 				serviceContext);
+
+		// TODO add log
 
 		return paymentFile;
 	}
