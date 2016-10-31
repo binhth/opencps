@@ -1949,7 +1949,9 @@ public class DossierLocalServiceImpl extends DossierLocalServiceBaseImpl {
 		dossier.setServiceMode(serviceMode);
 		dossier.setSubjectId(subjectId);
 		dossier.setSubjectName(subjectName);
-		dossier.setOid(PortalUUIDUtil.generate());
+		if(Validator.isNull(dossier.getOid())){
+			dossier.setOid(PortalUUIDUtil.generate());
+		}
 		dossier.setWardCode(wardCode);
 		dossier.setWardName(wardName);
 
