@@ -162,7 +162,7 @@
 								</span>
 								<span class="create-account">
 									<liferay-portlet:renderURL var="linkToPage"></liferay-portlet:renderURL>
-									<aui:a href="<%=linkToPage %>">
+									<aui:a href="<%=linkToPage.toString().replaceFirst("maximized", "normal") %>">
 										<liferay-ui:message key="create-account"/>
 									</aui:a>
 								</span>
