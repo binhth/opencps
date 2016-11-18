@@ -152,7 +152,7 @@ public class MessageBusUtil {
 		        .getUserId());
 
 		subscriptionSender
-		    .addRuntimeSubscribers(toAddress, toName);
+		    .addRuntimeSubscribers(toAddress, null);
 
 		subscriptionSender
 		    .flushNotificationsAsync();
@@ -231,7 +231,7 @@ public class MessageBusUtil {
 		        .getUserId());
 
 		subscriptionSender
-		    .addRuntimeSubscribers(toAddress, toName);
+		    .addRuntimeSubscribers(toAddress, null);
 
 		subscriptionSender
 		    .flushNotificationsAsync();
@@ -299,7 +299,7 @@ public class MessageBusUtil {
 		        .getUserId());
 
 		subscriptionSender
-		    .addRuntimeSubscribers(toAddress, toName);
+		    .addRuntimeSubscribers(toAddress, null);
 
 		subscriptionSender
 		    .flushNotificationsAsync();
@@ -385,7 +385,7 @@ public class MessageBusUtil {
 
 					subscriptionSender.setUserId(user.getUserId());
 
-					subscriptionSender.addRuntimeSubscribers(toAddress, toName);
+					subscriptionSender.addRuntimeSubscribers(toAddress, null);
 
 					subscriptionSender.flushNotificationsAsync();
 				}
