@@ -63,18 +63,13 @@
 	border: 1px solid #cbcbcb;
 }
 
-.ocps-btn{
-	margin-bottom: 5px;
-    box-shadow: none;
-    border-radius: 4px;
-}
-
-.ocps-green{
-    color: #fff !important;
-    background-color: #4CAF50 !important;
-}
-
-.ocps-red{
-	color: #fff !important;
-    background-color: #f44336 !important;
+#waiting .badge,
+#NLKTTT .badge,
+#NLHDCHS .badge,
+#NLDD .badge,
+#paying .badge,
+#done .badge,
+#HSBTC .badge,
+#canceled .badge{
+/* 	background-color: #e1576b !important;  */
 }

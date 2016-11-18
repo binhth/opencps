@@ -263,8 +263,8 @@ public class SyncFromBackOffice implements MessageListener {
 			
 			emailBody = StringUtil.replace(emailBody, "{receptionNo}", Long.toString(dossierId));
 
-			
-			emailBody = emailBody + LanguageUtil.get(locale, dossier.getDossierStatus());
+			emailBody = StringUtil.replace(emailBody, "{dossierStatus}", LanguageUtil.get(locale, dossier.getDossierStatus()));
+//			emailBody = emailBody + LanguageUtil.get(locale, dossier.getDossierStatus());
 			
 			SubscriptionSender subscriptionSender = new SubscriptionSender();
 

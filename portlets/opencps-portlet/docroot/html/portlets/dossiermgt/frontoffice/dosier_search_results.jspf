@@ -1,4 +1,8 @@
 
+<%@page import="org.opencps.util.PortletPropsValues"%>
+<%@page import="org.opencps.datamgt.service.DictItemLocalServiceUtil"%>
+<%@page import="org.opencps.datamgt.model.DictItem"%>
+<%@page import="com.liferay.portal.kernel.util.Validator"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -20,6 +24,12 @@
 
 
 <%
+	if(Validator.isNotNull(serviceDomainIndex_cfg)){
+		
+			searchTerms.setServiceDomainIndex(serviceDomainIndex_cfg);
+
+	}
+
 	totalCount = DossierLocalServiceUtil.countDossierByUser(scopeGroupId, themeDisplay.getUserId(), searchTerms.getKeywords(), searchTerms.getServiceDomainIndex(), dossierStatus);
 	dossiers = DossierLocalServiceUtil.getDossierByUser(scopeGroupId, themeDisplay.getUserId(), searchTerms.getKeywords(), searchTerms.getServiceDomainIndex(), dossierStatus, searchContainer.getStart(), searchContainer.getEnd(), 
 			searchContainer.getOrderByComparator());

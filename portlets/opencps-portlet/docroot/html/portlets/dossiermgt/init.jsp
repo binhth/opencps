@@ -1,4 +1,5 @@
 
+<%@page import="java.text.DecimalFormat"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -22,6 +23,8 @@
 <%@ include file="/init.jsp" %>
 
 <%
+	DecimalFormat doubleFomart=new DecimalFormat("#,###.#");
+
 	PortletPreferences preferences = renderRequest.getPreferences();
 	
 	portletResource = ParamUtil.getString(request, "portletResource");
@@ -53,5 +56,9 @@
 	boolean hiddenTreeNodeEqualNone = GetterUtil.getBoolean(preferences.getValue("hiddenTreeNodeEqualNone", "false"), false);
 	
 	boolean allowResultQuickView = GetterUtil.getBoolean(preferences.getValue("allowResultQuickView", "false"), false);
+	
+	String itemCode_cfg = GetterUtil.getString(preferences.getValue("itemCode_cfg", ""));
+	
+	String war_opencpsportlet_26_cfg = GetterUtil.getString(portletPreferences.getValue("war_opencpsportlet_26_cfg", ""));
 %>
 

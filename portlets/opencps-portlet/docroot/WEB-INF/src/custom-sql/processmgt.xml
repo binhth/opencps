@@ -343,21 +343,22 @@
 			SELECT 
 				DISTINCT
                 opencps_processstep.processStepId, 
-				opencps_processstep.stepName
+				opencps_processstep.stepName,
+				opencps_processstep.sequenceNo
 			FROM 
+				opencps_processstep
+			LEFT JOIN
 				opencps_processorder
-			INNER JOIN
-				opencps_serviceinfo 
 			ON 
-				opencps_processorder.serviceInfoId = opencps_serviceinfo.serviceinfoId
+				opencps_processorder.processStepId = opencps_processstep.processStepId
 			AND opencps_processorder.serviceInfoId = ?
 			
 			INNER JOIN
-				opencps_processstep
+				opencps_serviceinfo 
 			ON
-				opencps_processorder.processStepId = opencps_processstep.processStepId
+				opencps_processorder.serviceInfoId = opencps_serviceinfo.serviceinfoId
 			WHERE
-				opencps_processorder.processStepId IN 
+				opencps_processstep.processStepId IN 
 			(
 				SELECT
 					opencps_stepallowance.processStepId 
@@ -484,19 +485,20 @@
 			SELECT 
 				DISTINCT
                 opencps_processstep.processStepId, 
-				opencps_processstep.stepName
+				opencps_processstep.stepName,
+				opencps_processstep.sequenceNo
 			FROM 
+				opencps_processstep
+			LEFT JOIN
 				opencps_processorder
-			INNER JOIN
-				opencps_serviceinfo 
 			ON 
-				opencps_processorder.serviceInfoId = opencps_serviceinfo.serviceinfoId
+				opencps_processorder.processStepId = opencps_processstep.processStepId
 			AND opencps_processorder.serviceInfoId = ?
 			
 			INNER JOIN
-				opencps_processstep
+				opencps_serviceinfo 
 			ON
-				opencps_processorder.processStepId = opencps_processstep.processStepId
+				opencps_processorder.serviceInfoId = opencps_serviceinfo.serviceinfoId
 			WHERE
 				opencps_processorder.actionUserId = ?
 		]]>

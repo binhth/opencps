@@ -38,4 +38,7 @@
 	<category name="org.opencps.admin">
 		<portlet id="24"></portlet>
 	</category>
+	<category name="org.opencps.dashboard">
+		<portlet id="1001"></portlet>
+	</category>
 </display>

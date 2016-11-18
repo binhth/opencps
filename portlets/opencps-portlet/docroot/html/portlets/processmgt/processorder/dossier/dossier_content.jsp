@@ -130,11 +130,11 @@
 													<c:when test="<%=(partType == PortletConstants.DOSSIER_PART_TYPE_OPTION ||
 														partType == PortletConstants.DOSSIER_PART_TYPE_OTHER) && level == 0%>"
 													>
-														<span class="dossier-part-stt"> <%=dossierPart.getSibling() %></span>
+														<span class="dossier-part-stt"> <%=doubleFomart.format(dossierPart.getSibling()) %></span>
 														<i class="fa fa-dot-circle-o" aria-hidden="true"></i>
 													</c:when>
 														<c:otherwise>
-														<span class="dossier-part-stt"> <%=dossierPart.getSibling() %></span>
+														<span class="dossier-part-stt"> <%=doubleFomart.format(dossierPart.getSibling()) %></span>
 														<i 
 															id='<%="rowcheck" + dossierPart.getDossierpartId() + StringPool.DASH + index %>' 
 															class='<%=dossierFile != null &&  dossierFile.getFileEntryId() > 0 ? "fa fa-check-square-o" : "fa fa-square-o" %>' 
@@ -146,7 +146,7 @@
 												
 											</span>
 											<span class="opencps dossiermgt dossier-part-name">
-												<%=dossierPart.getPartName() + (Validator.isNotNull(dossierFile) ?  " - " + dossierFile.getDossierFileNo():StringPool.BLANK) + DossierMgtUtil.getLoaiGiayToLabel((Validator.isNotNull(dossierFile) ? dossierFile.getDossierFileMark() : -1), locale) %>
+												<%=dossierPart.getPartName() + ((Validator.isNotNull(dossierFile) && Validator.isNotNull(dossierFile.getDossierFileNo())) ?  " - " + LanguageUtil.get(pageContext, "so-hieu-gt") + ": " + dossierFile.getDossierFileNo():StringPool.BLANK) + DossierMgtUtil.getLoaiGiayToLabel((Validator.isNotNull(dossierFile) ? dossierFile.getDossierFileMark() : -1), locale) %>
 											</span>
 										</span>
 									
@@ -199,6 +199,10 @@
 													value="<%=String.valueOf(isOnlineData) %>"
 												/>
 												
+												<portlet:param 
+													name="isCBXL" 
+													value="true"
+												/>
 											</liferay-util:include>
 										</span>
 									</div>
@@ -268,6 +272,15 @@
 														<portlet:param 
 															name="isEditDossier" 
 															value="<%=String.valueOf(isEditDossier) %>"
+														/>
+														
+														<portlet:param 
+															name="isCBXL" 
+															value="true"
+														/>
+														<portlet:param 
+															name="isCBXL" 
+															value="true"
 														/>
 													</liferay-util:include>
 												</span>
@@ -350,6 +363,11 @@
 													name="isEditDossier" 
 													value="<%=String.valueOf(isEditDossier) %>"
 												/>
+												
+												<portlet:param 
+													name="isCBXL" 
+													value="true"
+												/>
 											</liferay-util:include>
 											<%
 											index ++;
@@ -374,3 +392,9 @@
 	}
 %>
 </div>
+
+<style>
+.label.opencps.dossiermgt.part-file-ctr.view-form .fa.fa-search{
+right: 170px !important;
+}
+</style>

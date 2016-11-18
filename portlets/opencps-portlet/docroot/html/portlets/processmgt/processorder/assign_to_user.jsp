@@ -369,7 +369,7 @@
 	
 	<div class="row-fluid">
 		<div class="span12">
-			<aui:input name="<%=ProcessOrderDisplayTerms.ACTION_NOTE %>" label="action-note" type="textarea" cssClass="input100"/>
+			<aui:input name="<%=ProcessOrderDisplayTerms.ACTION_NOTE %>" label="action-note-ykien" type="textarea" cssClass="input100"/>
 		</div>
 	</div>
 	

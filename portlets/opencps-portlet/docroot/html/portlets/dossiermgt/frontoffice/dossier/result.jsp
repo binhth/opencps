@@ -92,6 +92,15 @@
 		
 		%>
 		
+		
+		<aui:row>
+			<aui:col width="20" cssClass="bold">
+				<liferay-ui:message key="dossier-reception-no"/>
+			</aui:col>
+			<aui:col width="80">
+				<%=Validator.isNotNull(dossier.getReceptionNo()) ? dossier.getReceptionNo() : StringPool.DASH %>
+			</aui:col>
+		</aui:row>
 		<aui:row cssClass="pd_b20">
 			<aui:col width="20" cssClass="bold">
 				<liferay-ui:message key="dossier-service-name"/>
@@ -168,16 +177,6 @@
 							DateTimeUtil.convertDateToString(dossier.getSubmitDatetime(), DateTimeUtil._VN_DATE_TIME_FORMAT) : 
 							DateTimeUtil._EMPTY_DATE_TIME
 						%>
-					</aui:col>
-				</aui:row>
-				
-				<aui:row>
-					<aui:col width="30" cssClass="bold">
-						<liferay-ui:message key="dossier-reception-no"/>
-					</aui:col>
-					
-					<aui:col width="70">
-						<%=Validator.isNotNull(dossier.getReceptionNo()) ? dossier.getReceptionNo() : StringPool.DASH %>
 					</aui:col>
 				</aui:row>
 				

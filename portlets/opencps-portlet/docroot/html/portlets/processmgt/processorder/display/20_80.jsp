@@ -1,4 +1,6 @@
 
+<%@page import="java.util.Comparator"%>
+<%@page import="java.util.Collections"%>
 <%@page import="java.util.LinkedHashMap"%>
 <%@page import="org.opencps.processmgt.service.ProcessOrderLocalServiceUtil"%>
 <%@page import="org.opencps.processmgt.search.ProcessOrderSearchTerms"%>
@@ -127,12 +129,20 @@
 		
 	}catch(Exception e){}
 	
+	Collections.sort(processOrderSteps, new Comparator<ProcessOrderBean>() {
+
+        public int compare(ProcessOrderBean o1, ProcessOrderBean o2) {
+        	return String.valueOf(o1.getSequenceNo()).compareTo(String.valueOf(o2.getSequenceNo()));
+        }
+    });
+	
 	//remove duplicates process orders
 	Map<String, ProcessOrderBean> cleanMap = new LinkedHashMap<String, ProcessOrderBean>();
 	for (int i = 0; i < processOrderSteps.size(); i++) {
 	     cleanMap.put(processOrderSteps.get(i).getProcessStepId()+"", processOrderSteps.get(i));
 	}
 	processOrderSteps = new ArrayList<ProcessOrderBean>(cleanMap.values());
+	
 	
 	JSONObject arrayParam = JSONFactoryUtil
 		    .createJSONObject();
@@ -261,7 +271,7 @@
 								
 									String deadlineVal = Validator.isNotNull(processOrder.getDealine()) ? processOrder.getDealine() : StringPool.DASH;
 									
-									String hrefFix = "location.href='" + processURL.toString()+"'";
+									String hrefFix = "location.href='" + processURL.toString()+ "#" +renderResponse.getNamespace() +"tab="+ renderResponse.getNamespace() + "process"+"'";
 									String cssStatusColor = "status-color-" + processOrder.getDossierStatus();
 								%>
 								

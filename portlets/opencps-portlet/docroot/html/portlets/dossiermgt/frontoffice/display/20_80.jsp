@@ -84,6 +84,18 @@
 	
 	long serviceDomainId = ParamUtil.getLong(request, "serviceDomainId");
 
+	String serviceDomainIndex_cfg = StringPool.BLANK;
+	
+	if(Validator.isNotNull(itemCode_cfg)){
+		DictItem dictItem_cfg = DictItemLocalServiceUtil.getDictItemInuseByItemCode(themeDisplay.getScopeGroupId(), PortletPropsValues.DATAMGT_MASTERDATA_SERVICE_DOMAIN, itemCode_cfg);
+		
+		if(Validator.isNotNull(dictItem_cfg)){
+			serviceDomainId = dictItem_cfg.getDictItemId();
+			serviceDomainIndex_cfg = dictItem_cfg.getTreeIndex();
+		}
+		
+	}
+	
 	PortletURL iteratorURL = renderResponse.createRenderURL();
 	iteratorURL.setParameter("mvcPath", templatePath + "frontofficedossierlist.jsp");
 	iteratorURL.setParameter("tabs1", DossierMgtUtil.TOP_TABS_DOSSIER);

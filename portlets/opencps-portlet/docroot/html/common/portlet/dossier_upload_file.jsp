@@ -1,4 +1,5 @@
-
+<%@page import="org.opencps.util.PortletPropsValues"%>
+<%@page import="com.liferay.portal.RolePermissionsException"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -199,7 +200,15 @@
 	</aui:row>
 	<aui:row>
 		<aui:col width="100">
-			<aui:input name="<%=DossierFileDisplayTerms.DOSSIER_FILE_UPLOAD %>" type="file"/>
+			<aui:input name="<%=DossierFileDisplayTerms.DOSSIER_FILE_UPLOAD %>" type="file">
+				<aui:validator name="acceptFiles">
+					'<%= StringUtil.merge(PortletPropsValues.ACCOUNTMGT_FILE_TYPE) %>'
+				</aui:validator>
+			</aui:input>
+			<div class="alert alert-info" role="alert">
+				<liferay-ui:message key="dossier-file-type-excep"/>: <%= StringUtil.merge(PortletPropsValues.ACCOUNTMGT_FILE_TYPE) %> --- <liferay-ui:message key="dossier-file-size-excep"/>: <%= (PortletPropsValues.ACCOUNTMGT_FILE_SIZE/1024)/1024 %> MB
+			</div>
+			<font class="requiredStyleCSS"><liferay-ui:message key="control-with-star-is-required"/></font>
 		</aui:col>
 	</aui:row>
 	

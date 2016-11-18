@@ -124,7 +124,7 @@
 					
 						String deadLine = Validator.isNotNull(processOrder.getDealine()) ? processOrder.getDealine() : StringPool.DASH;
 						
-						String href = "location.href='" + processURL.toString()+"'";
+						String href = "location.href='" + processURL.toString()+ "#" +renderResponse.getNamespace() +"tab="+ renderResponse.getNamespace() + "process"+"'";
 						
 						String cssStatusColor = "status-color-" + processOrder.getDossierStatus();
 					%>

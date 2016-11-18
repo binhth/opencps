@@ -905,7 +905,35 @@ public class DossierFileLocalServiceImpl
 
 		return dossierFilePersistence.findByDID_DP(dossierId, dossierPartId);
 	}
+	/**
+	 * @param dossierId
+	 * @param dossierPartId
+	 * @param syncStatus
+	 * @return
+	 * @throws NoSuchDossierFileException
+	 * @throws SystemException
+	 */
+	public List<DossierFile> getDossierFileByDID_SS_DP(
+		long dossierId, long dossierPartId, int syncStatus)
+		throws NoSuchDossierFileException, SystemException {
 
+		return dossierFilePersistence.findByDID_SS_DP(dossierId, dossierPartId, syncStatus);
+	}
+	
+	/**
+	 * @param dossierId
+	 * @param dossierPartId
+	 * @param syncStatus
+	 * @return
+	 * @throws NoSuchDossierFileException
+	 * @throws SystemException
+	 */
+	public int countDossierFileByDID_SS_DP(
+		long dossierId, long dossierPartId, int syncStatus)
+		throws NoSuchDossierFileException, SystemException {
+
+		return dossierFilePersistence.countByDID_SS_DP(dossierId, dossierPartId, syncStatus);
+	}
 	/**
 	 * @param dossierId
 	 * @param dossierPartId

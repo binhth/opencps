@@ -200,7 +200,7 @@
 					</span>
 					
 					<span class="span8">
-						<liferay-ui:message key="<%= DossierMgtUtil.getDossierLogs(StringPool.BLANK, dossierLog.getMessageInfo())  %>"/>
+						<liferay-ui:message key="<%= DossierMgtUtil.getDossierLogs(StringPool.BLANK, dossierLog.getMessageInfo()).replaceAll(\"update-version-file\", LanguageUtil.get(pageContext, \"update-version-file\"))  %>"/>
 					</span>
 					
 				</aui:row>

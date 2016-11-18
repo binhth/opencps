@@ -162,9 +162,15 @@
 					>
 						<%
 							
-							
+							long plIdP26 = 0;
+						
+							if(Validator.isNotNull(war_opencpsportlet_26_cfg)){
+								plIdP26 = Long.valueOf(war_opencpsportlet_26_cfg);
+							}else{
+								plIdP26 = PortalUtil.getPlidFromPortletId(themeDisplay.getScopeGroupId(),  WebKeys.P26_SUBMIT_ONLINE);
+							}
 							PortletURL linkURL = PortletURLFactoryUtil.create(request, WebKeys.P26_SUBMIT_ONLINE, 
-									PortalUtil.getPlidFromPortletId(themeDisplay.getScopeGroupId(),  WebKeys.P26_SUBMIT_ONLINE), 
+									plIdP26, 
 									PortletRequest.RENDER_PHASE);
 							linkURL.setWindowState(WindowState.MAXIMIZED);
 							linkURL.setPortletMode(PortletMode.VIEW);

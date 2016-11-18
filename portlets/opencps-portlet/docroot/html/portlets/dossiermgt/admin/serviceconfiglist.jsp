@@ -57,7 +57,7 @@
 
 	headerNames.add("template-name");
 	headerNames.add("service-mode");
-	headerNames.add("process"); 
+	headerNames.add("process-qt"); 
 	
 	boolean isPermission =
 		ServiceConfigPermission.contains(
@@ -163,7 +163,7 @@
 				<div class="row-fluid">
 					
 					<div class="span4 bold">
-						<liferay-ui:message key="process"/>
+						<liferay-ui:message key="process-qt"/>
 					</div>
 					<div class="span8"><%=process%> </div>
 				</div>

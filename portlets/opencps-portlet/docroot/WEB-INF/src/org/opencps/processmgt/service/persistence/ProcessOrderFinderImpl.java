@@ -426,7 +426,9 @@ public class ProcessOrderFinderImpl extends BasePersistenceImpl<ProcessOrder>
 				.addScalar("processStepId", Type.LONG);
 			q
 				.addScalar("stepName", Type.STRING);
-
+			q
+				.addScalar("sequenceNo", Type.STRING);
+			
 			QueryPos qPos = QueryPos
 				.getInstance(q);
 
@@ -460,11 +462,15 @@ public class ProcessOrderFinderImpl extends BasePersistenceImpl<ProcessOrder>
 						.getLong(objects[0]);
 					String processStepName = (String) objects[1];
 
+					String sequenceNo = (String) objects[2];
+					
 					processOrderBean
 						.setProcessStepId(processStepId);
 					processOrderBean
 						.setStepName(processStepName);
-
+					processOrderBean
+						.setSequenceNo(sequenceNo);
+					
 					processOrderBeans
 						.add(processOrderBean);
 				}
@@ -516,7 +522,9 @@ public class ProcessOrderFinderImpl extends BasePersistenceImpl<ProcessOrder>
 				.addScalar("processStepId", Type.LONG);
 			q
 				.addScalar("stepName", Type.STRING);
-
+			q
+				.addScalar("sequenceNo", Type.STRING);
+			
 			QueryPos qPos = QueryPos
 				.getInstance(q);
 
@@ -548,11 +556,15 @@ public class ProcessOrderFinderImpl extends BasePersistenceImpl<ProcessOrder>
 						.getLong(objects[0]);
 					String processStepName = (String) objects[1];
 
+					String sequenceNo = (String) objects[2];
+					
 					processOrderBean
 						.setProcessStepId(processStepId);
 					processOrderBean
 						.setStepName(processStepName);
-
+					processOrderBean
+					.setSequenceNo(sequenceNo);
+					
 					processOrderBeans
 						.add(processOrderBean);
 				}

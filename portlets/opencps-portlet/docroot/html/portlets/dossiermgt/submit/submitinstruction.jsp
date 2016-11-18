@@ -118,24 +118,17 @@
 					<div class="span5 bold-label">
 						<liferay-ui:message key="service-domain"/>
 					</div>
-					<div class="span7"><%=DictItemUtil.getNameDictItem(service.getDomainCode())%></div>
+					<div class="span7"><%=DictItemUtil.getNameDictItem(service.getDomainCode())%> - <liferay-ui:message key="level-dvc-temp"/><%=service.getServiceLevel() %></div>
 				</div>
 				
 				<div class="row-fluid">
 					
 					<div class="span5 bold-label">
-						<liferay-ui:message key="service-administrator"/>
+						<liferay-ui:message key="gov-code"/>
 					</div>
 					<div class="span7"><%=itemName%></div>
 				</div>
 				
-				<div class="row-fluid">
-					
-					<div class="span5 bold-label">
-						<liferay-ui:message key="level-dvc"/>
-					</div>
-					<div class="span7"><%=service.getServiceLevel() %> </div>
-				</div>
 			</liferay-util:buffer>
 			
 			<%
