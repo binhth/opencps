@@ -962,6 +962,85 @@
 			<role-name>user</role-name>
 		</security-role-ref>
 	</portlet>
+	
+	<portlet>
+		<portlet-name>27</portlet-name>
+		<display-name>Holiday Config</display-name>
+		<portlet-class>
+			org.opencps.holidayconfig.portlet.HolidayConfigPortlet
+		</portlet-class>
+		<init-param>
+			<name>view-template</name>
+			<value>/html/portlets/holidayconfig/admin/holidayconfig_list.jsp</value>
+		</init-param>
+		<init-param>
+			<name>template-path</name>
+			<value>/html/portlets/holidayconfig/admin/</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<resource-bundle>content.Language_27</resource-bundle>
+		<portlet-info>
+			<title>Holiday Config</title>
+			<short-title>Holiday Config</short-title>
+			<keywords>Holiday Config</keywords>
+		</portlet-info>
+		<security-role-ref>
+			<role-name>administrator</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>guest</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>power-user</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>user</role-name>
+		</security-role-ref>
+	</portlet>
+	
+	<portlet>
+		<portlet-name>28</portlet-name>
+		<display-name>Notifications</display-name>
+		<portlet-class>
+			org.opencps.notificationmgt.portlet.NotificationPortlet
+		</portlet-class>
+		<init-param>
+			<name>view-template</name>
+			<value>/html/portlets/notificationmgt/view.jsp</value>
+		</init-param>
+		<init-param>
+			<name>template-path</name>
+			<value>/html/portlets/notificationmgt/</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<resource-bundle>content.Language_28</resource-bundle>
+		<portlet-info>
+			<title>Notifications</title>
+			<short-title>Notifications</short-title>
+			<keywords>Notifications</keywords>
+		</portlet-info>
+		<security-role-ref>
+			<role-name>administrator</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>guest</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>power-user</role-name>
+		</security-role-ref>
+		<security-role-ref>
+			<role-name>user</role-name>
+		</security-role-ref>
+	</portlet>
+	
 	<public-render-parameter>
     	<identifier>active</identifier>
    		<qname>active</qname>

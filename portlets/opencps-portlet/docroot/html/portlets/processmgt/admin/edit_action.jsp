@@ -155,6 +155,8 @@
 				<aui:option value="5-minutely"> <liferay-ui:message key="5-minutely"/></aui:option>
 				<aui:option value="hourly"> <liferay-ui:message key="hourly"/></aui:option>
 				<aui:option value="daily"> <liferay-ui:message key="daily"/></aui:option>
+				<aui:option value="weekly"> <liferay-ui:message key="weekly"/></aui:option>
+				<aui:option value="monthly"> <liferay-ui:message key="monthly"/></aui:option>
 			</aui:select>
 		</aui:col>	
 	</aui:row>

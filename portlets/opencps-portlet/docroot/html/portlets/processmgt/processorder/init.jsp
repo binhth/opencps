@@ -16,8 +16,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 %>
-<%@ include file="../init.jsp"%>
 <%@page import="org.opencps.processmgt.search.ProcessOrderDisplayTerms"%>
+
+<%@ include file="../init.jsp"%>
+
 
 <%
 	PortletPreferences preferences1 = renderRequest.getPreferences();
@@ -36,5 +38,6 @@
 	
 	boolean hiddenTreeNodeEqualNone = GetterUtil.getBoolean(preferences.getValue("hiddenTreeNodeEqualNone", "false"), false);
 	
+	String assignFormDisplayStyle = preferences1.getValue("assignFormDisplayStyle", "popup");
 	
 %>

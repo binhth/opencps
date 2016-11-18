@@ -149,14 +149,23 @@
 	}
 	
 	long dictStatusId = 0;
+	long dictSubStatusId = 0;
 	
 	DictItem itemStatus = null;
+	DictItem itemSubStatus = null;
 	
 	if(step != null) {
 		itemStatus = PortletUtil.getDictItem("DOSSIER_STATUS", step.getDossierStatus(), scopeGroupId);
+		
+		itemSubStatus = PortletUtil.getDictItem("DOSSIER_SUB_STATUS", step.getDossierSubStatus(), scopeGroupId);
 		if(Validator.isNotNull(itemStatus)) {
 			dictStatusId = itemStatus.getDictItemId();
 		}
+		
+		if(Validator.isNotNull(itemSubStatus)) {
+			dictSubStatusId = itemSubStatus.getDictItemId();
+		}
+
 	}
 %>
 
@@ -181,32 +190,22 @@
 		value="<%= Validator.isNotNull(step) ? step.getProcessStepId() : StringPool.BLANK %>"/>
 
 	<aui:row>
-		<aui:col width="70">
+		<aui:col width="50">
 			<liferay-ui:message key="step-name"/>
 			<aui:input name="stepName" inlineLabel="false" label="" inlineField="false"></aui:input>
 		</aui:col>
-		<aui:col width="30">
+		<aui:col width="50">
 			<liferay-ui:message key="sequence-no"/>
 			<aui:input name="sequenceNo" inlineLabel="false" label=""></aui:input>
 		</aui:col>
 	</aui:row>
 	<aui:row>
-		<aui:col width="70">
-			<%-- <aui:select name="dossierStatus" label="" inlineField="<%=true %>" inlineLabel="left">
-				<aui:option value="<%=StringPool.BLANK %>"><liferay-ui:message key="all"/></aui:option>
-				<%
-					for(String status : PortletUtil.getDossierStatus()){
-						%>
-							<aui:option value="<%= status%>"><%=PortletUtil.getDossierStatusLabel(status, locale) %></aui:option>
-						<%
-					}
-				%>
-			</aui:select> --%>
+		<aui:col width="50">
 			
 			<datamgt:ddr 
 				depthLevel="1" 
 				dictCollectionCode="DOSSIER_STATUS" 
-				showLabel="<%=false%>"
+				showLabel="<%=true%>"
 				emptyOptionLabels="dossier-status"
 				itemsEmptyOption="true"
 				itemNames="dossierStatus"
@@ -215,12 +214,35 @@
 			/>
 			
 		</aui:col>
-		<aui:col width="30">
-			<aui:input name="daysDuration" inlineField="false"></aui:input>
+		
+		<aui:col width="50">
+			
+			<datamgt:ddr 
+				depthLevel="1" 
+				dictCollectionCode="DOSSIER_SUB_STATUS" 
+				showLabel="<%=true%>"
+				emptyOptionLabels="dossier-sub-status"
+				itemsEmptyOption="true"
+				itemNames="dossierSubStatus"
+				selectedItems="<%=String.valueOf(dictSubStatusId)%>"
+				optionValueType="code"
+			/>
+			
+		</aui:col>
+
+	</aui:row>
+	
+	<aui:row>
+		<aui:col width="50">
+			<aui:input name="processStepNo" inlineField="false"/>		
+		</aui:col>
+		<aui:col width="50">
+			<aui:input name="daysDuration" inlineField="false"/>		
 		</aui:col>
 	</aui:row>
+	
 	<aui:row>
-		<aui:col width="70">
+		<aui:col width="50">
 			<aui:select name="referenceDossierPartId" showEmptyOption="true">
 				<%
 					for (DossierPart dossier : dossiers) {
@@ -233,7 +255,7 @@
 				%>
 			</aui:select>
 		</aui:col>
-		<aui:col width="30">
+		<aui:col width="50">
 			&nbsp;
 		</aui:col>
 	</aui:row>
@@ -262,6 +284,12 @@
 							}
 						%>
 					</aui:select>
+					<aui:input checked="<%= stepDossier.getReadOnly() %>" 
+					fieldParam='<%= "readOnly" + dossierIndex %>' 
+					id='<%= "readOnly" + dossierIndex %>' 
+					label="read-only" inlineField="<%= true %>" 
+					name='<%= "partReadOnly" + dossierIndex %>' 
+					type="checkbox"/>
 				</div>
 			</div>
 		

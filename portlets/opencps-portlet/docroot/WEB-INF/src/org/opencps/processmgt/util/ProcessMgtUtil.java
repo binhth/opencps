@@ -58,13 +58,7 @@ public class ProcessMgtUtil {
 					List<ActionHistory> actionList =
 					    ActionHistoryLocalServiceUtil.getActionHistoryRecent(
 					        processOrderId, preProcessStepId);
-					
-					System.out.println("######ACTIONLISSSSSSSSSSSSSS" + actionList.size());
-					
-					for (ActionHistory actionHis : actionList) {
-						System.out.println("######ACTIONLISSSSSSSSSSSSSS" + actionHis.getActionUserId() + "_" + actionHis.getActionDatetime());
 
-					}
 					
 					if (actionList.size() != 0) {
 						userId = actionList.get(0).getActionUserId();

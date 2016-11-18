@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app id="WebApp_ID" version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+<web-app id="WebApp_ID" version="2.5"
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 	<jsp-config>
 		<taglib>
 			<taglib-uri>http://opencps.org/datamgt</taglib-uri>
@@ -27,29 +29,41 @@
 		</init-param>
 		<load-on-startup>0</load-on-startup>
 	</servlet>
-	<servlet>
-      	<servlet-name>PreviewReportServlet</servlet-name>
-     	<servlet-class>org.opencps.servlet.PreviewReportServlet</servlet-class>
-  	</servlet>
-  	<servlet>
-      	<servlet-name>VerifySignServlet</servlet-name>
-     	<servlet-class>org.opencps.servlet.VerifySignDocumentServlet</servlet-class>
-  	</servlet>
-  	
 	<servlet-mapping>
-    	<servlet-name>VerifyEmailServlet</servlet-name>
-      	<url-pattern>/verify/*</url-pattern>
-  	</servlet-mapping> 
-  	
+		<servlet-name>VerifyEmailServlet</servlet-name>
+		<url-pattern>/verify/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>PreviewReportServlet</servlet-name>
+		<servlet-class>org.opencps.servlet.PreviewReportServlet</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>PreviewReportServlet</servlet-name>
 		<url-pattern>/preview/report/*</url-pattern>
-	</servlet-mapping>  
-	
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>VerifySignServlet</servlet-name>
+		<servlet-class>org.opencps.servlet.VerifySignDocumentServlet</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>VerifySignServlet</servlet-name>
 		<url-pattern>/verify-sign/*</url-pattern>
-	</servlet-mapping>  
-	
-	
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>VTCPayServlet</servlet-name>
+		<servlet-class>org.opencps.payment.servlet.VTCPayServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>VTCPayServlet</servlet-name>
+		<url-pattern>/VTCPayServlet/*</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>KeyPayServlet</servlet-name>
+		<servlet-class>org.opencps.payment.servlet.KeyPayServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>KeyPayServlet</servlet-name>
+		<url-pattern>/KeyPayServlet/*</url-pattern>
+	</servlet-mapping>
 </web-app>

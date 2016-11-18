@@ -1,4 +1,19 @@
-
+/**
+ * OpenCPS is the open source Core Public Services software
+ * Copyright (C) 2016-present OpenCPS community
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
+ */
 
 package org.opencps.processmgt.util;
 
@@ -15,18 +30,21 @@ import org.opencps.dossiermgt.service.DossierTemplateLocalServiceUtil;
 import org.opencps.processmgt.model.ActionHistory;
 import org.opencps.processmgt.model.ProcessStep;
 import org.opencps.processmgt.model.ProcessStepDossierPart;
+import org.opencps.processmgt.model.ProcessWorkflow;
 import org.opencps.processmgt.model.ServiceProcess;
 import org.opencps.processmgt.model.StepAllowance;
 import org.opencps.processmgt.model.WorkflowOutput;
+import org.opencps.processmgt.model.impl.ActionHistoryImpl;
 import org.opencps.processmgt.model.impl.ProcessStepDossierPartImpl;
+import org.opencps.processmgt.model.impl.ProcessStepImpl;
 import org.opencps.processmgt.model.impl.StepAllowanceImpl;
 import org.opencps.processmgt.model.impl.WorkflowOutputImpl;
 import org.opencps.processmgt.service.ActionHistoryLocalServiceUtil;
 import org.opencps.processmgt.service.ProcessStepDossierPartLocalServiceUtil;
 import org.opencps.processmgt.service.ProcessStepLocalServiceUtil;
+import org.opencps.processmgt.service.ProcessWorkflowLocalServiceUtil;
 import org.opencps.processmgt.service.ServiceProcessLocalServiceUtil;
 import org.opencps.processmgt.service.StepAllowanceLocalServiceUtil;
-import org.opencps.processmgt.service.impl.ActionHistoryLocalServiceImpl;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -253,9 +271,11 @@ public class ProcessUtils {
 			ProcessStepDossierPart doisserPart = new ProcessStepDossierPartImpl();
 			
 			long dossierPartId = ParamUtil.getLong(actionRequest, "dossierPart" + dossierIndex);
+			boolean readOnly = ParamUtil.getBoolean(actionRequest, "partReadOnly" + dossierIndex);
 			
 			doisserPart.setDossierPartId(dossierPartId);
 			doisserPart.setProcessStepId(processStepId);
+			doisserPart.setReadOnly(readOnly);
 			
 			ls.add(doisserPart);
 		}
@@ -485,6 +505,81 @@ public class ProcessUtils {
 	public static String[] _PROCESS_ORDER_CATEGORY_NAMES = {
 	    "process-order"
 	};
+	
+	/**
+	 * @param processWorkflowId
+	 * @return
+	 */
+	public static String getCssClass(long processWorkflowId) {
+	
+		String cssClass = StringPool.BLANK;
+		
+		int count = 0;
+		
+		try {
+			ProcessWorkflow processWorkflow = ProcessWorkflowLocalServiceUtil.fetchProcessWorkflow(processWorkflowId);
+			
+			if (processWorkflow.getAssignUser()) {
+	            count = count + 1;
+            }
+			
+			if (processWorkflow.getGenerateDeadline()) {
+	            count = count + 1;
+            }
+
+			if (processWorkflow.getGenerateReceptionNo()) {
+	            count = count + 1;
+            }
+			
+			if (processWorkflow.getRequestPayment()) {
+	            count = count + 1;
+            }
+			
+			if (count != 0) {
+				cssClass = "span" + Integer.toString(12/count);
+			}
+
+        }
+        catch (Exception e) {
+	        
+        }
+		
+		return cssClass;
+		
+	}
+
+
+	/**
+	 * @param processStepId
+	 * @return
+	 */
+	public static ProcessStep getPostProcessStep(long processStepId) {
+
+		ProcessStep step = new ProcessStepImpl();
+
+		try {
+			step = ProcessStepLocalServiceUtil.getProcessStep(processStepId);
+		}
+		catch (Exception e) {
+			
+		}
+
+
+		return step;
+	}
+	
+	public static ActionHistory getActionHistoryByLogId(long logId) {
+		ActionHistory actionHistory = new ActionHistoryImpl();
+		
+		try {
+	        actionHistory = ActionHistoryLocalServiceUtil.getActionHistoryByLogId(logId);
+        }
+        catch (Exception e) {
+	        // TODO: handle exception
+        }
+		
+		return actionHistory;
+	}
 	
 	private static Log _log = LogFactoryUtil.getLog(ProcessUtils.class.getName());
 }

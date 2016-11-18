@@ -44,6 +44,7 @@
     </ul>
     
     <span class="account-info">
+    	$theme.runtime("2_WAR_notificationsportlet")
     	<span class="account-name">
     		<img id="img1" alt="image user" src= "$images_folder/custom/welcome_new.png"></img>
     		<img id="img2" alt="image user" src= "$images_folder/custom/welcome_h.png"></img>

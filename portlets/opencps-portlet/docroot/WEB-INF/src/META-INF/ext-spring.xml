@@ -16,6 +16,8 @@
 
     <bean id="opencps.listener.backofficeprocessengine" class="org.opencps.backend.engine.BackOfficeProcessEngine" />
     <bean id="opencps.listener.backofficeprocesscallback" class="org.opencps.backend.engine.BackOfficeProcessCallback" />
+    
+    <bean id="opencps.listener.notifications" class="org.opencps.notificationmgt.engine.NotificationsListener" />
 
     <!-- Destinations -->
     <bean id="opencps.frontoffice.out.destination" class="com.liferay.portal.kernel.messaging.SerialDestination">
@@ -32,6 +34,10 @@
 
     <bean id="opencps.backoffice.engine.callback" class="com.liferay.portal.kernel.messaging.SerialDestination">
         <property name="name" value="opencps/backoffice/engine/callback" />
+    </bean>
+    
+    <bean id="opencps.notifications" class="com.liferay.portal.kernel.messaging.SerialDestination">
+        <property name="name" value="opencps/notifications" />
     </bean>
     
     <!-- Configurator -->
@@ -60,6 +66,11 @@
                         <ref bean="opencps.listener.backofficeprocesscallback" />
                     </list>
                 </entry>
+                <entry key="opencps/notifications">
+                    <list value-type="com.liferay.portal.kernel.messaging.MessageListener">
+                        <ref bean="opencps.listener.notifications" />
+                    </list>
+                </entry>
             </map>
         </property>
         <property name="destinations">
@@ -68,6 +79,7 @@
                 <ref bean="opencps.backoffice.out.destination"/>
                 <ref bean="opencps.backoffice.engine.destination"/>
                 <ref bean="opencps.backoffice.engine.callback"/>
+                <ref bean="opencps.notifications"/>
             </list>
         </property>
     </bean>

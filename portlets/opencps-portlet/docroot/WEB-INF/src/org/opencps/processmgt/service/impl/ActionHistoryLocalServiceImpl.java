@@ -20,8 +20,6 @@ package org.opencps.processmgt.service.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.opencps.datamgt.search.DictCollectionDisplayTerms;
-import org.opencps.datamgt.util.comparator.DictCollectionCreateDateComparator;
 import org.opencps.processmgt.NoSuchActionHistoryException;
 import org.opencps.processmgt.model.ActionHistory;
 import org.opencps.processmgt.service.base.ActionHistoryLocalServiceBaseImpl;
@@ -53,6 +51,17 @@ public class ActionHistoryLocalServiceImpl
 	 * {@link org.opencps.processmgt.service.ActionHistoryLocalServiceUtil} to
 	 * access the action history local service.
 	 */
+	
+	/**
+	 * @param logId
+	 * @return
+	 * @throws PortalException
+	 * @throws SystemException
+	 */
+	public ActionHistory getActionHistoryByLogId(long logId) throws PortalException, SystemException
+	{
+		return actionHistoryPersistence.fetchByLOG_ID(logId);
+	}
 
 	/**
 	 * @param userId
@@ -74,7 +83,7 @@ public class ActionHistoryLocalServiceImpl
 	    long userId, long groupId, long companyId, long processOrderId,
 	    long processWorkflowId, Date actionDatetime, String stepName,
 	    String actionName, String actionNote, long actionUserId, int daysDoing,
-	    int daysDelay, String dossierStatus)
+	    int daysDelay, String dossierStatus, long logId)
 	    throws SystemException {
 
 		long actionHistoryId = counterLocalService
@@ -121,6 +130,8 @@ public class ActionHistoryLocalServiceImpl
 			actionHistory
 			    .setDaysDoing(daysDoing);
 		}
+		
+		actionHistory.setLogId(logId);
 
 		actionHistory
 		    .setDaysDelay(daysDelay);
@@ -188,10 +199,8 @@ public class ActionHistoryLocalServiceImpl
 	}
 	
 	public ActionHistory getLatestActionHistory(
-	    long processOrderId, long processWorkflowId)
+	    long processOrderId, long processWorkflowId,boolean orderByAsc)
 	    throws NoSuchActionHistoryException, SystemException {
-
-		boolean orderByAsc = false;	
 
 		OrderByComparator orderByComparator =
 		    new ActionHistoryCreateDateComparator(orderByAsc);
@@ -200,7 +209,7 @@ public class ActionHistoryLocalServiceImpl
 		    .findByPOID_PWID_First(
 		        processOrderId, processWorkflowId, orderByComparator);
 	}
-
+	
 	public List<ActionHistory> getActionHistory(
 	    long processOrderId, long processWorkflowId)
 	    throws NoSuchActionHistoryException, SystemException {
@@ -247,11 +256,13 @@ public class ActionHistoryLocalServiceImpl
 	
 	
 	public List<ActionHistory> getActionHistoryByProcessOrderId(
-	    long processId, int start, int end)
-	    throws PortalException, SystemException {
+		long processId, int start, int end, boolean orderByAsc)
+		throws PortalException, SystemException {
+
+		OrderByComparator orderByComparator = new ActionHistoryCreateDateComparator(orderByAsc);
 
 		return actionHistoryPersistence.findByProcessOrderId(
-		    processId, start, end);
+			processId, start, end, orderByComparator);
 	}
 	
 	public int countActionHistoryByProcessId(long processId) throws PortalException, SystemException {

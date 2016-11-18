@@ -3,107 +3,150 @@
 <service-builder package-path="org.opencps.paymentmgt">
 	<author>trungdk</author>
 	<namespace>paymentmgt</namespace>
-    <entity name="PaymentFile" remote-service="true" local-service="true" human-name="Payment file" table="opencps_payment_file" uuid="true">
-        <column name="paymentFileId" type="long" primary="true"></column>
-        <column name="companyId" type="long"></column>
-        <column name="groupId" type="long"></column>
-        <column name="userId" type="long"></column>
-        <column name="createDate" type="Date"></column>
-        <column name="modifiedDate" type="Date"></column>
-        <column name="dossierId" type="long"></column>
-        <column name="fileGroupId" type="long"></column>
-        <column name="ownerUserId" type="long"></column>
-        <column name="ownerOrganizationId" type="long"></column>
-        <column name="govAgencyOrganizationId" type="long"></column>
-        <column name="paymentName" type="String"></column>
-        <column name="requestDatetime" type="Date"></column>
-        <column name="amount" type="double"></column>
-        <column name="requestNote" type="String"></column>
-        <column name="paymentOptions" type="String"></column>
-        <column name="keypayUrl" type="String"></column>
-        <column name="keypayTransactionId" type="long"></column>
-        <column name="keypayGoodCode" type="String"></column>
-        <column name="keypayMerchantCode" type="String"></column>
-        <column name="bankInfo" type="String"></column>
-        <column name="placeInfo" type="String"></column>
-        <column name="paymentStatus" type="int"></column>
-        <column name="paymentMethod" type="int"></column>
-        <column name="confirmDatetime" type="Date"></column>
-        <column name="confirmFileEntryId" type="long"></column>
-        <column name="approveDatetime" type="Date"></column>
-        <column name="accountUserName" type="String"></column>
-        <column name="approveNote" type="String"></column>
-        <column name="govAgencyTaxNo" type="String"></column>
-        <column name="invoiceTemplateNo" type="String"></column>
-        <column name="invoiceIssueNo" type="String"></column>
-        <column name="invoiceNo" type="String"></column>
-        <column name="syncStatus" type="int"></column>
-        <column name="oid" type="String"/>
-        <finder name="GoodCode" return-type="PaymentFile">
-            <finder-column name="groupId"></finder-column>
-            <finder-column name="keypayGoodCode"></finder-column>
-        </finder>
-        <finder return-type="Collection" name="D_P">
-        	<finder-column name="dossierId"/>
-        	<finder-column name="paymentStatus"/>
-        </finder>
-        <finder return-type="Collection" name="D_">
-        	<finder-column name="dossierId"/>
-        </finder>
+	<entity name="PaymentFile" remote-service="true" local-service="true"
+		human-name="Payment file" table="opencps_payment_file" uuid="true">
+		<column name="paymentFileId" type="long" primary="true"></column>
+		<column name="companyId" type="long"></column>
+		<column name="groupId" type="long"></column>
+		<column name="userId" type="long"></column>
+		<column name="createDate" type="Date"></column>
+		<column name="modifiedDate" type="Date"></column>
+		<column name="dossierId" type="long"></column>
+		<column name="fileGroupId" type="long"></column>
+		<column name="ownerUserId" type="long"></column>
+		<column name="ownerOrganizationId" type="long"></column>
+		<column name="govAgencyOrganizationId" type="long"></column>
+		<column name="paymentName" type="String"></column>
+		<column name="requestDatetime" type="Date"></column>
+		<column name="amount" type="double"></column>
+		<column name="requestNote" type="String"></column>
+		<column name="paymentOptions" type="String"></column>
+		<column name="keypayUrl" type="String"></column>
+		<column name="keypayTransactionId" type="long"></column>
+		<column name="keypayGoodCode" type="String"></column>
+		<column name="keypayMerchantCode" type="String"></column>
+		<column name="bankInfo" type="String"></column>
+		<column name="placeInfo" type="String"></column>
+		<column name="paymentStatus" type="int"></column>
+		<column name="paymentMethod" type="int"></column>
+		<column name="confirmDatetime" type="Date"></column>
+		<column name="confirmFileEntryId" type="long"></column>
+		<column name="approveDatetime" type="Date"></column>
+		<column name="accountUserName" type="String"></column>
+		<column name="approveNote" type="String"></column>
+		<column name="govAgencyTaxNo" type="String"></column>
+		<column name="invoiceTemplateNo" type="String"></column>
+		<column name="invoiceIssueNo" type="String"></column>
+		<column name="invoiceNo" type="String"></column>
+		<column name="syncStatus" type="int"></column>
+		<column name="oid" type="String" />
+		<column name="paymentConfig" type="long" />
+		<column name="paymentGateStatusCode" type="String" />
+		<column name="paymentGateResponseData" type="String" />
 
-        <finder name="MerchantResponse" return-type="PaymentFile">
-            <finder-column name="keypayTransactionId"></finder-column>
-            <finder-column name="keypayGoodCode"></finder-column>
-            <finder-column name="amount"></finder-column>
-        </finder>
-        
-        <finder return-type="PaymentFile" name="G_C">
-        	<finder-column name="keypayGoodCode"/>
-        </finder>
-        <finder return-type="PaymentFile" name="T_I">
-        	<finder-column name="keypayTransactionId"/>
-        </finder>
-        
-        <finder return-type="PaymentFile" name="OID">
-        	<finder-column name="oid"/>
-        </finder>
-        
-        <finder return-type="Collection" name="F_NEW_Request">
-        	<finder-column name="paymentStatus"/>
-        </finder>
-        
-        <reference entity="DLFileEntry" package-path="com.liferay.portlet.documentlibrary"/>
-        <reference package-path="com.liferay.portlet.documentlibrary" entity="DLFolder" />
-        <reference package-path="com.liferay.portlet.asset" entity="AssetEntry" />
-        <reference package-path="com.liferay.portlet.documentlibrary" entity="DLApp" />
-        
-    </entity>
-    <entity name="PaymentConfig" local-service="true" human-name="Payment configuration" table="opencps_payment_config">
-        <column name="paymentConfigId" type="long" primary="true"></column>
-        <column name="companyId" type="long"></column>
-        <column name="groupId" type="long"></column>
-        <column name="userId" type="long"></column>
-        <column name="createDate" type="Date"></column>
-        <column name="modifiedDate" type="Date"></column>
-        <column name="govAgencyOrganizationId" type="long"></column>
-        <column name="govAgencyName" type="String"></column>
-        <column name="govAgencyTaxNo" type="String"></column>
-        <column name="invoiceTemplateNo" type="String"></column>
-        <column name="invoiceIssueNo" type="String"></column>
-        <column name="invoiceLastNo" type="String"></column>
-        <column name="bankInfo" type="String"></column>
-        <column name="placeInfo" type="String"></column>
-        <column name="keypayDomain" type="String"></column>
-        <column name="keypayVersion" type="String"></column>
-        <column name="keypayMerchantCode" type="String"></column>
-        <column name="keypaySecureKey" type="String"></column>
-        <column name="reportTemplate" type="String"></column>
-        
-        <finder name="GovAgency" return-type="PaymentConfig">
-            <finder-column name="groupId"></finder-column>
-            <finder-column name="govAgencyOrganizationId"></finder-column>
-        </finder>
-        
-    </entity>
+		<finder name="GoodCode" return-type="PaymentFile">
+			<finder-column name="groupId"></finder-column>
+			<finder-column name="keypayGoodCode"></finder-column>
+		</finder>
+		<finder return-type="Collection" name="D_P">
+			<finder-column name="dossierId" />
+			<finder-column name="paymentStatus" />
+		</finder>
+		<finder return-type="Collection" name="D_">
+			<finder-column name="dossierId" />
+		</finder>
+
+		<finder name="MerchantResponse" return-type="PaymentFile">
+			<finder-column name="keypayTransactionId"></finder-column>
+			<finder-column name="keypayGoodCode"></finder-column>
+			<finder-column name="amount"></finder-column>
+		</finder>
+
+		<finder return-type="PaymentFile" name="G_C">
+			<finder-column name="keypayGoodCode" />
+		</finder>
+		<finder return-type="PaymentFile" name="T_I">
+			<finder-column name="keypayTransactionId" />
+		</finder>
+
+		<finder return-type="PaymentFile" name="OID">
+			<finder-column name="oid" />
+		</finder>
+
+		<finder return-type="Collection" name="F_NEW_Request">
+			<finder-column name="paymentStatus" />
+		</finder>
+
+		<reference entity="DLFileEntry" package-path="com.liferay.portlet.documentlibrary" />
+		<reference package-path="com.liferay.portlet.documentlibrary"
+			entity="DLFolder" />
+		<reference package-path="com.liferay.portlet.asset" entity="AssetEntry" />
+		<reference package-path="com.liferay.portlet.documentlibrary"
+			entity="DLApp" />
+
+	</entity>
+	<entity name="PaymentConfig" local-service="true"
+		human-name="Payment configuration" table="opencps_payment_config">
+		<column name="paymentConfigId" type="long" primary="true"></column>
+		<column name="companyId" type="long"></column>
+		<column name="groupId" type="long"></column>
+		<column name="userId" type="long"></column>
+		<column name="createDate" type="Date"></column>
+		<column name="modifiedDate" type="Date"></column>
+		<column name="govAgencyOrganizationId" type="long"></column>
+		<column name="govAgencyName" type="String"></column>
+		<column name="govAgencyTaxNo" type="String"></column>
+		<column name="invoiceTemplateNo" type="String"></column>
+		<column name="invoiceIssueNo" type="String"></column>
+		<column name="invoiceLastNo" type="String"></column>
+		<column name="bankInfo" type="String"></column>
+		<column name="placeInfo" type="String"></column>
+		<column name="keypayDomain" type="String"></column>
+		<column name="keypayVersion" type="String"></column>
+		<column name="keypayMerchantCode" type="String"></column>
+		<column name="keypaySecureKey" type="String"></column>
+		<column name="reportTemplate" type="String"></column>
+		<column name="paymentGateType" type="long"></column>
+		<column name="status" type="boolean"></column>
+		<column name="returnUrl" type="String"></column>
+
+		<finder name="GovAgencyPaymentType" return-type="PaymentConfig">
+			<finder-column name="groupId"></finder-column>
+			<finder-column name="govAgencyOrganizationId"></finder-column>
+			<finder-column name="paymentGateType"></finder-column>
+		</finder>
+		
+		<finder name="GovAgencyStatus" return-type="PaymentConfig">
+			<finder-column name="groupId"></finder-column>
+			<finder-column name="govAgencyOrganizationId"></finder-column>
+			<finder-column name="status"></finder-column>
+		</finder>
+		
+		<finder name="GovAgencyList" return-type="Collection">
+			<finder-column name="groupId"></finder-column>
+			<finder-column name="govAgencyOrganizationId"></finder-column>
+		</finder>
+		
+		<finder name="GovAgencyAndStatusList" return-type="Collection">
+			<finder-column name="groupId"></finder-column>
+			<finder-column name="govAgencyOrganizationId"></finder-column>
+			<finder-column name="status"></finder-column>
+		</finder>
+
+	</entity>
+	<entity name="PaymentGateConfig" local-service="true"
+		human-name="PaymentGate configuration" table="opencps_paymentgate_config">
+		<column name="paymentGateId" type="long" primary="true"></column>
+		<column name="paymentGateName" type="String"></column>
+	</entity>
+	
+	<entity name="PaymentStatusCode" local-service="true"
+		human-name="PaymentGate StatusCode" table="opencps_payment_statuscode">
+		<column name="paymentStatusCodeId" type="long" primary="true"></column>
+		<column name="statusCode" type="String"></column>
+		<column name="statusCodeMean" type="String"></column>
+		<column name="descripton" type="String"></column>
+		<column name="paymentGateId" type="String"></column>
+	</entity>
 
 </service-builder>

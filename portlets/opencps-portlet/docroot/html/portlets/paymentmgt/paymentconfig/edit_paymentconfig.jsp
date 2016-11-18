@@ -1,4 +1,8 @@
 
+<%@page import="org.opencps.paymentmgt.service.PaymentGateConfigLocalServiceUtil"%>
+<%@page import="org.opencps.paymentmgt.model.impl.PaymentGateConfigImpl"%>
+<%@page import="org.opencps.paymentmgt.model.PaymentGateConfig"%>
+<%@page import="java.util.ArrayList"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -46,6 +50,10 @@
 	}
 	List<WorkingUnit> wunits = WorkingUnitLocalServiceUtil.getWorkingUnits(scopeGroupId);
 	List<Organization> orgs = OrganizationLocalServiceUtil.getOrganizations(QueryUtil.ALL_POS,QueryUtil.ALL_POS);
+	
+	List<PaymentGateConfig> paymentGateConfigList = new ArrayList<PaymentGateConfig>();
+	paymentGateConfigList = PaymentGateConfigLocalServiceUtil.getPaymentGateConfigs(QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+	
 	PortletURL previewReportURL = renderResponse.createRenderURL();
 	previewReportURL.setParameter("mvcPath", templatePath + "preview_report.jsp");
 %>	
@@ -60,10 +68,12 @@
 				function loadPaymentConfig() {
 				    AUI().use('aui-io-request', function(A){
 				    	var govAgencyOrganizationId = A.one('#<portlet:namespace /><%= PaymentConfigDisplayTerms.GOV_AGENCY_ORGANIZATION_ID %>').val();
+				    	var paymentGateType = A.one('#<portlet:namespace /><%= PaymentConfigDisplayTerms.PAYMENT_GATE_TYPE %>').val();
 				        A.io.request('<%=resourceURL.toString()%>', {
 				        	 method: 'post',
 				             data: {
-				            	 <portlet:namespace /><%= PaymentConfigDisplayTerms.GOV_AGENCY_ORGANIZATION_ID %>: govAgencyOrganizationId
+				            	 <portlet:namespace /><%= PaymentConfigDisplayTerms.GOV_AGENCY_ORGANIZATION_ID %>: govAgencyOrganizationId,
+				            	 <portlet:namespace /><%= PaymentConfigDisplayTerms.PAYMENT_GATE_TYPE %>: paymentGateType
 				             },
 				             dataType: 'json',
 				             on: {
@@ -120,6 +130,22 @@
 					                 			A.one('#<portlet:namespace /><%= PaymentConfigDisplayTerms.REPORT_TEMPLATE %>').set('value', obj.<%= PaymentConfigDisplayTerms.REPORT_TEMPLATE %>);
 				                 			else
 				                 				A.one('#<portlet:namespace /><%= PaymentConfigDisplayTerms.REPORT_TEMPLATE %>').set('value', '');
+				                 			
+				                 			if(obj.<%= PaymentConfigDisplayTerms.PAYMENT_GATE_TYPE %>)
+				                 				A.one('#<portlet:namespace /><%= PaymentConfigDisplayTerms.PAYMENT_GATE_TYPE %>').set('selected', obj.<%= PaymentConfigDisplayTerms.PAYMENT_GATE_TYPE %>);
+				                 			
+				                 			if (obj.<%= PaymentConfigDisplayTerms.PAYMENT_STATUS %>){
+					                 			A.one('#<portlet:namespace /><%= PaymentConfigDisplayTerms.PAYMENT_STATUS %>').set('value', obj.<%= PaymentConfigDisplayTerms.PAYMENT_STATUS %>);
+				                 				A.one('#<portlet:namespace /><%= PaymentConfigDisplayTerms.PAYMENT_STATUS+PaymentConfigDisplayTerms.CHECKBOX %>').set('checked', obj.<%= PaymentConfigDisplayTerms.PAYMENT_STATUS %>);
+				                 			}else{
+				                 				A.one('#<portlet:namespace /><%= PaymentConfigDisplayTerms.PAYMENT_STATUS %>').set('value', false);
+				                 				A.one('#<portlet:namespace /><%= PaymentConfigDisplayTerms.PAYMENT_STATUS+PaymentConfigDisplayTerms.CHECKBOX %>').set('checked', false);
+				                 			}
+				                 			if (obj.<%= PaymentConfigDisplayTerms.RETURN_URL %>)
+					                 			A.one('#<portlet:namespace /><%= PaymentConfigDisplayTerms.RETURN_URL %>').set('value', obj.<%= PaymentConfigDisplayTerms.RETURN_URL %>);
+				                 			else
+				                 				A.one('#<portlet:namespace /><%= PaymentConfigDisplayTerms.RETURN_URL %>').set('value', '');
+				                 				
 				                 		}
 				                 	});
 				             	 }
@@ -128,168 +154,254 @@
 				    });
 				} 
 			</script>
-			
-			<portlet:actionURL var="updatePaymentConfigURL" name="updatePaymentConfig">			
-				<portlet:param name="returnURL" value="<%=currentURL %>"/>
-				<portlet:param name="backURL" value="<%=backURL %>"/>
+
+			<portlet:actionURL var="updatePaymentConfigURL"
+				name="updatePaymentConfig">
+				<portlet:param name="returnURL" value="<%=currentURL%>" />
+				<portlet:param name="backURL" value="<%=backURL%>" />
 			</portlet:actionURL>
-			
-			<liferay-ui:success 
-				key="update-payment-config-success" 
-				message="update-payment-config-success"
-			/>
-			
-			<liferay-ui:error 
-				key="update-payment-config-error" 
-				message="update-payment-config-error" 
-			/>
-			
-			<aui:form 
-				action="<%= updatePaymentConfigURL.toString() %>"
-				method="post"
-				name="fm"
-				id="fm"
-			>
-				<aui:input 
-					type="hidden" 
-					id="<%= PaymentConfigDisplayTerms.PAYMENT_CONFIG_ID %>"
-					name="<%= PaymentConfigDisplayTerms.PAYMENT_CONFIG_ID %>" 
-					value="<%= String.valueOf(paymentConfigId) %>"
-				/>
+
+			<liferay-ui:success key="update-payment-config-success"
+				message="update-payment-config-success" />
+
+			<liferay-ui:error key="update-payment-config-error"
+				message="update-payment-config-error" />
+
+			<aui:form action="<%=updatePaymentConfigURL.toString()%>"
+				method="post" name="fm" id="fm">
+				<aui:input type="hidden"
+					id="<%=PaymentConfigDisplayTerms.PAYMENT_CONFIG_ID%>"
+					name="<%=PaymentConfigDisplayTerms.PAYMENT_CONFIG_ID%>"
+					value="<%=String.valueOf(paymentConfigId)%>" />
+
+				<aui:row>
+					<aui:col width="50">
+						<aui:select
+							id="<%=PaymentConfigDisplayTerms.GOV_AGENCY_ORGANIZATION_ID%>"
+							onChange="loadPaymentConfig()"
+							name="<%=PaymentConfigDisplayTerms.GOV_AGENCY_ORGANIZATION_ID%>"
+							label="gov-agency-organization-id">
+							<%
+								for (WorkingUnit wunit : wunits) {
+									if (c != null &&
+										wunit.getMappingOrganisationId() == c.getGovAgencyOrganizationId()) {
+							%>
+								<aui:option selected="<%=true%>"
+									value="<%=wunit.getMappingOrganisationId()%>"><%=wunit.getName()%></aui:option>
+								
+							<%
+									}else {
+							%>
+								<aui:option selected="<%=false%>"
+									value="<%=wunit.getMappingOrganisationId()%>"><%=wunit.getName()%></aui:option>
+							<%
+									}
+								}
+							%>
+						</aui:select>
+					</aui:col>
+					
+					<aui:col width="50">
+						<aui:select
+							id="<%=PaymentConfigDisplayTerms.PAYMENT_GATE_TYPE%>"
+							onChange="loadPaymentConfig()"
+							name="<%=PaymentConfigDisplayTerms.PAYMENT_GATE_TYPE%>"
+							label="payment-gate-type">
+							<%
+								for (PaymentGateConfig paymentGateConfig : paymentGateConfigList) {
+									
+							%>
+								<aui:option
+									value="<%=paymentGateConfig.getPaymentGateId()%>"><%=paymentGateConfig.getPaymentGateName()%></aui:option>
+							<%
+								}
+							%>
+						</aui:select>
+					</aui:col>
+				</aui:row>
 				
 				<aui:row>
 					<aui:col>
-						<aui:select id="<%= PaymentConfigDisplayTerms.GOV_AGENCY_ORGANIZATION_ID %>" onChange="loadPaymentConfig()" name="<%= PaymentConfigDisplayTerms.GOV_AGENCY_ORGANIZATION_ID %>" label="gov-agency-organization-id">
-						<%
-							for (WorkingUnit wunit : wunits) {
-								if (c != null && wunit.getMappingOrganisationId() == c.getGovAgencyOrganizationId()) {
-						%>	
-						<aui:option selected="<%= true %>" value="<%= wunit.getMappingOrganisationId() %>"><%= wunit.getName() %></aui:option>
-						<%
-								}
-								else {
-						%>
-						<aui:option selected="<%= false %>" value="<%= wunit.getMappingOrganisationId() %>"><%= wunit.getName() %></aui:option>
-						<%			
-								}
-							}
-						%>
-						</aui:select>	
+						<aui:input 
+							id="<%=PaymentConfigDisplayTerms.PAYMENT_STATUS%>"
+							name="<%=PaymentConfigDisplayTerms.PAYMENT_STATUS%>"
+							label="active"
+							type="checkbox"
+							>
+							
+						</aui:input>
 					</aui:col>
 				</aui:row>
-				
+
 				<aui:row>
 					<aui:col width="50">
-						<aui:input value="<%= c != null ? c.getBankInfo() : \"\" %>" id="<%= PaymentConfigDisplayTerms.BANK_INFO %>" cssClass="input100" name="<%= PaymentConfigDisplayTerms.BANK_INFO %>" type="textarea" label="bank-info">
+						<aui:input value="<%=c != null ? c.getBankInfo() :\"\"%>"
+							id="<%=PaymentConfigDisplayTerms.BANK_INFO%>"
+							cssClass="input100"
+							name="<%=PaymentConfigDisplayTerms.BANK_INFO%>" type="textarea"
+							label="bank-info">
 							<aui:validator name="required"></aui:validator>
 						</aui:input>
 					</aui:col>
 					<aui:col width="50">
-						<aui:input value="<%= c != null ? c.getPlaceInfo() : \"\" %>" id="<%= PaymentConfigDisplayTerms.PLACE_INFO %>" cssClass="input100" name="<%= PaymentConfigDisplayTerms.PLACE_INFO %>" type="textarea" label="place-info">
+						<aui:input value="<%=c != null ? c.getPlaceInfo() :\"\"%>"
+							id="<%=PaymentConfigDisplayTerms.PLACE_INFO%>"
+							cssClass="input100"
+							name="<%=PaymentConfigDisplayTerms.PLACE_INFO%>"
+							type="textarea" label="place-info">
 							<aui:validator name="required"></aui:validator>
 						</aui:input>
 					</aui:col>
 				</aui:row>
-				
+
 				<aui:row>
 					<aui:col>
 						<div class="navbar">
 							<div class="navbar-inner">
-								<a class="brand">
-									<liferay-ui:message key="keypay-configuration"></liferay-ui:message>
+								<a class="brand"> <liferay-ui:message
+										key="keypay-configuration"></liferay-ui:message>
 								</a>
 							</div>
 						</div>
 					</aui:col>
 				</aui:row>
-				
+
 				<aui:row>
 					<aui:col width="50">
-						<aui:input value="<%= c != null ? c.getKeypayDomain() : \"\" %>" id="<%= PaymentConfigDisplayTerms.KEYPAY_DOMAIN  %>" cssClass="input100" name="<%= PaymentConfigDisplayTerms.KEYPAY_DOMAIN %>" label="keypay-domain">
+						<aui:input value="<%=c != null ? c.getKeypayDomain() :\"\"%>"
+							id="<%=PaymentConfigDisplayTerms.KEYPAY_DOMAIN%>"
+							cssClass="input100"
+							name="<%=PaymentConfigDisplayTerms.KEYPAY_DOMAIN%>"
+							label="keypay-domain">
 							<aui:validator name="required"></aui:validator>
-							<aui:validator name="url"/>
+							<aui:validator name="url" />
 						</aui:input>
 					</aui:col>
 					<aui:col width="50">
-						<aui:input value="<%= c != null ? c.getKeypayVersion() : \"\" %>" id="<%= PaymentConfigDisplayTerms.KEYPAY_VERSION %>" cssClass="input100" name="<%= PaymentConfigDisplayTerms.KEYPAY_VERSION %>" label="keypay-version">
+						<aui:input value="<%=c != null ? c.getKeypayVersion() :\"\"%>"
+							id="<%=PaymentConfigDisplayTerms.KEYPAY_VERSION%>"
+							cssClass="input100"
+							name="<%=PaymentConfigDisplayTerms.KEYPAY_VERSION%>"
+							label="keypay-version">
 							<aui:validator name="required"></aui:validator>
 						</aui:input>
 					</aui:col>
 				</aui:row>
-				
+
 				<aui:row>
 					<aui:col width="50">
-						<aui:input value="<%= c != null ? c.getKeypayMerchantCode() : \"\" %>" id="<%= PaymentConfigDisplayTerms.KEYPAY_MERCHANT_CODE %>" cssClass="input100" name="<%= PaymentConfigDisplayTerms.KEYPAY_MERCHANT_CODE %>" label="keypay-merchant-code">
+						<aui:input
+							value="<%=c != null ? c.getKeypayMerchantCode() :\"\"%>"
+							id="<%=PaymentConfigDisplayTerms.KEYPAY_MERCHANT_CODE%>"
+							cssClass="input100"
+							name="<%=PaymentConfigDisplayTerms.KEYPAY_MERCHANT_CODE%>"
+							label="keypay-merchant-code">
 							<aui:validator name="required"></aui:validator>
 						</aui:input>
 					</aui:col>
 					<aui:col width="50">
-						<aui:input value="<%= c != null ? c.getKeypaySecureKey() : \"\" %>" id="<%= PaymentConfigDisplayTerms.KEYPAY_SECURE_KEY %>" cssClass="input100" name="<%= PaymentConfigDisplayTerms.KEYPAY_SECURE_KEY %>" label="keypay-secure-key">
+						<aui:input
+							value="<%=c != null ? c.getKeypaySecureKey() :\"\"%>"
+							id="<%=PaymentConfigDisplayTerms.KEYPAY_SECURE_KEY%>"
+							cssClass="input100"
+							name="<%=PaymentConfigDisplayTerms.KEYPAY_SECURE_KEY%>"
+							label="keypay-secure-key">
 							<aui:validator name="required"></aui:validator>
 						</aui:input>
 					</aui:col>
 				</aui:row>
-				
+
 				<aui:row>
 					<aui:col>
 						<div class="navbar">
 							<div class="navbar-inner">
-								<a class="brand">
-									<liferay-ui:message key="invoice-configuration"></liferay-ui:message>
+								<a class="brand"> <liferay-ui:message
+										key="invoice-configuration"></liferay-ui:message>
 								</a>
 							</div>
 						</div>
 					</aui:col>
 				</aui:row>
-				
+
 				<aui:row>
 					<aui:col width="50">
-						<aui:input value="<%= c != null ? c.getGovAgencyTaxNo() : \"\" %>" id="<%= PaymentConfigDisplayTerms.GOV_AGENCY_TAX_NO %>" cssClass="input100" name="<%= PaymentConfigDisplayTerms.GOV_AGENCY_TAX_NO %>" label="gov-agency-tax-no">
+						<aui:input value="<%=c != null ? c.getGovAgencyTaxNo() :\"\"%>"
+							id="<%=PaymentConfigDisplayTerms.GOV_AGENCY_TAX_NO%>"
+							cssClass="input100"
+							name="<%=PaymentConfigDisplayTerms.GOV_AGENCY_TAX_NO%>"
+							label="gov-agency-tax-no">
 							<aui:validator name="required"></aui:validator>
 						</aui:input>
 					</aui:col>
 					<aui:col width="50">
-						<aui:input value="<%= c != null ? c.getInvoiceTemplateNo() : \"\" %>" id="<%= PaymentConfigDisplayTerms.INVOICE_TEMPLATE_NO %>" cssClass="input100" name="<%= PaymentConfigDisplayTerms.INVOICE_TEMPLATE_NO %>" label="invoice-template-no">
+						<aui:input
+							value="<%=c != null ? c.getInvoiceTemplateNo() :\"\"%>"
+							id="<%=PaymentConfigDisplayTerms.INVOICE_TEMPLATE_NO%>"
+							cssClass="input100"
+							name="<%=PaymentConfigDisplayTerms.INVOICE_TEMPLATE_NO%>"
+							label="invoice-template-no">
 							<aui:validator name="required"></aui:validator>
-						</aui:input>	
+						</aui:input>
 					</aui:col>
 				</aui:row>
-				
+
 				<aui:row>
 					<aui:col width="50">
-						<aui:input value="<%= c != null ? c.getInvoiceIssueNo() : \"\" %>" id="<%= PaymentConfigDisplayTerms.INVOICE_ISSUE_NO %>" cssClass="input100" name="<%= PaymentConfigDisplayTerms.INVOICE_ISSUE_NO %>" label="invoice-issue-no">
+						<aui:input value="<%=c != null ? c.getInvoiceIssueNo() :\"\"%>"
+							id="<%=PaymentConfigDisplayTerms.INVOICE_ISSUE_NO%>"
+							cssClass="input100"
+							name="<%=PaymentConfigDisplayTerms.INVOICE_ISSUE_NO%>"
+							label="invoice-issue-no">
 							<aui:validator name="required"></aui:validator>
 						</aui:input>
 					</aui:col>
 					<aui:col width="50">
-						<aui:input value="<%= c != null ? c.getInvoiceLastNo() : \"\" %>" id="<%= PaymentConfigDisplayTerms.INVOICE_LAST_NO %>" cssClass="input100" name="<%= PaymentConfigDisplayTerms.INVOICE_LAST_NO %>" label="invoice-last-no">
+						<aui:input value="<%=c != null ? c.getInvoiceLastNo() :\"\"%>"
+							id="<%=PaymentConfigDisplayTerms.INVOICE_LAST_NO%>"
+							cssClass="input100"
+							name="<%=PaymentConfigDisplayTerms.INVOICE_LAST_NO%>"
+							label="invoice-last-no">
 							<aui:validator name="required"></aui:validator>
 							<aui:validator name="maxLength"
-				            	errorMessage="no-more-than-7-characters">7</aui:validator>
-						</aui:input>	
-					</aui:col>
-				</aui:row>
-				
-				<aui:row>
-					<aui:col>
-						<aui:button cssClass="pull-right" id="previewButton" name="previewButton" value="view-report-template"></aui:button>
-					</aui:col>
-				</aui:row>
-				<aui:row>
-					<aui:col>
-						<aui:input value="<%= c != null ? c.getReportTemplate() : \"\" %>" id="<%= PaymentConfigDisplayTerms.REPORT_TEMPLATE %>" type="textarea" cssClass="input100" name="<%= PaymentConfigDisplayTerms.REPORT_TEMPLATE %>">
+								errorMessage="no-more-than-7-characters">7</aui:validator>
 						</aui:input>
 					</aui:col>
 				</aui:row>
-				
 				<aui:row>
-					<aui:col>
-						<aui:button name="submit" type="submit" value="submit"/>
+					<aui:col width="50">
+						<aui:input value="<%=c != null ? c.getReturnUrl() :\"\"%>"
+							id="<%=PaymentConfigDisplayTerms.RETURN_URL%>"
+							cssClass="input100"
+							name="<%=PaymentConfigDisplayTerms.RETURN_URL%>"
+							label="system-domain-url-return">
+							<aui:validator name="required"></aui:validator>
+						</aui:input>
 					</aui:col>
 				</aui:row>
-			
+				<aui:row>
+					<aui:col>
+						<aui:button cssClass="pull-right" id="previewButton"
+							name="previewButton" value="view-report-template"></aui:button>
+					</aui:col>
+				</aui:row>
+				<aui:row>
+					<aui:col>
+						<aui:input value="<%=c != null ? c.getReportTemplate() :\"\"%>"
+							id="<%=PaymentConfigDisplayTerms.REPORT_TEMPLATE%>"
+							type="textarea" cssClass="input100"
+							name="<%= PaymentConfigDisplayTerms.REPORT_TEMPLATE %>">
+						</aui:input>
+					</aui:col>
+				</aui:row>
+
+				<aui:row>
+					<aui:col>
+						<aui:button name="submit" type="submit" value="submit" />
+					</aui:col>
+				</aui:row>
+
 			</aui:form>
-			
+
 			<portlet:actionURL name="setReportTemplateTemp" var="setReportTemplateTempURL" />	
 			
 			<aui:script>

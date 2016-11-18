@@ -25,8 +25,6 @@ import java.util.List;
 import org.opencps.accountmgt.NoSuchBusinessException;
 import org.opencps.accountmgt.model.Business;
 import org.opencps.accountmgt.model.BusinessDomain;
-import org.opencps.accountmgt.model.impl.BusinessDomainImpl;
-import org.opencps.accountmgt.service.BusinessLocalServiceUtil;
 import org.opencps.accountmgt.service.base.BusinessLocalServiceBaseImpl;
 import org.opencps.util.DLFolderUtil;
 import org.opencps.util.DateTimeUtil;
@@ -101,17 +99,10 @@ public class BusinessLocalServiceImpl extends BusinessLocalServiceBaseImpl {
 		ServiceContext serviceContext)
 		throws SystemException, PortalException {
 
-		Role roleDefault = null;
-
-		try {
-			roleDefault =
+		 Role roleDefault =
 				RoleLocalServiceUtil.getRole(
 					serviceContext.getCompanyId(),
 					WebKeys.CITIZEN_BUSINESS_ROLE_NAME);
-		}
-		catch (Exception e) {
-			_log.info("ROLE CITIZEN IS NULL");
-		}
 
 		long businessId =
 			counterLocalService.increment(Business.class.getName());
@@ -204,10 +195,27 @@ public class BusinessLocalServiceImpl extends BusinessLocalServiceBaseImpl {
 				serviceContext);
 
 		int status = WorkflowConstants.STATUS_INACTIVE;
-
+		
+		Organization groupOrgBusiness = null;
+		
+		try {
+			groupOrgBusiness = organizationPersistence.findByC_N(serviceContext.getCompanyId(), PortletPropsValues.USERMGT_USERGROUP_NAME_BUSINESS);
+		} catch (Exception e) {
+			_log.error(e);
+		}
+				
+		if(groupOrgBusiness == null) {
+			groupOrgBusiness = OrganizationLocalServiceUtil.addOrganization(
+				mappingUser.getUserId(), OrganizationConstants.DEFAULT_PARENT_ORGANIZATION_ID,
+				PortletPropsValues.USERMGT_USERGROUP_NAME_BUSINESS,
+				OrganizationConstants.TYPE_REGULAR_ORGANIZATION, 0, 0,
+				ListTypeConstants.ORGANIZATION_STATUS_DEFAULT, 
+				PortletPropsValues.USERMGT_USERGROUP_NAME_BUSINESS, true,serviceContext);
+		}
+		
 		Organization org =
 			OrganizationLocalServiceUtil.addOrganization(
-				mappingUser.getUserId(), 0, fullName +
+				mappingUser.getUserId(), groupOrgBusiness.getOrganizationId(), fullName +
 					StringPool.OPEN_PARENTHESIS + idNumber +
 					StringPool.CLOSE_PARENTHESIS,
 				OrganizationConstants.TYPE_REGULAR_ORGANIZATION, 0, 0,
@@ -279,9 +287,7 @@ public class BusinessLocalServiceImpl extends BusinessLocalServiceBaseImpl {
 		business = businessPersistence.update(business);
 
 		if (businessDomainCodes != null && businessDomainCodes.length > 0) {
-			if (businessDomainCodes != null && businessDomainCodes.length > 0) {
 				businessDomainLocalService.addBusinessDomains(businessId, businessDomainCodes);
-			}
 		}
 
 		return business;
@@ -313,27 +319,13 @@ public class BusinessLocalServiceImpl extends BusinessLocalServiceBaseImpl {
 		}
 
 		if (fileEntryId > 0) {
-			FileEntry fileEntry = null;
 			try {
-				fileEntry = DLAppServiceUtil.getFileEntry(fileEntryId);
+				FileEntry fileEntry = DLAppServiceUtil.getFileEntry(fileEntryId);
+				DLFolderLocalServiceUtil.deleteFolder(fileEntry.getFolderId());
 			}
 			catch (Exception e) {
 				_log.error(e);
 			}
-			long folderId = 0;
-
-			if (fileEntry != null) {
-				folderId = fileEntry.getFolderId();
-			}
-
-			if (fileEntry != null) {
-				DLAppServiceUtil.deleteFileEntry(fileEntryId);
-			}
-
-			if (fileEntryId > 0) {
-				DLFolderLocalServiceUtil.deleteFolder(folderId);
-			}
-
 		}
 
 		if (mappingOrgId > 0) {
@@ -436,7 +428,12 @@ public class BusinessLocalServiceImpl extends BusinessLocalServiceBaseImpl {
 					parentFolder.getFolderId(), serviceContext);
 			}
 		}
-
+		
+		Organization organization = organizationPersistence.findByPrimaryKey(business.getMappingOrganizationId());
+		organization.setName(fullName +
+				StringPool.OPEN_PARENTHESIS + idNumber +
+				StringPool.CLOSE_PARENTHESIS);
+		organizationPersistence.update(organization);
 		
 		business.setAddress(address);
 
@@ -473,9 +470,7 @@ public class BusinessLocalServiceImpl extends BusinessLocalServiceBaseImpl {
 				businessDomainPersistence.remove(bdm);
 			}
 		}
-
 		return business;
-
 	}
 
 	public Business updateBusiness(
@@ -549,6 +544,12 @@ public class BusinessLocalServiceImpl extends BusinessLocalServiceBaseImpl {
 				contact = ContactLocalServiceUtil.updateContact(contact);
 			}
 		}
+		
+		Organization organization = organizationPersistence.findByPrimaryKey(business.getMappingOrganizationId());
+		organization.setName(fullName +
+				StringPool.OPEN_PARENTHESIS + idNumber +
+				StringPool.CLOSE_PARENTHESIS);
+		organizationPersistence.update(organization);
 
 		business.setAddress(address);
 

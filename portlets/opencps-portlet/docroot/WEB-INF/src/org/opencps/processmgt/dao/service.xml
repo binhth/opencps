@@ -65,9 +65,11 @@
 		<column name="stepName" type="String" />
 		<column name="sequenceNo" type="int" />
 		<column name="dossierStatus" type="String" />
+		<column name="dossierSubStatus" type="String" />
 		<column name="daysDuration" type="int" />
 		<column name="referenceDossierPartId" type="long" />
 		<column name="externalAppUrl" type="String" />
+		<column name="processStepNo" type="int" />
 		
 		<!-- Order -->
 		<order by="asc">
@@ -94,6 +96,7 @@
 
 		<column name="processStepId" type="long" primary="true" />
 		<column name="dossierPartId" type="long" primary="true" />
+		<column name="readOnly" type="boolean" />
 		
 		<finder return-type="Collection" name="ProcessStepId">
 			<finder-column name="processStepId"/>
@@ -191,6 +194,10 @@
 			<finder-column name="serviceProcessId"/>
 			<finder-column name="autoEvent"/>
 			<finder-column name="preProcessStepId"/>
+		</finder>
+		
+		<finder return-type="Collection" name="AutoEvent">
+			<finder-column name="autoEvent"/>
 		</finder>
 
         <finder name="ActionCode" return-type="ProcessWorkflow">
@@ -310,12 +317,17 @@
 		<column name="actionUserId" type="long"/>
 		<column name="daysDoing" type="int"/>
 		<column name="daysDelay" type="int"/>
-        <column name="oId" type="String"></column>
+        <column name="oId" type="String"/>
+        <column name="logId" type="long"/>
 
         <order >
             <order-column name="createDate" order-by="desc"></order-column>
             <order-column name="actionHistoryId" order-by="asc"/>
         </order>
+        
+        <finder name="LOG_ID" return-type="ActionHistory">
+            <finder-column name="logId"/>
+        </finder>
 
 
         <finder name="POID_PWID" return-type="Collection">
@@ -329,7 +341,7 @@
 			<finder-column name="processOrderId"/>
 		</finder>
 		
-		<finder return-type="Collection" name="ProcessOrderId" where="stepName != ''">
+		<finder return-type="Collection" name="ProcessOrderId">
 			<finder-column name="processOrderId"/>
 		</finder>
         <finder name="OId" return-type="ActionHistory">

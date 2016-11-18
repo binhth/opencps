@@ -74,11 +74,11 @@
 	String redirectURL = ParamUtil.getString(request, "redirectURL");
 
 	List<String> headerNames = new ArrayList<String>();
-	
+	headerNames.add("");
 	headerNames.add("#");
 	headerNames.add("dossier-file-no");
 	headerNames.add("display-name");
-	headerNames.add("select");
+	//headerNames.add("select");
 	
 	String headers = StringUtil.merge(headerNames);
 	
@@ -236,8 +236,19 @@
 				modelVar="dossierFile" 
 				keyProperty="dossierFileId"
 			>
-				<%				
-				    // no column
+				<%-- <div class="row-fluid min-width10">
+						<div class="span12 bold">
+							<%=row.getPos() + 1 %>
+						</div>
+					</div> --%>
+				<liferay-util:buffer var="rowTicker">
+					<aui:input name="hiddenDossierFileId" type="hidden" value="<%=dossierFile.getDossierFileId() %>"	/>
+					<i class="fa fa-circle-o "></i>
+					
+				</liferay-util:buffer>
+				<%
+					row.addText(rowTicker);
+					// no column
 					row.addText(String.valueOf(row.getPos() + 1 + searchContainer.getStart()));
 					
 					// dossier file no column
@@ -246,7 +257,7 @@
 					// dossier display name column
 					row.addText(dossierFile.getDisplayName());
 					
-					row.addButton(LanguageUtil.get(locale, "select"), "javascript:" + renderResponse.getNamespace() + "selectDossierFile(" + dossierFile.getDossierFileId() +")");
+				//	row.addButton(LanguageUtil.get(locale, "select"), "javascript:" + renderResponse.getNamespace() + "selectDossierFile(" + dossierFile.getDossierFileId() +")");
 					
 				%>	
 			</liferay-ui:search-container-row> 
@@ -263,16 +274,64 @@
 	<aui:input name="<%=DossierFileDisplayTerms.DOSSIER_FILE_ORIGINAL %>" type="hidden" value="<%=String.valueOf(PortletConstants.DOSSIER_FILE_ORIGINAL) %>"/>
 	<aui:input name="<%=DossierFileDisplayTerms.DOSSIER_FILE_TYPE %>" type="hidden" value="<%=String.valueOf(PortletConstants.DOSSIER_FILE_TYPE_INPUT) %>"/>
 	<aui:input name="<%=DossierFileDisplayTerms.GROUP_NAME %>" type="hidden" value="<%=groupName %>"/>
-	
+	<aui:input name="receiveHiddenDossierFile" type="hidden" />
+	<aui:row>
+		<aui:button name="btnCancel" value="cancel"/>
+		<aui:button  name="btnAccept" value="agree"/>
+	</aui:row>
 </aui:form>
+
 <aui:script>
 
 	AUI().ready(function(A){
 		
 		var success = '<%=success%>';
+		var receiveHiddenDossierFile = A.one('#<portlet:namespace />receiveHiddenDossierFile');
+		var btnAccept = A.one('#<portlet:namespace />btnAccept');
+		var btnCancel = A.one('#<portlet:namespace />btnCancel');
+		var allRows = A.all('.form tr');
+		
+		var circleTemp = null;
+		
+		btnAccept.addClass('disabled');
+		btnAccept.setAttribute('disabled' , 'true');
 		
 		if(success == 'true'){
 			<portlet:namespace/>closeDialog();
+		}
+		
+		allRows.each(function(taskNode) {
+			taskNode.on('click', function(){
+				var instance = A.one(this);
+				var childNode = instance.one('.first input');
+				var circle = instance.one('.first i');
+				
+				receiveHiddenDossierFile.val(childNode.val());
+				if(receiveHiddenDossierFile.val() != '') {
+					btnAccept.removeClass('disabled');
+					btnAccept.removeAttribute('disabled');
+					
+					if(circleTemp != null) {
+						circleTemp.removeClass('fa-dot-circle-o');
+						circleTemp.addClass('fa-circle-o');
+					}
+					circle.removeClass('fa-circle-o');
+					circle.addClass('fa-dot-circle-o');
+					circleTemp = circle;
+				}
+			});
+		});
+		
+		if(btnAccept) {
+			btnAccept.on('click', function() {
+				<portlet:namespace/>selectDossierFile(receiveHiddenDossierFile.val());
+			});
+		}
+		
+		if(btnCancel) {
+			btnCancel.on('click', function() {
+				<portlet:namespace/>closeDialog();
+			});
 		}
 	});
 	

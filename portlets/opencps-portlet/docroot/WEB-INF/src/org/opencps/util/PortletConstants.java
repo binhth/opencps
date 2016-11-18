@@ -213,5 +213,14 @@ public class PortletConstants {
 	public static final String EMAIL_CONFIG_2_STEP = "2";
 	
 	public static final String EMAIL_CONFIG_3_STEP = "3";
+	public static final int DOSSIER_FILE_ADD = 1;
+	public static final int DOSSIER_FILE_DUPLICATE = 2;
+	public static final int DOSSIER_FILE_REMOVE = 3;
+	public static final int DOSSIER_FILE_EXPORT = 4;
+	public static final int DOSSIER_FILE_SIGN = 5;
+	public static final int DOSSIER_FILE_UPDATE = 6;
+	
+
+	
 	
 }

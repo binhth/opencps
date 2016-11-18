@@ -343,5 +343,16 @@ public class ProcessWorkflowLocalServiceImpl
 			throws SystemException {
 		
 		return processWorkflowPersistence.fetchByS_PreP_AN(serviceProcessId, preProcessStepId, actionName);
-	}	
+	}
+	
+	/**
+	 * @param autoEvent
+	 * @return
+	 * @throws PortalException
+	 * @throws SystemException
+	 */
+	public List<ProcessWorkflow> getProcessWorkflowByEvent(String autoEvent)
+	    throws PortalException, SystemException {
+		return processWorkflowPersistence.findByAutoEvent(autoEvent);
+	}
 }

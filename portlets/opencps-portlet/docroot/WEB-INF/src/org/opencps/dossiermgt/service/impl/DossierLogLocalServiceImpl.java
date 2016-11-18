@@ -21,10 +21,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.opencps.backend.util.BackendUtils;
 import org.opencps.dossiermgt.NoSuchDossierLogException;
 import org.opencps.dossiermgt.comparator.DossierLogUpdateDatetimeComparator;
 import org.opencps.dossiermgt.model.DossierLog;
 import org.opencps.dossiermgt.service.base.DossierLogLocalServiceBaseImpl;
+import org.opencps.processmgt.model.ProcessStep;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -75,15 +77,18 @@ public class DossierLogLocalServiceImpl extends DossierLogLocalServiceBaseImpl {
 	 * @throws SystemException
 	 */
 	public DossierLog addCommandRequest(
-		long userId, long groupId, long companyId, long dossierId,
-		long fileGroupId, String status, String actionInfo, String messageInfo,
-		Date updateDatetime, int level, int syncStatus, int actor,
-		long actorId, String actorName, String className, String commandRequest)
-		throws SystemException {
+	    long userId, long groupId, long companyId, long dossierId,
+	    long fileGroupId, String status, String actionInfo, String messageInfo,
+	    Date updateDatetime, int level, int syncStatus, int actor,
+	    long actorId, String actorName, String className,
+	    String commandRequest, long processOrderId, long processWorkflowId)
+	    throws SystemException {
 
 		long dossierLogId =
 			counterLocalService.increment(DossierLog.class.getName());
 		DossierLog dossierLog = dossierLogPersistence.create(dossierLogId);
+		
+		ProcessStep processStep = BackendUtils.getProcessStepByDossierId(dossierId);
 
 		dossierLog.setGroupId(groupId);
 		dossierLog.setCompanyId(companyId);
@@ -109,7 +114,11 @@ public class DossierLogLocalServiceImpl extends DossierLogLocalServiceBaseImpl {
 		dossierLog.setClassName(className);
 		dossierLog.setSyncStatus(syncStatus);
 		dossierLog.setRequestCommand(commandRequest);
-
+		dossierLog.setStepId(processStep.getProcessStepId());
+		dossierLog.setStepName(processStep.getStepName());
+		dossierLog.setProcessOrderId(processOrderId);
+		dossierLog.setProcessWorkflowId(processWorkflowId);
+		
 		return dossierLogPersistence.update(dossierLog);
 
 	}
@@ -222,15 +231,17 @@ public class DossierLogLocalServiceImpl extends DossierLogLocalServiceBaseImpl {
 	 * java.lang.String, java.util.Date, int, java.lang.String)
 	 */
 	public DossierLog addDossierLog(
-		long userId, long groupId, long companyId, long dossierId,
-		long fileGroupId, String status, String actionInfo, String messageInfo,
-		Date updateDatetime, int level, int syncStatus, int actor,
-		long actorId, String actorName, String className)
-		throws SystemException {
+	    long userId, long groupId, long companyId, long dossierId,
+	    long fileGroupId, String status, String actionInfo, String messageInfo,
+	    Date updateDatetime, int level, int syncStatus, int actor,
+	    long actorId, String actorName, String className, long processOrderId,
+	    long processWorkflowId, boolean syncFile)
+	    throws PortalException, SystemException {
 
 		long dossierLogId =
 			counterLocalService.increment(DossierLog.class.getName());
 		DossierLog dossierLog = dossierLogPersistence.create(dossierLogId);
+		ProcessStep processStep = BackendUtils.getProcessStepByDossierId(dossierId);
 
 		dossierLog.setGroupId(groupId);
 		dossierLog.setCompanyId(companyId);
@@ -257,7 +268,15 @@ public class DossierLogLocalServiceImpl extends DossierLogLocalServiceBaseImpl {
 		dossierLog.setActorName(actorName);
 		dossierLog.setClassName(className);
 		dossierLog.setSyncStatus(syncStatus);
-
+		dossierLog.setStepId(processStep.getProcessStepId());
+		dossierLog.setStepName(processStep.getStepName());
+		dossierLog.setProcessOrderId(processOrderId);
+		dossierLog.setProcessWorkflowId(processWorkflowId);
+		
+		if (syncFile) {
+			dossierFileLogLocalService.updateFileLog(dossierId, dossierLogId, actor);
+		}
+		
 		return dossierLogPersistence.update(dossierLog);
 
 	}

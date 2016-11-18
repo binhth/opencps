@@ -89,8 +89,7 @@ public class AccountUtil {
 	 * @throws PortalException
 	 * @throws SystemException
 	 */
-	public static void initAccount(
-		HttpServletRequest request, HttpServletResponse response)
+	public static void initAccount(HttpServletRequest request, HttpServletResponse response)
 		throws PortalException, SystemException {
 
 		HttpSession session = request.getSession();
@@ -98,8 +97,7 @@ public class AccountUtil {
 		User user = (User) session.getAttribute(WebKeys.USER);
 
 		if (user == null) {
-			ThemeDisplay themeDisplay =
-				(ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
+			ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
 
 			if (themeDisplay != null) {
 				user = themeDisplay.getUser();
@@ -110,8 +108,7 @@ public class AccountUtil {
 
 		// long scopeGroupId = PortalUtil.getScopeGroupId(request);
 
-		ServiceContext serviceContext =
-			ServiceContextFactory.getInstance(request);
+		ServiceContext serviceContext = ServiceContextFactory.getInstance(request);
 
 		Object accountInstance = null;
 
@@ -121,8 +118,7 @@ public class AccountUtil {
 		String accountType =
 			GetterUtil.getString(session.getAttribute(org.opencps.util.WebKeys.ACCOUNT_TYPE));
 
-		Citizen citizen =
-			(Citizen) session.getAttribute(org.opencps.util.WebKeys.CITIZEN_ENTRY);
+		Citizen citizen = (Citizen) session.getAttribute(org.opencps.util.WebKeys.CITIZEN_ENTRY);
 
 		Business business =
 			(Business) session.getAttribute(org.opencps.util.WebKeys.BUSINESS_ENTRY);
@@ -138,13 +134,11 @@ public class AccountUtil {
 
 		long ownerUserId =
 			GetterUtil.getLong(
-				session.getAttribute(org.opencps.util.WebKeys.ACCOUNT_OWNERUSERID),
-				0L);
+				session.getAttribute(org.opencps.util.WebKeys.ACCOUNT_OWNERUSERID), 0L);
 
 		long ownerOrganizationId =
 			GetterUtil.getLong(
-				session.getAttribute(org.opencps.util.WebKeys.ACCOUNT_OWNERORGANIZATIONID),
-				0L);
+				session.getAttribute(org.opencps.util.WebKeys.ACCOUNT_OWNERORGANIZATIONID), 0L);
 
 		if (!user.isDefaultUser() && Validator.isNull(accountBean)) {
 
@@ -155,8 +149,7 @@ public class AccountUtil {
 
 				accountBean =
 					AccountUtil.getAccountBean(
-						user.getUserId(), serviceContext.getScopeGroupId(),
-						serviceContext);
+						user.getUserId(), serviceContext.getScopeGroupId(), serviceContext);
 
 				if (accountBean != null) {
 
@@ -181,57 +174,37 @@ public class AccountUtil {
 					accountOrgs = accountBean.getAccountOrgs();
 					accountRoles = accountBean.getAccountRoles();
 
-					request.setAttribute(
-						org.opencps.util.WebKeys.ACCOUNT_TYPE, accountType);
-					request.setAttribute(
-						org.opencps.util.WebKeys.CITIZEN_ENTRY, citizen);
-					request.setAttribute(
-						org.opencps.util.WebKeys.BUSINESS_ENTRY, business);
+					request.setAttribute(org.opencps.util.WebKeys.ACCOUNT_TYPE, accountType);
+					request.setAttribute(org.opencps.util.WebKeys.CITIZEN_ENTRY, citizen);
+					request.setAttribute(org.opencps.util.WebKeys.BUSINESS_ENTRY, business);
+
+					request.setAttribute(org.opencps.util.WebKeys.EMPLOYEE_ENTRY, employee);
 
 					request.setAttribute(
-						org.opencps.util.WebKeys.EMPLOYEE_ENTRY, employee);
+						org.opencps.util.WebKeys.ACCOUNT_OWNERORGANIZATIONID, ownerOrganizationId);
 
-					request.setAttribute(
-						org.opencps.util.WebKeys.ACCOUNT_OWNERORGANIZATIONID,
-						ownerOrganizationId);
+					request.setAttribute(org.opencps.util.WebKeys.ACCOUNT_OWNERUSERID, ownerUserId);
 
-					request.setAttribute(
-						org.opencps.util.WebKeys.ACCOUNT_OWNERUSERID,
-						ownerUserId);
+					request.setAttribute(org.opencps.util.WebKeys.ACCOUNT_ROLES, accountRoles);
 
-					request.setAttribute(
-						org.opencps.util.WebKeys.ACCOUNT_ROLES, accountRoles);
-
-					request.setAttribute(
-						org.opencps.util.WebKeys.ACCOUNT_ORGANIZATION,
-						accountOrgs);
+					request.setAttribute(org.opencps.util.WebKeys.ACCOUNT_ORGANIZATION, accountOrgs);
 
 					// Store session
 
-					session.setAttribute(
-						org.opencps.util.WebKeys.ACCOUNT_TYPE, accountType);
-					session.setAttribute(
-						org.opencps.util.WebKeys.CITIZEN_ENTRY, citizen);
-					session.setAttribute(
-						org.opencps.util.WebKeys.BUSINESS_ENTRY, business);
+					session.setAttribute(org.opencps.util.WebKeys.ACCOUNT_TYPE, accountType);
+					session.setAttribute(org.opencps.util.WebKeys.CITIZEN_ENTRY, citizen);
+					session.setAttribute(org.opencps.util.WebKeys.BUSINESS_ENTRY, business);
+
+					session.setAttribute(org.opencps.util.WebKeys.EMPLOYEE_ENTRY, employee);
 
 					session.setAttribute(
-						org.opencps.util.WebKeys.EMPLOYEE_ENTRY, employee);
+						org.opencps.util.WebKeys.ACCOUNT_OWNERORGANIZATIONID, ownerOrganizationId);
 
-					session.setAttribute(
-						org.opencps.util.WebKeys.ACCOUNT_OWNERORGANIZATIONID,
-						ownerOrganizationId);
+					session.setAttribute(org.opencps.util.WebKeys.ACCOUNT_OWNERUSERID, ownerUserId);
 
-					session.setAttribute(
-						org.opencps.util.WebKeys.ACCOUNT_OWNERUSERID,
-						ownerUserId);
+					session.setAttribute(org.opencps.util.WebKeys.ACCOUNT_ROLES, accountRoles);
 
-					session.setAttribute(
-						org.opencps.util.WebKeys.ACCOUNT_ROLES, accountRoles);
-
-					session.setAttribute(
-						org.opencps.util.WebKeys.ACCOUNT_ORGANIZATION,
-						accountOrgs);
+					session.setAttribute(org.opencps.util.WebKeys.ACCOUNT_ORGANIZATION, accountOrgs);
 
 				}
 				else {
@@ -246,17 +219,15 @@ public class AccountUtil {
 			finally {
 				accountBean =
 					new AccountBean(
-						accountInstance, accountType, accountRoles,
-						accountOrgs, ownerUserId, ownerOrganizationId);
+						accountInstance, accountType, accountRoles, accountOrgs, ownerUserId,
+						ownerOrganizationId);
 
-				session.setAttribute(
-					org.opencps.util.WebKeys.ACCOUNT_BEAN, accountBean);
+				session.setAttribute(org.opencps.util.WebKeys.ACCOUNT_BEAN, accountBean);
 
 				_log.info(AccountUtil.class.getName() +
 					": ########################################: AccountType=" +
-					accountBean.getAccountType() + " OwnerUserId=" +
-					accountBean.getOwnerUserId() + " OwnerOrganizationId=" +
-					accountBean.getOwnerOrganizationId());
+					accountBean.getAccountType() + " OwnerUserId=" + accountBean.getOwnerUserId() +
+					" OwnerOrganizationId=" + accountBean.getOwnerOrganizationId());
 			}
 
 		}
@@ -271,14 +242,13 @@ public class AccountUtil {
 	 * @param ownerOrganizationId
 	 */
 	public static void initAccount(
-		Object accountInstance, String accountType,
-		ArrayList<Role> accountRoles, ArrayList<Organization> accountOrgs,
-		long ownerUserId, long ownerOrganizationId) {
+		Object accountInstance, String accountType, ArrayList<Role> accountRoles,
+		ArrayList<Organization> accountOrgs, long ownerUserId, long ownerOrganizationId) {
 
 		AccountBean accountBean =
 			new AccountBean(
-				accountInstance, accountType, accountRoles, accountOrgs,
-				ownerUserId, ownerOrganizationId);
+				accountInstance, accountType, accountRoles, accountOrgs, ownerUserId,
+				ownerOrganizationId);
 
 		AccountUtil.setAccountBean(accountBean);
 	}
@@ -324,8 +294,7 @@ public class AccountUtil {
 	 * @param request
 	 * @param sessionInvalidate
 	 */
-	public static void destroy(
-		HttpServletRequest request, boolean sessionInvalidate) {
+	public static void destroy(HttpServletRequest request, boolean sessionInvalidate) {
 
 		HttpSession session = request.getSession();
 		session.removeAttribute(WebKeys.ACCOUNT_FOLDER);
@@ -410,8 +379,7 @@ public class AccountUtil {
 			}
 
 			if (accountType.equals(PortletPropsValues.USERMGT_USERGROUP_NAME_CITIZEN)) {
-				Citizen citizen =
-					CitizenLocalServiceUtil.getCitizen(user.getUserId());
+				Citizen citizen = CitizenLocalServiceUtil.getCitizen(user.getUserId());
 
 				accountInstance = citizen;
 
@@ -420,8 +388,7 @@ public class AccountUtil {
 			}
 			else if (accountType.equals(PortletPropsValues.USERMGT_USERGROUP_NAME_BUSINESS)) {
 
-				Business business =
-					BusinessLocalServiceUtil.getBusiness(user.getUserId());
+				Business business = BusinessLocalServiceUtil.getBusiness(user.getUserId());
 
 				ownerOrganizationId = business.getMappingOrganizationId();
 
@@ -430,8 +397,7 @@ public class AccountUtil {
 			}
 			else if (accountType.equals(PortletPropsValues.USERMGT_USERGROUP_NAME_EMPLOYEE)) {
 				Employee employee =
-					EmployeeLocalServiceUtil.getEmployeeByMappingUserId(
-						groupId, userId);
+					EmployeeLocalServiceUtil.getEmployeeByMappingUserId(groupId, userId);
 
 				accountInstance = employee;
 
@@ -439,8 +405,7 @@ public class AccountUtil {
 					WorkingUnit workingUnit =
 						WorkingUnitLocalServiceUtil.getWorkingUnit(employee.getWorkingUnitId());
 
-					ownerOrganizationId =
-						workingUnit.getMappingOrganisationId();
+					ownerOrganizationId = workingUnit.getMappingOrganisationId();
 				}
 				catch (Exception e) {
 					_log.warn(e.getCause());
@@ -455,8 +420,8 @@ public class AccountUtil {
 		finally {
 			accountBean =
 				new AccountBean(
-					accountInstance, accountType, accountRoles, accountOrgs,
-					ownerUserId, ownerOrganizationId);
+					accountInstance, accountType, accountRoles, accountOrgs, ownerUserId,
+					ownerOrganizationId);
 		}
 
 		return accountBean;
@@ -470,8 +435,7 @@ public class AccountUtil {
 
 		HttpSession session = request.getSession();
 
-		AccountBean accountBean =
-			(AccountBean) session.getAttribute(WebKeys.ACCOUNT_BEAN);
+		AccountBean accountBean = (AccountBean) session.getAttribute(WebKeys.ACCOUNT_BEAN);
 
 		return accountBean;
 	}
@@ -482,19 +446,17 @@ public class AccountUtil {
 	 */
 	public static AccountBean getAccountBean(ActionRequest actionRequest) {
 
-		HttpServletRequest request =
-			PortalUtil.getHttpServletRequest(actionRequest);
+		HttpServletRequest request = PortalUtil.getHttpServletRequest(actionRequest);
 		HttpSession session = request.getSession();
 
 		AccountBean accountBean = null;
 
 		try {
-			accountBean =
-				(AccountBean) session.getAttribute(WebKeys.ACCOUNT_BEAN);
+			accountBean = (AccountBean) session.getAttribute(WebKeys.ACCOUNT_BEAN);
 		}
 		catch (Exception e) {
 
-			//_log.error(e);
+			// _log.error(e);
 			AccountUtil.destroy(request, false);
 			// reInitAccount
 			accountBean = initAccount(request);
@@ -509,21 +471,18 @@ public class AccountUtil {
 	 */
 	public static AccountBean getAccountBean(RenderRequest renderRequest) {
 
-		HttpServletRequest request =
-			PortalUtil.getHttpServletRequest(renderRequest);
+		HttpServletRequest request = PortalUtil.getHttpServletRequest(renderRequest);
 
-		HttpSession session =
-			PortalSessionContext.get(request.getRequestedSessionId());
+		HttpSession session = PortalSessionContext.get(request.getRequestedSessionId());
 
 		AccountBean accountBean = null;
 
 		try {
-			accountBean =
-				(AccountBean) session.getAttribute(WebKeys.ACCOUNT_BEAN);
+			accountBean = (AccountBean) session.getAttribute(WebKeys.ACCOUNT_BEAN);
 		}
 		catch (Exception e) {
 
-			//_log.error(e);
+			// _log.error(e);
 			AccountUtil.destroy(request, false);
 			// reInitAccount
 			accountBean = initAccount(request);
@@ -536,23 +495,20 @@ public class AccountUtil {
 	 * @param actionRequest
 	 * @return
 	 */
-	public static AccountBean getAccountBeanFromAttribute(
-		ActionRequest actionRequest) {
+	public static AccountBean getAccountBeanFromAttribute(ActionRequest actionRequest) {
 
-		HttpServletRequest request =
-			PortalUtil.getHttpServletRequest(actionRequest);
+		HttpServletRequest request = PortalUtil.getHttpServletRequest(actionRequest);
 
 		ServletContext servletContext = request.getServletContext();
 
 		AccountBean accountBean = null;
 
 		try {
-			accountBean =
-				(AccountBean) servletContext.getAttribute(WebKeys.ACCOUNT_BEAN);
+			accountBean = (AccountBean) servletContext.getAttribute(WebKeys.ACCOUNT_BEAN);
 		}
 		catch (Exception e) {
 
-			//_log.error(e);
+			// _log.error(e);
 			AccountUtil.destroy(request, false);
 			// reInitAccount
 			accountBean = initAccount(request);
@@ -565,23 +521,20 @@ public class AccountUtil {
 	 * @param renderRequest
 	 * @return
 	 */
-	public static AccountBean getAccountBeanFromAttribute(
-		RenderRequest renderRequest) {
+	public static AccountBean getAccountBeanFromAttribute(RenderRequest renderRequest) {
 
-		HttpServletRequest request =
-			PortalUtil.getHttpServletRequest(renderRequest);
+		HttpServletRequest request = PortalUtil.getHttpServletRequest(renderRequest);
 
 		ServletContext servletContext = request.getServletContext();
 
 		AccountBean accountBean = null;
 
 		try {
-			accountBean =
-				(AccountBean) servletContext.getAttribute(WebKeys.ACCOUNT_BEAN);
+			accountBean = (AccountBean) servletContext.getAttribute(WebKeys.ACCOUNT_BEAN);
 		}
 		catch (Exception e) {
 
-			//_log.error(e);
+			// _log.error(e);
 			AccountUtil.destroy(request, false);
 			// reInitAccount
 			accountBean = initAccount(request);
@@ -600,6 +553,5 @@ public class AccountUtil {
 		return _accountBean;
 	}
 
-	private static Log _log =
-		LogFactoryUtil.getLog(AccountUtil.class.getName());
+	private static Log _log = LogFactoryUtil.getLog(AccountUtil.class.getName());
 }

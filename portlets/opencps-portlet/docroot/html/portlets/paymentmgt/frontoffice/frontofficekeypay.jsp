@@ -38,7 +38,7 @@
 	PaymentConfig paymentConfig = null;
 	try {
 		if (paymentFile != null)
-			paymentConfig = PaymentConfigLocalServiceUtil.getPaymentConfigByGovAgency(scopeGroupId, paymentFile.getGovAgencyOrganizationId());
+			paymentConfig = PaymentConfigLocalServiceUtil.getPaymentConfigByGovAgency(scopeGroupId, paymentFile.getGovAgencyOrganizationId(),true);
 	}
 	catch (SystemException e) {
 		

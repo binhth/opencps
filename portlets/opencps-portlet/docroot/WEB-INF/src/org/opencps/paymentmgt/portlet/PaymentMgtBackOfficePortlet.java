@@ -179,7 +179,7 @@ public class PaymentMgtBackOfficePortlet extends MVCPortlet {
 					PortletConstants.DOSSIER_ACTION_CONFIRM_PAYMENT, msgInfo,
 					new Date(), 1, 2, actorBean.getActor(),
 					actorBean.getActorId(), actorBean.getActorName(),
-					PaymentMgtBackOfficePortlet.class.getName());
+					PaymentMgtBackOfficePortlet.class.getName(), 0, 0, false);
 
 				SessionMessages.add(
 					actionRequest,
@@ -247,7 +247,7 @@ public class PaymentMgtBackOfficePortlet extends MVCPortlet {
 				// govAgencyOrganizationId = 24787;
 				PaymentConfig paymentConfig =
 					PaymentConfigLocalServiceUtil.getPaymentConfigByGovAgency(
-						themeDisplay.getScopeGroupId(), govAgencyOrganizationId);
+						themeDisplay.getScopeGroupId(), govAgencyOrganizationId,true);
 				// Get account folder
 				String dossierDestinationFolder =
 					PortletUtil.getEmployeeDestinationFolder(
@@ -524,14 +524,14 @@ public class PaymentMgtBackOfficePortlet extends MVCPortlet {
 
 			// Add dossierLog for confirm payment
 			DossierLogLocalServiceUtil.addDossierLog(
-				serviceContext.getUserId(), serviceContext.getScopeGroupId(),
-				serviceContext.getCompanyId(), paymentFile.getDossierId(),
-				paymentFile.getFileGroupId(), null,
-				PortletConstants.DOSSIER_ACTION_CONFIRM_PAYMENT,
-				PortletConstants.DOSSIER_ACTION_CONFIRM_PAYMENT, new Date(), 1,
-				2, actorBean.getActor(), actorBean.getActorId(),
-				actorBean.getActorName(),
-				PaymentMgtBackOfficePortlet.class.getName());
+			    serviceContext.getUserId(), serviceContext.getScopeGroupId(),
+			    serviceContext.getCompanyId(), paymentFile.getDossierId(),
+			    paymentFile.getFileGroupId(), null,
+			    PortletConstants.DOSSIER_ACTION_CONFIRM_PAYMENT,
+			    PortletConstants.DOSSIER_ACTION_CONFIRM_PAYMENT, new Date(), 1,
+			    2, actorBean.getActor(), actorBean.getActorId(),
+			    actorBean.getActorName(),
+			    PaymentMgtBackOfficePortlet.class.getName(), 0, 0, false);
 
 			addProcessActionSuccessMessage = false;
 			SessionMessages.add(actionRequest, "confirm-payment-cash-success");
@@ -605,7 +605,7 @@ public class PaymentMgtBackOfficePortlet extends MVCPortlet {
 				PortletConstants.DOSSIER_ACTION_CONFIRM_PAYMENT, new Date(), 1,
 				2, actorBean.getActor(), actorBean.getActorId(),
 				actorBean.getActorName(),
-				PaymentMgtBackOfficePortlet.class.getName());
+				PaymentMgtBackOfficePortlet.class.getName(), 0, 0, false);
 			SessionMessages.add(actionRequest, "confirm-payment-cash-success");
 
 			MessageBusUtil.sendMessage(

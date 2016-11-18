@@ -511,7 +511,7 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<name>message</name>
+			<name></name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>

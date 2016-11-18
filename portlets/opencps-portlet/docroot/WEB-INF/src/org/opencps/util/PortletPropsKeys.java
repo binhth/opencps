@@ -139,4 +139,10 @@ public class PortletPropsKeys {
 	public static final String OPENCPS_CANCEL_DOSSIER_NOTICE = "opencps.cancel.dossier.notice";
 	public static final String OPENCPS_PERSON_MAKE_PROCEDURE_CANCEL = "opencps.person.make.procedure.cancel";
 	
+	public static final String SYSTEM_EMAIL = "email.from.default";
+	public static final String SUBJECT_TO_CUSTOMER = "subject.email.to.customer";
+	public static final String CONTENT_TO_CUSTOMER = "content.email.to.customer";
+	
+	public static final String HOLIDAYCONFIG_DESCRIPTION_LENGTH = "opencps.holidayconfig.description.lengths";
+	
 }

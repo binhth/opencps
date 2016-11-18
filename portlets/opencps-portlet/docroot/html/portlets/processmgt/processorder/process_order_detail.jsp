@@ -23,6 +23,7 @@
 <%@page import="org.opencps.dossiermgt.model.DossierPart"%>
 <%@page import="org.opencps.dossiermgt.model.ServiceConfig"%>
 <%@page import="org.opencps.processmgt.util.ProcessUtils"%>
+
 <%@ include file="../init.jsp"%>
 
 <%
@@ -41,64 +42,55 @@
 	
 	String[][] categorySections = {processOrderSections};
 %>
-<%-- <div class="ocps-custom-header">
-	<label class="opcps-label">
-		<liferay-ui:message key="process-order" />
-	</label>
-	<span class="ocps-span">
-		<a href="<%=backURL %>"><liferay-ui:message key="back"/></a>
-	</span>
-</div> --%>
 
 <liferay-ui:header
 	backURL="<%= backURL %>"
 	title="process-order"
 />
 
-<portlet:actionURL var="updateProcessOrderURL" name="updateDossier"/>
 <div class="ocps-history-process-bound-navigator">
-<liferay-util:buffer var="htmlTop">
-	<c:if test="<%= processOrder != null %>">
-		<div class="form-navigator-topper dossier-info">
-			<div class="form-navigator-container">
-				<i aria-hidden="true" class="fa fa-suitcase"></i>
-				<span class="form-navigator-topper-name"><%= Validator.isNotNull(dossier.getReceptionNo()) ? dossier.getReceptionNo() : StringPool.BLANK %></span>
+	<liferay-util:buffer var="htmlTop">
+		<c:if test="<%= processOrder != null %>">
+			<div class="form-navigator-topper dossier-info">
+				<div class="form-navigator-container">
+					<i aria-hidden="true" class="fa fa-suitcase"></i>
+					<span class="form-navigator-topper-name"><%= Validator.isNotNull(dossier.getReceptionNo()) ? dossier.getReceptionNo() : StringPool.BLANK %></span>
+				</div>
 			</div>
-		</div>
-	</c:if> 
-</liferay-util:buffer>
-
-<liferay-util:buffer var="htmlBottom">
-
-</liferay-util:buffer>
-
-<aui:form name="fm" action="<%=updateProcessOrderURL %>" method="post">
-
-	<aui:model-context bean="<%= processOrder %>" model="<%= ProcessOrder.class %>" />
+		</c:if> 
+	</liferay-util:buffer>
 	
-	<aui:input 
-		name="redirectURL" 
-		type="hidden" 
-		value="<%= backURL%>"
-	/>
-	<aui:input 
-		name="returnURL" 
-		type="hidden" 
-		value="<%= currentURL%>"
-	/>
-	<div class="opencps-form-navigator-container">
-		<liferay-ui:form-navigator
-			backURL="<%= backURL %>"
-			categoryNames="<%= ProcessUtils._PROCESS_ORDER_CATEGORY_NAMES %>"
-			categorySections="<%= categorySections %>"
-			htmlBottom="<%= htmlBottom %>"
-			htmlTop="<%= htmlTop %>"
-			jspPath='<%=templatePath + "dossier/" %>'
-			showButtons="<%=false%>"
-			displayStyle="left-navigator"
+	<liferay-util:buffer var="htmlBottom">
+	
+	</liferay-util:buffer>
+	
+	<aui:form name="pofm" action="" method="post">
+	
+		<aui:model-context bean="<%= processOrder %>" model="<%= ProcessOrder.class %>" />
+		
+		<aui:input 
+			name="redirectURL" 
+			type="hidden" 
+			value="<%= backURL%>"
 		/>
-	</div>
-</aui:form>
+		<aui:input 
+			name="returnURL" 
+			type="hidden" 
+			value="<%= currentURL%>"
+		/>
+		<div class="opencps-form-navigator-container">
+			<liferay-ui:form-navigator
+				backURL="<%= backURL %>"
+				categoryNames="<%= ProcessUtils._PROCESS_ORDER_CATEGORY_NAMES %>"
+				categorySections="<%= categorySections %>"
+				htmlBottom="<%= htmlBottom %>"
+				htmlTop="<%= htmlTop %>"
+				jspPath='<%=templatePath + "dossier/" %>'
+				showButtons="<%=false%>"
+				displayStyle="left-navigator"
+			/>
+		</div>
+	</aui:form>
 </div>
 
 

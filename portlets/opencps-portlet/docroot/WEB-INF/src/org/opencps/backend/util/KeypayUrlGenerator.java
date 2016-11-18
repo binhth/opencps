@@ -302,7 +302,7 @@ public class KeypayUrlGenerator {
 		try {
 			paymentConfig =
 				PaymentConfigLocalServiceUtil.getPaymentConfigByGovAgency(
-					groupId, govAgencyOrganizationId);
+					groupId, govAgencyOrganizationId,true);
 		}
 		catch (Exception e) {
 			paymentConfig = null;

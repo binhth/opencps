@@ -1,4 +1,9 @@
 
+<%@page import="org.opencps.paymentmgt.service.PaymentGateConfigLocalServiceUtil"%>
+<%@page import="org.opencps.paymentmgt.model.PaymentGateConfig"%>
+<%@page import="com.liferay.portal.kernel.log.Log"%>
+<%@page import="com.liferay.portal.kernel.log.LogFactoryUtil"%>
+<%@page import="org.opencps.paymentmgt.service.persistence.PaymentFileUtil"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -18,53 +23,50 @@
  */
 %>
 
-<%@page import="java.util.Date"%>
-<%@page import="org.opencps.util.PortletConstants"%>
-<%@page import="org.opencps.dossiermgt.util.ActorBean"%>
-<%@page import="org.opencps.dossiermgt.bean.AccountBean"%>
-<%@page import="com.liferay.portal.kernel.mail.Account"%>
-<%@page import="org.opencps.dossiermgt.service.DossierLogLocalServiceUtil"%>
-<%@page import="org.opencps.util.WebKeys"%>
-<%@page import="com.liferay.portal.kernel.messaging.MessageBusUtil"%>
-<%@page import="com.liferay.portal.kernel.messaging.Message"%>
-<%@page import="org.opencps.backend.message.UserActionMsg"%>
-<%@page import="org.opencps.backend.util.BackendUtils"%>
+
 <%@ include file="../init.jsp"%>
 
 <%
-	HttpServletRequest r = PortalUtil.getHttpServletRequest(renderRequest);
-	String responseCode = PortalUtil.getOriginalServletRequest(r).getParameter("response_code");
-	String trans_id = PortalUtil.getOriginalServletRequest(r).getParameter("trans_id");
-	String secure_hash = PortalUtil.getOriginalServletRequest(r).getParameter("secure_hash");
-	Map<String, String[]> params = PortalUtil.getOriginalServletRequest(r).getParameterMap();
-    Map<String, String> fields = new HashMap<String, String>();
+	HttpServletRequest originalRequest = PortalUtil.getOriginalServletRequest(PortalUtil.getHttpServletRequest(renderRequest));
 	
-	for (Map.Entry<String, String[]> entry : params.entrySet())
-	{
-		fields.put(entry.getKey(), entry.getValue()[0]);
+	long paymentFileId = ParamUtil.getLong(originalRequest, "paymentFileId",0);
+	long dossierId = ParamUtil.getLong(originalRequest, "dossierId",0);
+	long serviceInfoId = ParamUtil.getLong(originalRequest, "serviceInfoId",0);
+	
+	PaymentFile paymentFile = null;
+	Dossier dossier = null;
+	ServiceInfo serviceInfo = null;
+	PaymentConfig paymentConfig = null;
+	PaymentGateConfig paymentGateConfig = null;
+	
+	try{
+	
+		if (paymentFileId > 0) {
+			paymentFile = PaymentFileLocalServiceUtil.getPaymentFile(paymentFileId);
+	
+			if (Validator.isNotNull(paymentFile) && paymentFile.getPaymentConfig() > 0) {
+				paymentConfig =
+					PaymentConfigLocalServiceUtil.getPaymentConfig(paymentFile.getPaymentConfig());
+	
+				if (Validator.isNotNull(paymentConfig) &&
+					paymentConfig.getPaymentConfigId() > 0) {
+					paymentGateConfig =
+						PaymentGateConfigLocalServiceUtil.getPaymentGateConfig(paymentConfig.getPaymentGateType());
+				}
+			}
+	
+		}
+		if (dossierId > 0) {
+			dossier = DossierLocalServiceUtil.getDossier(dossierId);
+	
+		}
+		if (serviceInfoId > 0) {
+			serviceInfo = ServiceInfoLocalServiceUtil.getServiceInfo(serviceInfoId);
+	
+		}
+	}catch(Exception e){
+		
 	}
-	
-	String command = PortalUtil.getOriginalServletRequest(r).getParameter("command");
-	String merchant_trans_id = PortalUtil.getOriginalServletRequest(r).getParameter("merchant_trans_id");
-	String merchant_code = PortalUtil.getOriginalServletRequest(r).getParameter("merchant_code");
-	String response_code = PortalUtil.getOriginalServletRequest(r).getParameter("response_code");
-	String good_code = PortalUtil.getOriginalServletRequest(r).getParameter("good_code");
-	String net_cost = PortalUtil.getOriginalServletRequest(r).getParameter("net_cost");
-	String ship_fee = PortalUtil.getOriginalServletRequest(r).getParameter("ship_fee");
-	String tax = PortalUtil.getOriginalServletRequest(r).getParameter("tax");
-	String service_code = PortalUtil.getOriginalServletRequest(r).getParameter("service_code");
-	String currency_code = PortalUtil.getOriginalServletRequest(r).getParameter("currency_code");
-	String bank_code = PortalUtil.getOriginalServletRequest(r).getParameter("bank_code");
-	String desc_1 = PortalUtil.getOriginalServletRequest(r).getParameter("desc_1");
-	String desc_2 = PortalUtil.getOriginalServletRequest(r).getParameter("desc_2");
-	String desc_3 = PortalUtil.getOriginalServletRequest(r).getParameter("desc_3");
-	String desc_4 = PortalUtil.getOriginalServletRequest(r).getParameter("desc_4");
-	String desc_5 = PortalUtil.getOriginalServletRequest(r).getParameter("desc_5");
-	String p_p_id = PortalUtil.getOriginalServletRequest(r).getParameter("p_p_id");
-	String p_p_lifecycle = PortalUtil.getOriginalServletRequest(r).getParameter("p_p_id");
-	
-	KeyPay keyPay = new KeyPay(PortalUtil.getOriginalServletRequest(r));
-
 %>
 
 <portlet:renderURL var="backURL">
@@ -80,154 +82,57 @@
 />
 
 <c:choose>
-	<c:when test="<%= responseCode != null && responseCode.equals(\"00\") %>">
+	<c:when test="<%= Validator.isNotNull(paymentFile) && paymentFile.getPaymentStatus() == PaymentMgtUtil.PAYMENT_STATUS_APPROVED %>">
 		<div class="alert alert-success">
-			<liferay-ui:message key="keypay-success"></liferay-ui:message>
+			<liferay-ui:message key="paygate-success"></liferay-ui:message>
 		</div>
-		<%
-			String receptionNo = good_code;
-
-			
-			PaymentFile paymentFile = null;
-			Dossier dossier = null;
-			ServiceInfo  serviceInfo = null;
-
-			try {
-				paymentFile =
-					PaymentFileLocalServiceUtil.getPaymentFileByMerchantResponse(
-						GetterUtil.getLong(merchant_trans_id),
-						good_code, Double.parseDouble(net_cost));
-				if (paymentFile != null &&
-					paymentFile.getPaymentStatus() == PaymentMgtUtil.PAYMENT_STATUS_REQUESTED) {
-
-					dossier =
-						DossierLocalServiceUtil.getDossier(paymentFile.getDossierId());
-
-					serviceInfo =
-						ServiceInfoLocalServiceUtil.getServiceInfo(dossier.getServiceInfoId());
-
-					PaymentConfig paymentConfig =
-						PaymentConfigLocalServiceUtil.getPaymentConfigByGovAgency(
-							scopeGroupId,
-							paymentFile.getGovAgencyOrganizationId());
-					if (paymentConfig != null) {
-
-						if (keyPay.checkSecureHash(secure_hash)) {
-
-							boolean trustServiceMode =
-								BackendUtils.checkServiceMode(paymentFile.getDossierId());
-
-							if (!trustServiceMode) {
-
-								UserActionMsg actionMsg =
-									new UserActionMsg();
-
-								actionMsg.setAction(org.opencps.util.WebKeys.ACTION_PAY_VALUE);
-
-								actionMsg.setPaymentFileId(paymentFile.getPaymentFileId());
-
-								actionMsg.setDossierId(paymentFile.getDossierId());
-
-								actionMsg.setCompanyId(dossier.getCompanyId());
-
-								actionMsg.setGovAgencyCode(dossier.getGovAgencyCode());
-
-								Message message = new Message();
-
-								message.put("msgToEngine", actionMsg);
-
-								MessageBusUtil.sendMessage(
-									"opencps/frontoffice/out/destination",
-									message);
-
-							}
-
-							paymentFile.setPaymentStatus(PaymentMgtUtil.PAYMENT_STATUS_APPROVED);
-							paymentFile.setPaymentMethod(WebKeys.PAYMENT_METHOD_KEYPAY);
-							PaymentFileLocalServiceUtil.updatePaymentFile(paymentFile);
-
-							ActorBean actorBean =
-								new ActorBean(
-									1, themeDisplay.getUserId());
-
-							// Add dossierLog payment confirm
-
-							DossierLogLocalServiceUtil.addDossierLog(
-								themeDisplay.getUserId(),
-								themeDisplay.getScopeGroupId(),
-								themeDisplay.getCompanyId(),
-								paymentFile.getDossierId(),
-								paymentFile.getFileGroupId(),
-								null,
-								PortletConstants.DOSSIER_ACTION_CONFIRM_PAYMENT,
-								PortletConstants.DOSSIER_ACTION_CONFIRM_PAYMENT,
-								new Date(), 1, 2, actorBean.getActor(),
-								actorBean.getActorId(),
-								actorBean.getActorName(),
-								"html/portlet/paymentmgt/frontoffice/frontofficeconfirmkeypay.jsp");
-						}
-					}
-				}
-			}
-			catch (SystemException e) {
-
-			}
-		%>
-		<c:if test="<%= dossier != null && paymentFile != null && serviceInfo != null %>">
-		<div class="lookup-result">
-			<table>
-				<tr style="background: #fae5d3;">
-					<td class="col-left"><liferay-ui:message key="reception-no"></liferay-ui:message></td>
-					<td class="col-right"><%= dossier != null ? dossier.getReceptionNo() : "" %></td>
-				</tr>
-				<tr>
-					<td class="col-left"><liferay-ui:message key="service-name"></liferay-ui:message></td>
-					<td class="col-right"><%= serviceInfo != null ? serviceInfo.getServiceName() : "" %></td>
-				</tr>
-				<tr>
-					<td class="col-left"><liferay-ui:message key="administration-name"></liferay-ui:message></td>
-					<td class="col-right">
-						<c:if test="<%= dossier != null %>">
-							<%= dossier.getGovAgencyName() %>
-						</c:if>
-					</td>
-				</tr>
-				<tr>
-					<td class="col-left"><liferay-ui:message key="payment-name"></liferay-ui:message></td>
-					<td class="col-right"><%= paymentFile != null ? paymentFile.getPaymentName() : "" %></td>
-				</tr>
-				<tr>
-					<td class="col-left"><liferay-ui:message key="amount"></liferay-ui:message></td>
-					<td class="col-right"><%= NumberFormat.getInstance(new Locale("vi", "VN")).format(paymentFile.getAmount()) %></td>
-				</tr>
-				<tr>
-					<td class="col-left"><liferay-ui:message key="trans_id"></liferay-ui:message></td>
-					<td class="col-right"><%= trans_id %></td>
-				</tr>
-			</table>	
-		</div>	
+		<c:if test="<%= Validator.isNotNull(dossier) && Validator.isNotNull(serviceInfo) %>">
+			<div class="lookup-result">
+				<table>
+					<tr>
+						<td class="col-left"><liferay-ui:message key="reception-no"></liferay-ui:message></td>
+						<td class="col-right"><%= dossier.getReceptionNo()%></td>
+					</tr>
+					<tr>
+						<td class="col-left"><liferay-ui:message key="service-name"></liferay-ui:message></td>
+						<td class="col-right"><%= serviceInfo.getServiceName() %></td>
+					</tr>
+					<tr>
+						<td class="col-left"><liferay-ui:message key="administration-name"></liferay-ui:message></td>
+						<td class="col-right"><%= dossier.getGovAgencyName() %></td>
+					</tr>
+					<tr>
+						<td class="col-left"><liferay-ui:message key="payment-name"></liferay-ui:message></td>
+						<td class="col-right"><%=paymentFile.getPaymentName()%></td>
+					</tr>
+					<tr>
+						<td class="col-left"><liferay-ui:message key="amount"></liferay-ui:message></td>
+						<td class="col-right"><%= NumberFormat.getInstance(new Locale("vi", "VN")).format(paymentFile.getAmount()) %></td>
+					</tr>
+					<tr>
+						<td class="col-left"><liferay-ui:message key="trans_id"></liferay-ui:message></td>
+						<td class="col-right"><%=paymentFile.getKeypayTransactionId() %></td>
+					</tr>
+					<tr>
+						<td class="col-left"><liferay-ui:message key="paygate_id"></liferay-ui:message></td>
+						<td class="col-right"><%=paymentFile.getKeypayGoodCode() %></td>
+					</tr>
+					<tr>
+						<td class="col-left"><liferay-ui:message key="paygate_name"></liferay-ui:message></td>
+						<td class="col-right">
+							<%=Validator.isNotNull(paymentGateConfig)?paymentGateConfig.getPaymentGateName():StringPool.BLANK %>
+						</td>
+					</tr>
+				</table>	
+			</div>	
 		</c:if>
 	</c:when>
-	<c:when test="<%= responseCode != null && responseCode.equals(\"10\") %>">
-		<div class="alert alert-error">
-			<liferay-ui:message key="good-code-not-valid"></liferay-ui:message>
-		</div>
-	</c:when>
 	<c:otherwise>
-		<%
-			String receptionNo = good_code;
-
-			PaymentFile paymentFile = null;
-			try {
-				paymentFile = PaymentFileLocalServiceUtil.getPaymentFileByGoodCode(scopeGroupId, good_code);
-				paymentFile.setPaymentStatus(PaymentMgtUtil.PAYMENT_STATUS_REJECTED);
-				paymentFile.setPaymentMethod(WebKeys.PAYMENT_METHOD_KEYPAY);
-				PaymentFileLocalServiceUtil.updatePaymentFile(paymentFile);
-			}
-			catch (SystemException e) {
-				
-			}
-			
-		%>
+		<div class="alert alert-error">
+			<liferay-ui:error key="paygate-alert"></liferay-ui:error>
+		</div>
+		
 	</c:otherwise>
 </c:choose>
+
+<%! private static Log _log = LogFactoryUtil.getLog("/html/portlets/paymentmgt/frontoffice/frontofficeconfirmkeypay");%>

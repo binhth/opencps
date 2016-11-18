@@ -190,7 +190,7 @@ public class JMSMessageBodyUtil {
 					0, 2, actorBean.getActor(), actorBean.getActorId(),
 					actorBean.getActorName(),
 					JMSMessageBodyUtil.class.getName() + ".repairDossier()",
-					WebKeys.ACTION_CANCEL_VALUE);
+					WebKeys.ACTION_CANCEL_VALUE, 0, 0);
 			}
 			else {
 				_log.info("####################JMSMessageBodyUtil: Unknown object type");

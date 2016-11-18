@@ -18,6 +18,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -47,6 +49,7 @@ import org.opencps.util.DateTimeUtil;
 import org.opencps.util.PortletPropsValues;
 import org.opencps.util.PortletUtil;
 
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -73,6 +76,7 @@ import com.liferay.util.bridges.mvc.MVCPortlet;
  * @author trungdk
  */
 public class PaymentMgtPaymentConfigPortlet extends MVCPortlet {
+
 	/**
 	 * @param jrxmlTemplate
 	 * @param formData
@@ -82,226 +86,214 @@ public class PaymentMgtPaymentConfigPortlet extends MVCPortlet {
 	 * @return
 	 */
 	protected String exportToPDFFile(
-	    String jrxmlTemplate, String formData, Map<String, Object> map,
-	    String outputDestination, String fileName) {
+		String jrxmlTemplate, String formData, Map<String, Object> map, String outputDestination,
+		String fileName) {
 
-		return JRReportUtil
-		    .createReportPDFfFile(
-		        jrxmlTemplate, formData, map, outputDestination, fileName);
+		return JRReportUtil.createReportPDFfFile(
+			jrxmlTemplate, formData, map, outputDestination, fileName);
 	}
 
-	
-	public void previewReport(
-		    ActionRequest actionRequest, ActionResponse actionResponse)
-		    throws IOException {
-		ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest
-			    .getAttribute(WebKeys.THEME_DISPLAY);
-			
+	public void previewReport(ActionRequest actionRequest, ActionResponse actionResponse)
+		throws IOException {
+
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+
 		File file = null;
 
 		InputStream inputStream = null;
 
-		JSONObject responseJSON = JSONFactoryUtil
-			.createJSONObject();
+		JSONObject responseJSON = JSONFactoryUtil.createJSONObject();
 
 		String fileExportDir = StringPool.BLANK;
 		String urlFileDowLoad = StringPool.BLANK;
 		PortletSession portletSession = actionRequest.getPortletSession();
-		String reportTemplate = (String)portletSession.getAttribute(PaymentConfigDisplayTerms.REPORT_TEMPLATE);
+		String reportTemplate =
+			(String) portletSession.getAttribute(PaymentConfigDisplayTerms.REPORT_TEMPLATE);
 		portletSession.removeAttribute(PaymentConfigDisplayTerms.REPORT_TEMPLATE);
 		try {
-					ServiceContext serviceContext = ServiceContextFactory
-					    .getInstance(actionRequest);
-					serviceContext
-					    .setAddGroupPermissions(true);
-					serviceContext
-					    .setAddGuestPermissions(true);
-					// Get PaymentFile
-					long govAgencyOrganizationId = -1;
-					long userId = themeDisplay.getUserId();
-					long paymentConfigId = ParamUtil.getLong(actionRequest, PaymentConfigDisplayTerms.PAYMENT_CONFIG_ID);
-					// Get account folder
-					String dossierDestinationFolder = PortletUtil
-								    .getEmployeeDestinationFolder(themeDisplay.getScopeGroupId()
-								    			, userId);
-					DLFolder accountForlder = DLFolderUtil
-								    .getTargetFolder(themeDisplay
-								        .getUserId(), themeDisplay
-								            .getScopeGroupId(),
-								        themeDisplay
-								            .getScopeGroupId(),
-								        false, 0, dossierDestinationFolder,
-								        StringPool.BLANK, false, serviceContext);;
+			ServiceContext serviceContext = ServiceContextFactory.getInstance(actionRequest);
+			serviceContext.setAddGroupPermissions(true);
+			serviceContext.setAddGuestPermissions(true);
+			// Get PaymentFile
+			long govAgencyOrganizationId = -1;
+			long userId = themeDisplay.getUserId();
+			long paymentConfigId =
+				ParamUtil.getLong(actionRequest, PaymentConfigDisplayTerms.PAYMENT_CONFIG_ID);
+			// Get account folder
+			String dossierDestinationFolder =
+				PortletUtil.getEmployeeDestinationFolder(themeDisplay.getScopeGroupId(), userId);
+			DLFolder accountForlder =
+				DLFolderUtil.getTargetFolder(
+					themeDisplay.getUserId(), themeDisplay.getScopeGroupId(),
+					themeDisplay.getScopeGroupId(), false, 0, dossierDestinationFolder,
+					StringPool.BLANK, false, serviceContext);;
 
-					// Get user folder
-					DLFolder paymentFolder = DLFolderUtil.addFolder(themeDisplay
-					        .getUserId(), themeDisplay.getScopeGroupId(),themeDisplay.getScopeGroupId(),false, accountForlder.getFolderId(),
-				           String.valueOf(userId),
-				            StringPool.BLANK, false, serviceContext);
+			// Get user folder
+			DLFolder paymentFolder =
+				DLFolderUtil.addFolder(
+					themeDisplay.getUserId(), themeDisplay.getScopeGroupId(),
+					themeDisplay.getScopeGroupId(), false, accountForlder.getFolderId(),
+					String.valueOf(userId), StringPool.BLANK, false, serviceContext);
 
-					//TODO
-					String formData = StringPool.BLANK;
-					JSONObject payloadJSON = JSONFactoryUtil.createJSONObject();
-					JSONObject resultJSON = JSONFactoryUtil.createJSONObject();
-					payloadJSON.put("paymentFileId", "");
-					payloadJSON.put("dossierId", "");
-			        payloadJSON.put("fileGroupId", "");
-			        payloadJSON.put("ownerUserId", "");
-			        payloadJSON.put("ownerOrganizationId", "");
-			        //TODO
-			        
-			        Citizen citizen = null;
-				        payloadJSON.put("ownerOrganizationName", "");
-				        payloadJSON.put("ownerOrganizationAddress", "");		        			        	
-			        
-			        payloadJSON.put("govAgencyOrganizationId", "");
-			        payloadJSON.put("paymentName", "");
-			        payloadJSON.put("requestDatetime", "");
-			        payloadJSON.put("amount", "");
-			        //TODO
-			        payloadJSON.put("amountNumber", "");
-			        payloadJSON.put("amountString", "");
-			        
-			        payloadJSON.put("requestNote", "");
-			        payloadJSON.put("keypayUrl", "");
-			        payloadJSON.put("keypayTransactionId", "");
-			        payloadJSON.put("keypayGoodCode", "");
-			        payloadJSON.put("keypayMerchantCode", "");
-			        payloadJSON.put("bankInfo", "");
-			        payloadJSON.put("placeInfo", "");
-			        payloadJSON.put("paymentStatus", "");
-			        payloadJSON.put("paymentMethod", "");
-			        //TODO
-			        
-			        payloadJSON.put("confirmDatetime", "");
-			        payloadJSON.put("confirmFileEntryId", "");
-			        payloadJSON.put("approveDatetime", "");
-			        payloadJSON.put("accountUserName", "");
-			        payloadJSON.put("approveNote", "");
-			        payloadJSON.put("govAgencyTaxNo", "");
-			        payloadJSON.put("invoiceTemplateNo", "");
-			        payloadJSON.put("invoiceIssueNo", "");
-			        payloadJSON.put("invoiceNo", "");
-			        
-			        payloadJSON.put("cf_paymentConfigId", "");
-			        payloadJSON.put("cf_govAgencyOrganizationId", "");
-			        payloadJSON.put("cf_govAgencyName", "");
-			        payloadJSON.put("cf_govAgencyTaxNo", "");
-			        payloadJSON.put("cf_invoiceTemplateNo", "");
-			        payloadJSON.put("cf_invoiceIssueNo", "");
-			        payloadJSON.put("cf_invoiceLastNo", "");
-			        payloadJSON.put("cf_bankInfo", "");
-			        payloadJSON.put("cf_placeInfo", "");
-			        payloadJSON.put("cf_keypayDomain", "");
-			        payloadJSON.put("cf_keypayVersion", "");
-			        payloadJSON.put("cf_keypayMerchantCode", "");
-			        payloadJSON.put("cf_keypaySecureKey", "");
-			        resultJSON.put("opencps", payloadJSON);
-			        System.out.println("PaymentMgtBackOfficePortlet.createReport()"+resultJSON.toString());
-					
-					String jrxmlTemplate = reportTemplate;
+			// TODO
+			String formData = StringPool.BLANK;
+			JSONObject payloadJSON = JSONFactoryUtil.createJSONObject();
+			JSONObject resultJSON = JSONFactoryUtil.createJSONObject();
+			payloadJSON.put("paymentFileId", "");
+			payloadJSON.put("dossierId", "");
+			payloadJSON.put("fileGroupId", "");
+			payloadJSON.put("ownerUserId", "");
+			payloadJSON.put("ownerOrganizationId", "");
+			// TODO
 
-					// Validate json string
-					formData = resultJSON.toString();
-//					JSONFactoryUtil
-//					    .createJSONObject(formData);
+			Citizen citizen = null;
+			payloadJSON.put("ownerOrganizationName", "");
+			payloadJSON.put("ownerOrganizationAddress", "");
 
-					String outputDestination =
-					    PortletPropsValues.OPENCPS_FILE_SYSTEM_TEMP_DIR;
-					String fileName = System.currentTimeMillis() + StringPool.DASH + "preview.pdf";
+			payloadJSON.put("govAgencyOrganizationId", "");
+			payloadJSON.put("paymentName", "");
+			payloadJSON.put("requestDatetime", "");
+			payloadJSON.put("amount", "");
+			// TODO
+			payloadJSON.put("amountNumber", "");
+			payloadJSON.put("amountString", "");
 
-					fileExportDir = exportToPDFFile(
-					    jrxmlTemplate, formData, null, outputDestination, fileName);
+			payloadJSON.put("requestNote", "");
+			payloadJSON.put("keypayUrl", "");
+			payloadJSON.put("keypayTransactionId", "");
+			payloadJSON.put("keypayGoodCode", "");
+			payloadJSON.put("keypayMerchantCode", "");
+			payloadJSON.put("bankInfo", "");
+			payloadJSON.put("placeInfo", "");
+			payloadJSON.put("paymentStatus", "");
+			payloadJSON.put("paymentMethod", "");
+			// TODO
 
-					if (Validator
-					    .isNotNull(fileExportDir)) {
+			payloadJSON.put("confirmDatetime", "");
+			payloadJSON.put("confirmFileEntryId", "");
+			payloadJSON.put("approveDatetime", "");
+			payloadJSON.put("accountUserName", "");
+			payloadJSON.put("approveNote", "");
+			payloadJSON.put("govAgencyTaxNo", "");
+			payloadJSON.put("invoiceTemplateNo", "");
+			payloadJSON.put("invoiceIssueNo", "");
+			payloadJSON.put("invoiceNo", "");
 
-						file = new File(fileExportDir);
-						inputStream = new FileInputStream(file);
-						if (inputStream != null) {
-							String sourceFileName = fileExportDir
-							    .substring(fileExportDir
-							        .lastIndexOf(StringPool.SLASH) + 1, fileExportDir
-							            .length());
-							System.out
-							    .println(sourceFileName);
-							
-							System.out
-						    	.println(file.getName());
-							
-							String mimeType = MimeTypesUtil
-							    .getContentType(file);
+			payloadJSON.put("cf_paymentConfigId", "");
+			payloadJSON.put("cf_govAgencyOrganizationId", "");
+			payloadJSON.put("cf_govAgencyName", "");
+			payloadJSON.put("cf_govAgencyTaxNo", "");
+			payloadJSON.put("cf_invoiceTemplateNo", "");
+			payloadJSON.put("cf_invoiceIssueNo", "");
+			payloadJSON.put("cf_invoiceLastNo", "");
+			payloadJSON.put("cf_bankInfo", "");
+			payloadJSON.put("cf_placeInfo", "");
+			payloadJSON.put("cf_keypayDomain", "");
+			payloadJSON.put("cf_keypayVersion", "");
+			payloadJSON.put("cf_keypayMerchantCode", "");
+			payloadJSON.put("cf_keypaySecureKey", "");
+			resultJSON.put("opencps", payloadJSON);
+			System.out.println("PaymentMgtBackOfficePortlet.createReport()" + resultJSON.toString());
 
-							FileEntry fileEntry = DLAppServiceUtil
-							    .addFileEntry(serviceContext
-							        .getScopeGroupId(), paymentFolder.getFolderId(),
-							        sourceFileName, mimeType, fileName,
-							        StringPool.BLANK, StringPool.BLANK, inputStream,
-							        file.length(),
-							        serviceContext);
-							fileExportDir = getURL(fileEntry);
-							String tenFileExport = "defaultPDF.pdfs";
-							if(fileExportDir.contains(".pdfs")){
-								urlFileDowLoad = fileExportDir.replace(".pdfs", ".pdf") + "#view=FitH&scrollbar=0&page=1&toolbar=0&statusbar=0&messages=0&navpanes=0";
-							} else if(fileExportDir.contains(".doc")){
-								urlFileDowLoad="https://docs.google.com/viewer?url="+PortalUtil.getPortalURL(actionRequest)+fileExportDir+"&embedded=true";
-							} else{
-								urlFileDowLoad = fileExportDir + "#view=FitH&scrollbar=0&page=1&toolbar=0&statusbar=0&messages=0&navpanes=0";
-							}
-						}
+			String jrxmlTemplate = reportTemplate;
+
+			// Validate json string
+			formData = resultJSON.toString();
+			// JSONFactoryUtil
+			// .createJSONObject(formData);
+
+			String outputDestination = PortletPropsValues.OPENCPS_FILE_SYSTEM_TEMP_DIR;
+			String fileName = System.currentTimeMillis() + StringPool.DASH + "preview.pdf";
+
+			fileExportDir =
+				exportToPDFFile(jrxmlTemplate, formData, null, outputDestination, fileName);
+
+			if (Validator.isNotNull(fileExportDir)) {
+
+				file = new File(fileExportDir);
+				inputStream = new FileInputStream(file);
+				if (inputStream != null) {
+					String sourceFileName =
+						fileExportDir.substring(
+							fileExportDir.lastIndexOf(StringPool.SLASH) + 1, fileExportDir.length());
+
+					String mimeType = MimeTypesUtil.getContentType(file);
+
+					FileEntry fileEntry =
+						DLAppServiceUtil.addFileEntry(
+							serviceContext.getScopeGroupId(), paymentFolder.getFolderId(),
+							sourceFileName, mimeType, fileName, StringPool.BLANK, StringPool.BLANK,
+							inputStream, file.length(), serviceContext);
+					fileExportDir = getURL(fileEntry);
+					String tenFileExport = "defaultPDF.pdfs";
+					if (fileExportDir.contains(".pdfs")) {
+						urlFileDowLoad =
+							fileExportDir.replace(".pdfs", ".pdf") +
+								"#view=FitH&scrollbar=0&page=1&toolbar=0&statusbar=0&messages=0&navpanes=0";
 					}
+					else if (fileExportDir.contains(".doc")) {
+						urlFileDowLoad =
+							"https://docs.google.com/viewer?url=" +
+								PortalUtil.getPortalURL(actionRequest) + fileExportDir +
+								"&embedded=true";
+					}
+					else {
+						urlFileDowLoad =
+							fileExportDir +
+								"#view=FitH&scrollbar=0&page=1&toolbar=0&statusbar=0&messages=0&navpanes=0";
+					}
+				}
 			}
-			catch (Exception e) {
-				_log
-				    .error(e);
-			}
-			finally {
-				responseJSON
-			    .put("fileExportDir", urlFileDowLoad);
-				PortletUtil
-			    .writeJSON(actionRequest, actionResponse, responseJSON);
-				inputStream.close();
-				file.delete();
-				
-			}
-	}
-
-	private String getURL(FileEntry fileEntry){
-		try{
-			String url =    "/documents/"
-					        + fileEntry.getGroupId()
-					        + StringPool.SLASH
-					        + fileEntry.getFolderId()
-					        + StringPool.SLASH
-					        + fileEntry.getTitle()
-					        + "?version="+fileEntry.getVersion();
-			return url;
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			_log.error(e);
 		}
-	
-	
+		finally {
+			responseJSON.put("fileExportDir", urlFileDowLoad);
+			PortletUtil.writeJSON(actionRequest, actionResponse, responseJSON);
+			inputStream.close();
+			file.delete();
+
+		}
+	}
+
+	private String getURL(FileEntry fileEntry) {
+
+		try {
+			String url =
+				"/documents/" + fileEntry.getGroupId() + StringPool.SLASH +
+					fileEntry.getFolderId() + StringPool.SLASH + fileEntry.getTitle() +
+					"?version=" + fileEntry.getVersion();
+			return url;
+		}
+		catch (Exception e) {
+			_log.error(e);
+		}
+
 		return "";
 	}
 
 	@Override
-	public void serveResource(
-	    ResourceRequest resourceRequest, ResourceResponse resourceResponse)
-	    throws IOException, PortletException {
+	public void serveResource(ResourceRequest resourceRequest, ResourceResponse resourceResponse)
+		throws IOException, PortletException {
 
 		long govAgencyOrganizationId =
-		    ParamUtil.getLong(
-		        resourceRequest,
-		        PaymentConfigDisplayTerms.GOV_AGENCY_ORGANIZATION_ID);
+			ParamUtil.getLong(resourceRequest, PaymentConfigDisplayTerms.GOV_AGENCY_ORGANIZATION_ID);
+		boolean paymentStatus =
+			ParamUtil.getBoolean(resourceRequest, PaymentConfigDisplayTerms.PAYMENT_STATUS, true);
+		long paymentGateType =
+			ParamUtil.getLong(resourceRequest, PaymentConfigDisplayTerms.PAYMENT_GATE_TYPE, 0);
 		PaymentConfig pc = null;
 		ThemeDisplay themeDisplay =
 			(ThemeDisplay) resourceRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
 		long groupId = themeDisplay.getScopeGroupId();
-		
+
 		try {
 			pc =
-			    PaymentConfigLocalServiceUtil.getPaymentConfigByGovAgency(groupId, govAgencyOrganizationId);
+				PaymentConfigLocalServiceUtil.getPaymentConfigByGovAgency(
+					groupId, govAgencyOrganizationId, paymentGateType);
 		}
 		catch (SystemException e) {
 			// TODO Auto-generated catch block
@@ -309,26 +301,29 @@ public class PaymentMgtPaymentConfigPortlet extends MVCPortlet {
 		}
 
 		PrintWriter writer = resourceResponse.getWriter();
-		JSONArray paymentConfigsJsonArray=JSONFactoryUtil.createJSONArray();
-		
+		JSONArray paymentConfigsJsonArray = JSONFactoryUtil.createJSONArray();
+
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 		if (pc != null) {
 			jsonObject.put(PaymentConfigDisplayTerms.PAYMENT_CONFIG_ID, pc.getPaymentConfigId());
-			jsonObject.put(
-			    PaymentConfigDisplayTerms.BANK_INFO, pc.getBankInfo());
+			jsonObject.put(PaymentConfigDisplayTerms.BANK_INFO, pc.getBankInfo());
 			jsonObject.put(PaymentConfigDisplayTerms.PLACE_INFO, pc.getPlaceInfo());
 			jsonObject.put(PaymentConfigDisplayTerms.KEYPAY_DOMAIN, pc.getKeypayDomain());
 			jsonObject.put(PaymentConfigDisplayTerms.KEYPAY_VERSION, pc.getKeypayVersion());
-			jsonObject.put(PaymentConfigDisplayTerms.KEYPAY_MERCHANT_CODE, pc.getKeypayMerchantCode());
+			jsonObject.put(
+				PaymentConfigDisplayTerms.KEYPAY_MERCHANT_CODE, pc.getKeypayMerchantCode());
 			jsonObject.put(PaymentConfigDisplayTerms.KEYPAY_SECURE_KEY, pc.getKeypaySecureKey());
 			jsonObject.put(PaymentConfigDisplayTerms.GOV_AGENCY_TAX_NO, pc.getGovAgencyTaxNo());
 			jsonObject.put(PaymentConfigDisplayTerms.INVOICE_TEMPLATE_NO, pc.getInvoiceTemplateNo());
 			jsonObject.put(PaymentConfigDisplayTerms.INVOICE_ISSUE_NO, pc.getInvoiceIssueNo());
 			jsonObject.put(PaymentConfigDisplayTerms.INVOICE_LAST_NO, pc.getInvoiceLastNo());
 			jsonObject.put(PaymentConfigDisplayTerms.REPORT_TEMPLATE, pc.getReportTemplate());
+			jsonObject.put(PaymentConfigDisplayTerms.PAYMENT_GATE_TYPE, pc.getPaymentGateType());
+			jsonObject.put(PaymentConfigDisplayTerms.PAYMENT_STATUS, pc.getStatus());
+			jsonObject.put(PaymentConfigDisplayTerms.RETURN_URL, pc.getReturnUrl());
 		}
 		paymentConfigsJsonArray.put(jsonObject);
-		
+
 		writer.print(paymentConfigsJsonArray.toString());
 		writer.flush();
 		writer.close();
@@ -341,62 +336,101 @@ public class PaymentMgtPaymentConfigPortlet extends MVCPortlet {
 	 * @param actionResponse
 	 * @throws IOException
 	 */
-	public void setReportTemplateTemp(
-	    ActionRequest actionRequest, ActionResponse actionResponse)
-	    throws IOException {
-		String reportTemplate = ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.REPORT_TEMPLATE);
+	public void setReportTemplateTemp(ActionRequest actionRequest, ActionResponse actionResponse)
+		throws IOException {
+
+		String reportTemplate =
+			ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.REPORT_TEMPLATE);
 		PortletSession portletSession = actionRequest.getPortletSession();
-		portletSession.setAttribute(PaymentConfigDisplayTerms.REPORT_TEMPLATE, reportTemplate);	
+		portletSession.setAttribute(PaymentConfigDisplayTerms.REPORT_TEMPLATE, reportTemplate);
 	}
-	
+
 	/**
 	 * @param actionRequest
 	 * @param actionResponse
 	 * @throws IOException
 	 */
-	public void updatePaymentConfig(
-	    ActionRequest actionRequest, ActionResponse actionResponse)
-	    throws IOException {
+	public void updatePaymentConfig(ActionRequest actionRequest, ActionResponse actionResponse)
+		throws IOException {
 
 		long paymentConfigId =
-					    ParamUtil.getLong(
-					        actionRequest,
-					        PaymentConfigDisplayTerms.PAYMENT_CONFIG_ID);
+			ParamUtil.getLong(actionRequest, PaymentConfigDisplayTerms.PAYMENT_CONFIG_ID);
 		long govAgencyOrganizationId =
-		    ParamUtil.getLong(
-		        actionRequest,
-		        PaymentConfigDisplayTerms.GOV_AGENCY_ORGANIZATION_ID);
-		String govAgencyName = ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.GOV_AGENCY_NAME);
-		String govAgencyTaxNo = ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.GOV_AGENCY_TAX_NO);
-		String invoiceTemplateNo = ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.INVOICE_TEMPLATE_NO);
-		String invoiceIssueNo = ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.INVOICE_ISSUE_NO);
-		String invoiceLastNo = ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.INVOICE_LAST_NO);
+			ParamUtil.getLong(actionRequest, PaymentConfigDisplayTerms.GOV_AGENCY_ORGANIZATION_ID);
+		String govAgencyName =
+			ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.GOV_AGENCY_NAME);
+		String govAgencyTaxNo =
+			ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.GOV_AGENCY_TAX_NO);
+		String invoiceTemplateNo =
+			ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.INVOICE_TEMPLATE_NO);
+		String invoiceIssueNo =
+			ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.INVOICE_ISSUE_NO);
+		String invoiceLastNo =
+			ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.INVOICE_LAST_NO);
 		String bankInfo = ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.BANK_INFO);
 		String placeInfo = ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.PLACE_INFO);
-		String keypayDomain = ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.KEYPAY_DOMAIN);
-		String keypayVersion = ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.KEYPAY_VERSION);
-		String keypayMerchantCode = ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.KEYPAY_MERCHANT_CODE);
-		String keypaySecureKey = ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.KEYPAY_SECURE_KEY);
-		String reportTemplate = ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.REPORT_TEMPLATE);
-		
+		String keypayDomain =
+			ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.KEYPAY_DOMAIN);
+		String keypayVersion =
+			ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.KEYPAY_VERSION);
+		String keypayMerchantCode =
+			ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.KEYPAY_MERCHANT_CODE);
+		String keypaySecureKey =
+			ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.KEYPAY_SECURE_KEY);
+		String reportTemplate =
+			ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.REPORT_TEMPLATE);
+		String returnFromPaymentGateUrl =
+						ParamUtil.getString(actionRequest, PaymentConfigDisplayTerms.RETURN_URL);
+		long paymentGateType =
+			ParamUtil.getLong(actionRequest, PaymentConfigDisplayTerms.PAYMENT_GATE_TYPE);
+		boolean paymentStatus =
+			ParamUtil.getBoolean(actionRequest, PaymentConfigDisplayTerms.PAYMENT_STATUS, false);
+
 		String returnURL = ParamUtil.getString(actionRequest, "returnURL");
 		String currentURL = ParamUtil.getString(actionRequest, "currentURL");
 		String backURL = ParamUtil.getString(actionRequest, "backURL");
 
+		List<PaymentConfig> paymentConfiglist = new ArrayList<PaymentConfig>();
+
 		try {
 
-			ServiceContext serviceContext =
-			    ServiceContextFactory.getInstance(actionRequest);
+			ServiceContext serviceContext = ServiceContextFactory.getInstance(actionRequest);
+
+			if (paymentStatus) {
+				paymentConfiglist =
+					PaymentConfigLocalServiceUtil.getPaymentConfigListByGovAgency(
+						serviceContext.getScopeGroupId(), govAgencyOrganizationId);
+
+				if (paymentConfiglist.size() > 0) {
+					for (PaymentConfig paymentConfig : paymentConfiglist) {
+
+						paymentConfig.setStatus(false);
+						PaymentConfigLocalServiceUtil.updatePaymentConfig(paymentConfig);
+
+					}
+				}
+			}
 			if (paymentConfigId == 0) {
-				 PaymentConfig c = PaymentConfigLocalServiceUtil.addPaymentConfig(govAgencyOrganizationId, govAgencyName, govAgencyTaxNo, invoiceTemplateNo, invoiceIssueNo, invoiceLastNo, bankInfo, placeInfo, keypayDomain, keypayVersion, keypayMerchantCode, keypaySecureKey, reportTemplate, serviceContext.getUserId(), serviceContext);
-				 paymentConfigId = c.getPaymentConfigId();
+				PaymentConfig c =
+					PaymentConfigLocalServiceUtil.addPaymentConfig(
+						govAgencyOrganizationId, govAgencyName, govAgencyTaxNo, invoiceTemplateNo,
+						invoiceIssueNo, invoiceLastNo, bankInfo, placeInfo, keypayDomain,
+						keypayVersion, keypayMerchantCode, keypaySecureKey, reportTemplate,
+						paymentGateType, paymentStatus, serviceContext.getUserId(),returnFromPaymentGateUrl, serviceContext);
+				paymentConfigId = c.getPaymentConfigId();
 			}
 			else {
-				PaymentConfigLocalServiceUtil.updatePaymentConfig(paymentConfigId, govAgencyOrganizationId, govAgencyName, govAgencyTaxNo, invoiceTemplateNo, invoiceIssueNo, invoiceLastNo, bankInfo, placeInfo, keypayDomain, keypayVersion, keypayMerchantCode, keypaySecureKey, reportTemplate, serviceContext.getUserId(), serviceContext);
+				PaymentConfigLocalServiceUtil.updatePaymentConfig(
+					paymentConfigId, govAgencyOrganizationId, govAgencyName, govAgencyTaxNo,
+					invoiceTemplateNo, invoiceIssueNo, invoiceLastNo, bankInfo, placeInfo,
+					keypayDomain, keypayVersion, keypayMerchantCode, keypaySecureKey,
+					reportTemplate, paymentGateType, paymentStatus, serviceContext.getUserId(),returnFromPaymentGateUrl,
+					serviceContext);
 			}
 
 			addProcessActionSuccessMessage = false;
-			actionResponse.setRenderParameter(PaymentConfigDisplayTerms.PAYMENT_CONFIG_ID, String.valueOf(paymentConfigId));
+			actionResponse.setRenderParameter(
+				PaymentConfigDisplayTerms.PAYMENT_CONFIG_ID, String.valueOf(paymentConfigId));
 			SessionMessages.add(actionRequest, "update-payment-config-success");
 		}
 		catch (Exception e) {
@@ -405,7 +439,6 @@ public class PaymentMgtPaymentConfigPortlet extends MVCPortlet {
 
 	}
 
-	private Log _log =
-	    LogFactoryUtil.getLog(PaymentMgtPaymentConfigPortlet.class.getName());
+	private Log _log = LogFactoryUtil.getLog(PaymentMgtPaymentConfigPortlet.class.getName());
 
 }

@@ -113,7 +113,6 @@
 				<div class="span9"><%=Validator.isNotNull(adminAction) ? adminAction.getItemName(locale,true) : StringPool.BLANK %></div>
 			</div>
 		</div>
-			
 	</div>
 <%
 	
@@ -123,7 +122,11 @@
 		}catch(Exception e){}
 	}
 	
-	int index = 0; 
+	int index = 0;
+	
+	List<String> requiredDossierPartIds = new ArrayList<String>();
+	String [] requiredDossierPartIdsArr = new String[]{};
+	int requiredIndex = 0;
 	if(dossierPartsLevel1 != null){
 		for (DossierPart dossierPartLevel1 : dossierPartsLevel1){
 	
@@ -169,18 +172,43 @@
 									}
 								}
 								
-								cssRequired = dossierPart.getRequired() ? "cssRequired" : StringPool.BLANK;
+								if(partType == PortletConstants.DOSSIER_PART_TYPE_SUBMIT) {
+									if(dossierPart.getRequired() && dossierFile == null) {
+										requiredDossierPartIds.add(String.valueOf(dossierPart.getDossierpartId()));
+									}
+									
+									if (dossierPart.getRequired() && dossierFile != null) {
+										if(requiredDossierPartIds.contains(String.valueOf(dossierPart.getDossierpartId()))) {
+											requiredDossierPartIds.remove(String.valueOf(dossierPart.getDossierpartId()));
+										}
+									}
+								} else {
+									if(dossierPartLevel1.getRequired()) {
+										
+										if(dossierPartLevel1.getDossierpartId() == dossierPart.getDossierpartId()) {
+											requiredDossierPartIds.add(String.valueOf(dossierPartLevel1.getDossierpartId()));
+										}
+										
+										if(dossierPartLevel1.getDossierpartId() != dossierPart.getDossierpartId() && Validator.isNotNull(dossierFile)) {
+											if(requiredDossierPartIds.contains(String.valueOf(dossierPartLevel1.getDossierpartId()))) {
+												requiredDossierPartIds.remove(String.valueOf(dossierPartLevel1.getDossierpartId()));
+											}
+										}
+									}
+								}
 								
-								if(dossierPart.getRequired() && dossierFile == null) {
+								 cssRequired = dossierPart.getRequired() ? "cssRequired" : StringPool.BLANK;
+								
+								/* if(dossierPart.getRequired() && dossierFile == null) {
 									cssDossierPartRequired = "dossierPartRequired";
 								} else {
 									cssDossierPartRequired = StringPool.BLANK;
-								}
+								} */
 								
 								urlDownload = DossierMgtUtil.getURLDownloadTemplateFile(themeDisplay, dossierPart.getTemplateFileNo());
 								
 								%>
-									<div class='<%="opencps dossiermgt dossier-part-row r-" + index + " " + cssDossierPartRequired%>'>
+									<div class='<%="opencps dossiermgt dossier-part-row r-" + index + " " + String.valueOf(dossierPart.getDossierpartId())%>'>
 										<span class='<%="level-" + level + " opencps dossiermgt dossier-part"%>'>
 											<span class="row-icon row-icon-stt-new">
 												<c:choose>
@@ -357,9 +385,13 @@
 								
 								//TODO: kiem tra lai dieu kien dossierPartRequired voi truong hop nay
 								if(dossierPartLevel1.getRequired() && (fileGroups == null || (fileGroups != null && fileGroups.size() > 0))) {
-									cssDossierPartRequired = "dossierPartRequired";
+									//cssDossierPartRequired = "dossierPartRequired";
+									requiredDossierPartIds.add(String.valueOf(dossierPartLevel1.getDossierpartId()));
 								} else {
-									cssDossierPartRequired = StringPool.BLANK;
+									//cssDossierPartRequired = StringPool.BLANK;
+									if(requiredDossierPartIds.contains(String.valueOf(dossierPartLevel1.getDossierpartId()))) {
+										requiredDossierPartIds.remove(String.valueOf(dossierPartLevel1.getDossierpartId()));
+									}
 								}
 								
 								urlDownload = DossierMgtUtil.getURLDownloadTemplateFile(themeDisplay, dossierPartLevel1.getTemplateFileNo());
@@ -450,7 +482,18 @@
 			<%
 			}
 		}
-	}
+		requiredDossierPartIdsArr = new String[requiredDossierPartIds.size()]; 
+		for(String str : requiredDossierPartIds) {
+			requiredDossierPartIdsArr[requiredIndex] = str;
+			requiredIndex ++;
+		}
+		
+		requiredIndex = 0;
+		
+		%>
+			<aui:input name="requiredDossierPart" type="hidden" value="<%= StringUtil.merge(requiredDossierPartIdsArr) %>"/>
+		<%
+	}	
 %>
 </div>
 <aui:script>

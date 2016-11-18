@@ -213,7 +213,7 @@
 			AND 
 				opencps_dossierpart.partType IN (? , ?)
 			ORDER BY 
-				opencps_dev.opencps_dossier_file.dossierFileDate DESC
+				opencps_dossier_file.dossierFileDate DESC
 		]]>
 	</sql>
 	
@@ -987,12 +987,9 @@
 			WHERE
 				opencps_dossier_log.dossierId = ?
 			AND 
-				((
-					opencps_dossier_log.actor = 1
-					AND opencps_dossier_log.actionInfo NOT IN("add-attachment-file","remove-attachment-file","clone-attachment-file")
-				)
-				OR opencps_dossier_log.syncStatus = 2)
-			
+				( opencps_dossier_log.actor = 1 OR opencps_dossier_log.syncStatus = 2)
+				AND (opencps_dossier_log.dossierStatus != 'system')
+				AND (opencps_dossier_log.requestCommand = '')			
 			ORDER BY modifiedDate DESC
 		]]>
 	</sql>
@@ -1006,17 +1003,15 @@
 			WHERE
 				opencps_dossier_log.dossierId = ?
 			AND 
-				((
-					opencps_dossier_log.actor = 1
-					AND opencps_dossier_log.actionInfo NOT IN("add-attachment-file","remove-attachment-file","clone-attachment-file")
-				)
-				OR opencps_dossier_log.syncStatus = 2)
+				( opencps_dossier_log.actor = 1 OR opencps_dossier_log.syncStatus = 2)
+				AND (opencps_dossier_log.dossierStatus != 'system')
+				AND (opencps_dossier_log.requestCommand = '')
+			ORDER BY modifiedDate DESC
 		]]>
 	</sql>
 	
 	<sql id="org.opencps.dossiermgt.service.persistence.DossierLogFinder.findDossierLogByEmployee">
 		<![CDATA[
-
 			SELECT
 				opencps_dossier_log.*
 			FROM
@@ -1024,12 +1019,9 @@
 			WHERE
 				opencps_dossier_log.dossierId = ?
 			AND 
-				(
-					(opencps_dossier_log.actor = 1 OR opencps_dossier_log.actor = 2)
-					AND opencps_dossier_log.actionInfo NOT IN("add-attachment-file","remove-attachment-file","clone-attachment-file")
-				
-				)
-			
+					opencps_dossier_log.actor != 0
+				AND (opencps_dossier_log.dossierStatus != 'system')
+				AND (opencps_dossier_log.requestCommand = '')			
 			ORDER BY modifiedDate DESC
 		]]>
 	</sql>
@@ -1043,11 +1035,9 @@
 			WHERE
 				opencps_dossier_log.dossierId = ?
 			AND 
-				(
-					(opencps_dossier_log.actor = 1 OR opencps_dossier_log.actor = 2)
-					AND opencps_dossier_log.actionInfo NOT IN("add-attachment-file","remove-attachment-file","clone-attachment-file")
-				
-				)
+					opencps_dossier_log.actor != 0
+				AND (opencps_dossier_log.dossierStatus != 'system')
+				AND (opencps_dossier_log.requestCommand = '')			
 		]]>
 	</sql>
 	

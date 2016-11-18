@@ -310,6 +310,8 @@ public class MessageBusUtil {
 			Citizen citizen, ServiceContext serviceContext) throws PortalException,
 			SystemException {
 		
+		System.out.println("EMAIL ADMIN --------------**************************" + emailConfirmToAdmin);
+		
 		String emailAdmins[] = null;
 		
 		String telNo = StringPool.BLANK;

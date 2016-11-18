@@ -18,16 +18,10 @@
 package org.opencps.paymentmgt.service.impl;
 
 import java.util.Date;
+import java.util.List;
 
-import org.opencps.dossiermgt.model.ServiceConfig;
-import org.opencps.paymentmgt.NoSuchPaymentConfigException;
 import org.opencps.paymentmgt.model.PaymentConfig;
 import org.opencps.paymentmgt.service.base.PaymentConfigLocalServiceBaseImpl;
-import org.opencps.servicemgt.model.ServiceInfo;
-import org.opencps.servicemgt.service.ServiceInfoLocalServiceUtil;
-import org.opencps.usermgt.model.WorkingUnit;
-import org.opencps.usermgt.service.WorkingUnitLocalServiceUtil;
-import org.opencps.util.PortletConstants;
 
 import com.liferay.counter.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -35,168 +29,133 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.service.ServiceContext;
 
 /**
- * The implementation of the Payment configuration local service.
- *
- * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link org.opencps.paymentmgt.service.PaymentConfigLocalService} interface.
- *
- * <p>
- * This is a local service. Methods of this service will not have security checks based on the propagated JAAS credentials because this service can only be accessed from within the same VM.
- * </p>
+ * The implementation of the Payment configuration local service. <p> All custom
+ * service methods should be put in this class. Whenever methods are added,
+ * rerun ServiceBuilder to copy their definitions into the
+ * {@link org.opencps.paymentmgt.service.PaymentConfigLocalService} interface.
+ * <p> This is a local service. Methods of this service will not have security
+ * checks based on the propagated JAAS credentials because this service can only
+ * be accessed from within the same VM. </p>
  *
  * @author trungdk
  * @see org.opencps.paymentmgt.service.base.PaymentConfigLocalServiceBaseImpl
  * @see org.opencps.paymentmgt.service.PaymentConfigLocalServiceUtil
  */
-public class PaymentConfigLocalServiceImpl
-	extends PaymentConfigLocalServiceBaseImpl {
+public class PaymentConfigLocalServiceImpl extends PaymentConfigLocalServiceBaseImpl {
+
 	/*
-	 * NOTE FOR DEVELOPERS:
-	 *
-	 * Never reference this interface directly. Always use {@link org.opencps.paymentmgt.service.PaymentConfigLocalServiceUtil} to access the Payment configuration local service.
+	 * NOTE FOR DEVELOPERS: Never reference this interface directly. Always use
+	 * {@link org.opencps.paymentmgt.service.PaymentConfigLocalServiceUtil} to
+	 * access the Payment configuration local service.
 	 */
-	
+
 	public PaymentConfig addPaymentConfig(
-	    long govAgencyOrganizationId,
-	    String govAgencyName,
-	    String govAgencyTaxNo,
-	    String invoiceTemplateNo,
-	    String invoiceIssueNo,
-	    String invoiceLastNo,
-	    String bankInfo,
-	    String placeInfo,
-	    String keypayDomain,
-	    String keypayVersion,
-	    String keypayMerchantCode,
-	    String keypaySecureKey,
-	    String reportTemplate,
-	    long userId,
-	    ServiceContext serviceContext)
-	    throws PortalException, SystemException {
+		long govAgencyOrganizationId, String govAgencyName, String govAgencyTaxNo,
+		String invoiceTemplateNo, String invoiceIssueNo, String invoiceLastNo, String bankInfo,
+		String placeInfo, String keypayDomain, String keypayVersion, String keypayMerchantCode,
+		String keypaySecureKey, String reportTemplate, long paymentGateType, boolean paymentStatus,
+		long userId,String returnUrl, ServiceContext serviceContext)
+		throws PortalException, SystemException {
 
-		long paymentConfigId = CounterLocalServiceUtil
-		    .increment(PaymentConfig.class
-		        .getName());
+		long paymentConfigId = CounterLocalServiceUtil.increment(PaymentConfig.class.getName());
 
-		PaymentConfig paymentConfig = paymentConfigPersistence
-		    .create(paymentConfigId);
+		PaymentConfig paymentConfig = paymentConfigPersistence.create(paymentConfigId);
 
 		Date currentDate = new Date();
 
-		paymentConfig
-		    .setUserId(userId);
-		paymentConfig
-		    .setCompanyId(serviceContext
-		        .getCompanyId());
-		paymentConfig
-		    .setGroupId(serviceContext
-		        .getScopeGroupId());
-		paymentConfig
-		    .setCreateDate(currentDate);
-		paymentConfig
-		    .setModifiedDate(currentDate);
+		paymentConfig.setUserId(userId);
+		paymentConfig.setCompanyId(serviceContext.getCompanyId());
+		paymentConfig.setGroupId(serviceContext.getScopeGroupId());
+		paymentConfig.setCreateDate(currentDate);
+		paymentConfig.setModifiedDate(currentDate);
 
-		paymentConfig
-		    .setGovAgencyOrganizationId(govAgencyOrganizationId);
-		paymentConfig
-			.setGovAgencyName(govAgencyName);
-		paymentConfig
-			.setGovAgencyTaxNo(govAgencyTaxNo);
-		paymentConfig
-			.setInvoiceTemplateNo(invoiceTemplateNo);
-		paymentConfig
-			.setInvoiceIssueNo(invoiceIssueNo);
-		paymentConfig
-			.setInvoiceLastNo(invoiceLastNo);
-		paymentConfig
-			.setBankInfo(bankInfo);
-		paymentConfig
-			.setPlaceInfo(placeInfo);
-		paymentConfig
-			.setKeypayDomain(keypayDomain);
-		paymentConfig
-			.setKeypayVersion(keypayVersion);
-		paymentConfig
-			.setKeypayMerchantCode(keypayMerchantCode);
-		paymentConfig
-			.setKeypaySecureKey(keypaySecureKey);
-		paymentConfig
-			.setReportTemplate(reportTemplate);
-		return paymentConfigPersistence
-		    .update(paymentConfig);
+		paymentConfig.setGovAgencyOrganizationId(govAgencyOrganizationId);
+		paymentConfig.setGovAgencyName(govAgencyName);
+		paymentConfig.setGovAgencyTaxNo(govAgencyTaxNo);
+		paymentConfig.setInvoiceTemplateNo(invoiceTemplateNo);
+		paymentConfig.setInvoiceIssueNo(invoiceIssueNo);
+		paymentConfig.setInvoiceLastNo(invoiceLastNo);
+		paymentConfig.setBankInfo(bankInfo);
+		paymentConfig.setPlaceInfo(placeInfo);
+		paymentConfig.setKeypayDomain(keypayDomain);
+		paymentConfig.setKeypayVersion(keypayVersion);
+		paymentConfig.setKeypayMerchantCode(keypayMerchantCode);
+		paymentConfig.setKeypaySecureKey(keypaySecureKey);
+		paymentConfig.setReportTemplate(reportTemplate);
+		paymentConfig.setPaymentGateType(paymentGateType);
+		paymentConfig.setStatus(paymentStatus);
+		paymentConfig.setReturnUrl(returnUrl);
+		return paymentConfigPersistence.update(paymentConfig);
 
 	}
-	
+
 	public PaymentConfig updatePaymentConfig(
-	    long paymentConfigId, 
-	    long govAgencyOrganizationId,
-	    String govAgencyName,
-	    String govAgencyTaxNo,
-	    String invoiceTemplateNo,
-	    String invoiceIssueNo,
-	    String invoiceLastNo,
-	    String bankInfo,
-	    String placeInfo,
-	    String keypayDomain,
-	    String keypayVersion,
-	    String keypayMerchantCode,
-	    String keypaySecureKey,	 
-	    String reportTemplate,
-	    long userId,
-	    ServiceContext serviceContext)
-	    throws PortalException, SystemException {
+		long paymentConfigId, long govAgencyOrganizationId, String govAgencyName,
+		String govAgencyTaxNo, String invoiceTemplateNo, String invoiceIssueNo,
+		String invoiceLastNo, String bankInfo, String placeInfo, String keypayDomain,
+		String keypayVersion, String keypayMerchantCode, String keypaySecureKey,
+		String reportTemplate, long paymentGateType, boolean paymentStatus, long userId,String returnUrl,
+		ServiceContext serviceContext)
+		throws PortalException, SystemException {
 
-		PaymentConfig paymentConfig = paymentConfigPersistence
-		    .findByPrimaryKey(paymentConfigId);
+		PaymentConfig paymentConfig = paymentConfigPersistence.findByPrimaryKey(paymentConfigId);
 
 		Date currentDate = new Date();
 
-		paymentConfig
-		    .setUserId(userId);
-		paymentConfig
-		    .setCompanyId(serviceContext
-		        .getCompanyId());
-		paymentConfig
-		    .setGroupId(serviceContext
-		        .getScopeGroupId());
-		paymentConfig
-		    .setCreateDate(currentDate);
-		paymentConfig
-		    .setModifiedDate(currentDate);
+		paymentConfig.setUserId(userId);
+		paymentConfig.setCompanyId(serviceContext.getCompanyId());
+		paymentConfig.setGroupId(serviceContext.getScopeGroupId());
+		paymentConfig.setCreateDate(currentDate);
+		paymentConfig.setModifiedDate(currentDate);
 
-		paymentConfig
-			.setGovAgencyOrganizationId(govAgencyOrganizationId);
-		paymentConfig
-			.setGovAgencyName(govAgencyName);
-		paymentConfig
-			.setGovAgencyTaxNo(govAgencyTaxNo);
-		paymentConfig
-			.setInvoiceTemplateNo(invoiceTemplateNo);
-		paymentConfig
-			.setInvoiceIssueNo(invoiceIssueNo);
-		paymentConfig
-			.setInvoiceLastNo(invoiceLastNo);
-		paymentConfig
-			.setBankInfo(bankInfo);
-		paymentConfig
-			.setPlaceInfo(placeInfo);
-		paymentConfig
-			.setKeypayDomain(keypayDomain);
-		paymentConfig
-			.setKeypayVersion(keypayVersion);
-		paymentConfig
-			.setKeypayMerchantCode(keypayMerchantCode);
-		paymentConfig
-			.setKeypaySecureKey(keypaySecureKey);
-		paymentConfig
-			.setReportTemplate(reportTemplate);
-		
-		return paymentConfigPersistence
-		    .update(paymentConfig);
+		paymentConfig.setGovAgencyOrganizationId(govAgencyOrganizationId);
+		paymentConfig.setGovAgencyName(govAgencyName);
+		paymentConfig.setGovAgencyTaxNo(govAgencyTaxNo);
+		paymentConfig.setInvoiceTemplateNo(invoiceTemplateNo);
+		paymentConfig.setInvoiceIssueNo(invoiceIssueNo);
+		paymentConfig.setInvoiceLastNo(invoiceLastNo);
+		paymentConfig.setBankInfo(bankInfo);
+		paymentConfig.setPlaceInfo(placeInfo);
+		paymentConfig.setKeypayDomain(keypayDomain);
+		paymentConfig.setKeypayVersion(keypayVersion);
+		paymentConfig.setKeypayMerchantCode(keypayMerchantCode);
+		paymentConfig.setKeypaySecureKey(keypaySecureKey);
+		paymentConfig.setReportTemplate(reportTemplate);
+		paymentConfig.setPaymentGateType(paymentGateType);
+		paymentConfig.setStatus(paymentStatus);
+		paymentConfig.setReturnUrl(returnUrl);
+
+		return paymentConfigPersistence.update(paymentConfig);
 
 	}
-	
-	public PaymentConfig getPaymentConfigByGovAgency(long groupId, long govAgencyOrganizationId) throws SystemException {
-		return paymentConfigPersistence.fetchByGovAgency(groupId, govAgencyOrganizationId);
+
+	public List<PaymentConfig> getPaymentConfigListByGovAgency(
+		long groupId, long govAgencyOrganizationId)
+		throws SystemException {
+
+		return paymentConfigPersistence.findByGovAgencyList(groupId, govAgencyOrganizationId);
+
+	}
+
+	public PaymentConfig getPaymentConfigByGovAgency(
+		long groupId, long govAgencyOrganizationId, long paymentType)
+		throws SystemException {
+
+		return paymentConfigPersistence.fetchByGovAgencyPaymentType(
+			groupId, govAgencyOrganizationId, paymentType);
+	}
+
+	public PaymentConfig getPaymentConfigByGovAgency(
+		long groupId, long govAgencyOrganizationId, boolean status)
+		throws SystemException {
+
+		return paymentConfigPersistence.fetchByGovAgencyStatus(groupId, govAgencyOrganizationId, status);
+	}
+	public List<PaymentConfig> getPaymentConfigListByGovAgencyAndStatus(
+		long groupId, long govAgencyOrganizationId,boolean status)
+		throws SystemException {
+
+		return paymentConfigPersistence.findByGovAgencyAndStatusList(groupId, govAgencyOrganizationId, status);
+
 	}
 }

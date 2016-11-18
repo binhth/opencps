@@ -404,22 +404,32 @@
 
 <aui:script>
 	Liferay.provide(
-		window,
-		'<portlet:namespace/>updateDossierStatus',
-			function(actionURL) {
-				var A = AUI(); 
-				// validate dossier part required
-				
-				var cnt = A.all('#<portlet:namespace/>fm .dossierPartRequired').size();
-				
-				if(cnt > 0) {
-					A.all('#<portlet:namespace/>fm .dossierPartRequired').addClass('dossierPartRequired-error');
-					alert('<%= LanguageUtil.get(themeDisplay.getLocale(), "please-upload-dossier-part-required-before-send") %>');
-				} else {
-					location.href = '<%= updateDossierStatusURL %>';
-				}
-			},
-		['aui-base']
+			window,
+			'<portlet:namespace/>updateDossierStatus',
+				function(actionURL) {
+					var A = AUI(); 
+					// validate dossier part required
+					
+				 	/* var cnt = A.all('#<portlet:namespace/>fm .dossierPartRequired').size();
+					
+					if(cnt > 0) {
+						A.all('#<portlet:namespace/>fm .dossierPartRequired').addClass('dossierPartRequired-error');
+						alert('<%= LanguageUtil.get(themeDisplay.getLocale(), "please-upload-dossier-part-required-before-send") %>');
+					} else {
+						location.href = '<%= updateDossierStatusURL %>';
+					} */
+					
+					var requiredDossierPart = A.one('#<portlet:namespace/>requiredDossierPart');
+					
+					if(requiredDossierPart) {
+						if(requiredDossierPart.val().toString().length == 0) {
+							location.href = '<%= updateDossierStatusURL %>';
+						} else {
+							alert('<%= LanguageUtil.get(themeDisplay.getLocale(), "please-upload-dossier-part-required-before-send") %>');
+						}
+					}
+				},
+			['aui-base']
 	);
 </aui:script>
 

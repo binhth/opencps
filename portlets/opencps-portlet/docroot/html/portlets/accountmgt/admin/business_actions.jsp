@@ -77,6 +77,7 @@
 			</portlet:actionURL>
 	
 			<liferay-ui:icon
+				message="deactivate"
 			 	label="deactivate"
 			 	cssClass="search-container-action fa deactivate"
 				url="<%= updateStatusURL.toString()%>" 

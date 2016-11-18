@@ -112,6 +112,37 @@
 		<portlet-name>15</portlet-name>
 		<icon>/icon.png</icon>
 		<scheduler-entry>
+			<scheduler-event-listener-class>org.opencps.backend.scheduler.Weekly</scheduler-event-listener-class>
+			<trigger>
+				<simple>
+					<simple-trigger-value>1</simple-trigger-value>
+					<time-unit>week</time-unit>
+				</simple>
+			</trigger>
+		</scheduler-entry>
+
+		<scheduler-entry>
+			<scheduler-event-listener-class>org.opencps.backend.scheduler.Daily</scheduler-event-listener-class>
+			<trigger>
+				<simple>
+					<simple-trigger-value>1</simple-trigger-value>
+					<time-unit>day</time-unit>
+				</simple>
+			</trigger>
+		</scheduler-entry>
+
+		<scheduler-entry>
+			<scheduler-event-listener-class>org.opencps.backend.scheduler.Hourly</scheduler-event-listener-class>
+			<trigger>
+				<simple>
+					<simple-trigger-value>60</simple-trigger-value>
+					<time-unit>minute</time-unit>
+				</simple>
+			</trigger>
+		</scheduler-entry>
+
+
+		<scheduler-entry>
 			<scheduler-event-listener-class>org.opencps.backend.scheduler.FiveMinutes</scheduler-event-listener-class>
 			<trigger>
 				<simple>
@@ -304,6 +335,28 @@
 			/js/main.js
 		</footer-portlet-javascript>
 		<css-class-wrapper>26-portlet</css-class-wrapper>
+	</portlet>
+	<portlet>
+		<portlet-name>27</portlet-name>
+		<icon>/icon.png</icon>
+		<instanceable>true</instanceable>
+		<header-portlet-css>/css/main.css</header-portlet-css>
+		<header-portlet-javascript>/js/portlets/holidayconfig/main.js</header-portlet-javascript>
+		<footer-portlet-javascript>
+			/js/main.js
+		</footer-portlet-javascript>
+		<css-class-wrapper>27-portlet</css-class-wrapper>
+	</portlet>
+	<portlet>
+		<portlet-name>28</portlet-name>
+		<icon>/icon.png</icon>
+		<user-notification-definitions>org/opencps/notificationmgt/engine/user-notification-definitions.xml</user-notification-definitions>
+		<user-notification-handler-class>org.opencps.notificationmgt.engine.UserNotificationHandler</user-notification-handler-class>
+		<header-portlet-css>/css/main.css</header-portlet-css>
+		<footer-portlet-javascript>
+			/js/main.js
+		</footer-portlet-javascript>
+		<css-class-wrapper>28-portlet</css-class-wrapper>
 	</portlet>
 	<role-mapper>
 		<role-name>administrator</role-name>
