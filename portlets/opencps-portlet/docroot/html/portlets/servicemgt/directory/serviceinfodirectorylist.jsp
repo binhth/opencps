@@ -70,19 +70,24 @@
 	}
 	
 	String myComboTree = ProcessOrderUtils.generateComboboxTree(PortletPropsValues.DATAMGT_MASTERDATA_SERVICE_DOMAIN, PortletConstants.TREE_VIEW_ALL_ITEM, 
-			PortletConstants.TREE_VIEW_LEVER_2, true, renderRequest);
+			PortletConstants.TREE_VIEW_LEVER_2, false, renderRequest);
 %>
 
 
 <script>
 $(document).ready(function(){
 	var myComboTree = '<%=myComboTree %>';
-	$('#cc').combotree({  
+	var domainCode = '<%=domainCode%>';
+	$('#comboboxTree').combotree({  
 	
 	    animate:true,
-	    data: JSON.parse(myComboTree)
+	    data: JSON.parse(myComboTree),
+	    onChange:function(){
+            $('#<portlet:namespace /><%=ServiceDisplayTerms.SERVICE_DOMAINCODE %>').val($('#comboboxTree').combotree('getValue'));
+        }
 	});
 
+	$ ('#comboboxTree').combotree('setValue', domainCode);
 });
 
 </script>
@@ -122,7 +127,8 @@ $(document).ready(function(){
 							>
 							</datamgt:ddr> --%>
 							
-							<select id="cc" class="easyui-combotree"></select>
+							<aui:input name="<%=ServiceDisplayTerms.SERVICE_DOMAINCODE %>" type="hidden"></aui:input>
+							<select id="comboboxTree" class="easyui-combotree"></select>
 
 						</aui:col>
 						<aui:col width="30" cssClass="search-col">
