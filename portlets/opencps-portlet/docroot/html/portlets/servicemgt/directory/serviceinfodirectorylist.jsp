@@ -67,10 +67,12 @@
 	}
 %>
 
-<div class="title_box">
-	<p class="txtitle"><i class="fa fa-file-text-o blue MR10"></i><liferay-ui:message key="serviceprocess-list"/></p>
-</div>
 
+    <div class="easyui-panel" style="width:100%;max-width:400px;padding:30px 60px;">
+        <div style="margin-bottom:20px">
+            <input class="easyui-combotree" data-options="url:'http://www.jeasyui.com/demo/main/tree_data1.json',method:'get',label:'Select Node:',labelPosition:'top'" style="width:100%">
+        </div>
+    </div>
 
 <aui:nav-bar cssClass="opencps-toolbar custom-toolbar">
 	<aui:nav-bar-search cssClass="pull-right">
