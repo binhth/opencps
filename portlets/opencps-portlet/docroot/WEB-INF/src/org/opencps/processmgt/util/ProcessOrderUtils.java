@@ -56,6 +56,7 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
@@ -793,7 +794,11 @@ public class ProcessOrderUtils {
 			JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 			
 			JSONObject jsonObject = null;
-			
+			jsonObject = JSONFactoryUtil
+					.createJSONObject();
+			jsonObject.put("id", StringPool.BLANK);
+			jsonObject.put("text", LanguageUtil.get(themeDisplay.getLocale(), "domainCode", "domainCode"));
+			jsonArray.put(jsonObject);
 			int countPeriod = 0;
 			
 				for (DictItem dictItem : result) {
