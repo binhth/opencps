@@ -73,3 +73,9 @@
 #canceled .badge{
 /* 	background-color: #e1576b !important;  */
 }
+
+.row-icon-stt-new {
+    width: auto;
+    text-align: right;
+    white-space: nowrap;
+}

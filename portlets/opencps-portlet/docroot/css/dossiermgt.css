@@ -140,10 +140,7 @@ level-0 opencps dossiermgt dossier-part .row-icon {
 .dossier-part-stt {
   margin-right: 3px;
 }
-.row-icon-stt-new {
-    width: auto;
-    text-align: right;
-}
+
 
 .dossierPartRequired.dossierPartRequired-error .dossier-part-name{
 	color:red;
