@@ -1,4 +1,7 @@
 
+<%@page import="org.opencps.util.PortletConstants"%>
+<%@page import="org.opencps.util.PortletPropsValues"%>
+<%@page import="org.opencps.processmgt.util.ProcessOrderUtils"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -65,14 +68,26 @@
 	if(Validator.isNotNull(collectionDomain)) {
 		dictItems = DictItemLocalServiceUtil.getDictItemsByDictCollectionId(collectionDomain.getDictCollectionId());
 	}
+	
+	String myComboTree = ProcessOrderUtils.generateComboboxTree(PortletPropsValues.DATAMGT_MASTERDATA_SERVICE_DOMAIN, PortletConstants.TREE_VIEW_ALL_ITEM, 
+			PortletConstants.TREE_VIEW_LEVER_2, true, renderRequest);
 %>
 
 
-    <div class="easyui-panel" style="width:100%;max-width:400px;padding:30px 60px;">
-        <div style="margin-bottom:20px">
-            <input class="easyui-combotree" data-options="url:'http://www.jeasyui.com/demo/main/tree_data1.json',method:'get',label:'Select Node:',labelPosition:'top'" style="width:100%">
-        </div>
-    </div>
+<script>
+$(document).ready(function(){
+	var myComboTree = '<%=myComboTree %>';
+	$('#cc').combotree({  
+	
+	    animate:true,
+	    data: JSON.parse(myComboTree)
+	});
+
+});
+
+</script>
+
+<!-- <select class="easyui-combotree" url="/opencps-portlet/temp/city_data.json" name="city" style="width:156px;"/> -->
 
 <aui:nav-bar cssClass="opencps-toolbar custom-toolbar">
 	<aui:nav-bar-search cssClass="pull-right">
@@ -107,30 +122,7 @@
 							>
 							</datamgt:ddr> --%>
 							
-							<aui:select name="<%=ServiceDisplayTerms.SERVICE_DOMAINCODE %>" label="">
-								<aui:option value="">
-									<liferay-ui:message key="<%=ServiceDisplayTerms.SERVICE_DOMAINCODE %>"/>
-								</aui:option>
-								<%
-									if(dictItems != null){
-										for(DictItem dictItem : dictItems){
-											if((curDictItem != null && dictItem.getDictItemId() == curDictItem.getDictItemId())||
-													(curDictItem != null && dictItem.getTreeIndex().contains(curDictItem.getDictItemId() + StringPool.PERIOD))){
-												continue;
-											}
-											
-											int level = StringUtil.count(dictItem.getTreeIndex(), StringPool.PERIOD);
-											String index = "|";
-											for(int i = 0; i < level; i++){
-												index += "_";
-											}
-											%>
-												<aui:option value="<%=dictItem.getDictItemId() %>"><%=index + dictItem.getItemName(locale) %></aui:option>
-											<%
-										}
-									}
-								%>
-							</aui:select>
+							<select id="cc" class="easyui-combotree"></select>
 
 						</aui:col>
 						<aui:col width="30" cssClass="search-col">

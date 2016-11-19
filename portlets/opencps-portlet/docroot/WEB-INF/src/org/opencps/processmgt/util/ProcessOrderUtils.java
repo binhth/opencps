@@ -775,7 +775,102 @@ public class ProcessOrderUtils {
 		return recevieDate;
 
 	}
+	
+	public static String generateComboboxTree(String collectionCode, String itemCode,
+			int level, boolean isCode ,RenderRequest renderRequest)		
+					throws SystemException, PortalException {
+		
+			ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest
+				.getAttribute(WebKeys.THEME_DISPLAY);
 
+			long groupId = themeDisplay
+				.getScopeGroupId();
+			
+			//get chirentDataSource
+			List<DictItem> result = PortletUtil.getDictItemInUseByCode(groupId, collectionCode, itemCode);
+			
+			JSONArray jsonArrayRoot = JSONFactoryUtil.createJSONArray();
+			JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+			
+			JSONObject jsonObject = null;
+			
+			int countPeriod = 0;
+			
+				for (DictItem dictItem : result) {
+					
+					jsonObject = JSONFactoryUtil
+							.createJSONObject();
+					String[] treeIn = dictItem.getTreeIndex().split(StringPool.BACK_SLASH+StringPool.PERIOD);
+					
+					countPeriod = StringUtil.count(dictItem.getTreeIndex(), StringPool.PERIOD);
+					
+					if(countPeriod <= level){
+						
+						if(isCode){
+							jsonObject.put("id", dictItem.getItemCode());
+						}else{
+							jsonObject.put("id", StringUtil.valueOf(dictItem.getDictItemId()));
+						}
+						
+						jsonObject.put("text", dictItem.getItemName(themeDisplay.getLocale()));
+						
+						
+						jsonObject.put("children", JSONFactoryUtil.createJSONArray());
+						
+						jsonObject.put("idCHK", StringUtil.valueOf(dictItem.getDictItemId()));
+						
+						if(countPeriod > 0){
+							
+							jsonObject.put("parentId", StringUtil.valueOf(treeIn[countPeriod-1]));
+							
+							for (int y = 0; y < jsonArray.length(); y++) {
+								
+								buildChildJsonComboboxTreeData(jsonObject, 0, jsonArray.getJSONObject(y));
+								
+							}
+						}else{
+							
+							jsonArray.put(jsonObject);
+							
+						}
+						
+					}
+				}
+			
+			
+			return jsonArray.toString();
+		}
+	public static void buildChildJsonComboboxTreeData(JSONObject newJsonObject, int i, JSONObject compareJsonObject) {
+		
+		JSONObject childObj = compareJsonObject;
+		
+		if(Validator.isNotNull(compareJsonObject.getJSONArray("children").getJSONObject(i)) && i > 0){
+			childObj = compareJsonObject.getJSONArray("children").getJSONObject(i);
+		}
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+		
+		if(childObj != null){
+
+			jsonArray = childObj.getJSONArray("children");
+			
+			if(newJsonObject.getString("parentId").equals(childObj.getString("idCHK"))){
+
+				jsonArray.put(newJsonObject);
+				
+				childObj.put("children", jsonArray);
+			}
+			
+			i++;
+				
+			JSONObject objChk = compareJsonObject.getJSONArray("children").getJSONObject(i);
+				
+			if(Validator.isNotNull(objChk)){
+				
+				buildChildJsonComboboxTreeData(newJsonObject, i, compareJsonObject);
+			}
+			
+		}		
+}
 	private static Log _log =
     		LogFactoryUtil.getLog(ProcessOrderUtils.class.getName());
 }

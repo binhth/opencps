@@ -392,9 +392,3 @@
 	}
 %>
 </div>
-
-<style>
-.label.opencps.dossiermgt.part-file-ctr.view-form .fa.fa-search{
-right: 170px !important;
-}
-</style>
