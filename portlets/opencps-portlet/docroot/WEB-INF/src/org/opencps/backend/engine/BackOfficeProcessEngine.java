@@ -741,18 +741,18 @@ public class BackOfficeProcessEngine implements MessageListener {
 		List<Employee> ls = new ArrayList<>();
 
 		try {
-			List<User> users =
-				ProcessUtils.getAssignUsers(processWorkflow.getPostProcessStepId(), 3);
-
-			for (User user : users) {
-				AccountBean accountEmploy =
-					AccountUtil.getAccountBean(user.getUserId(), user.getGroupId(), null);
-
-				Employee employee = (Employee) accountEmploy.getAccountInstance();
-
-				ls.add(employee);
-
-			}
+//			List<User> users =
+//				ProcessUtils.getAssignUsers(processWorkflow.getPostProcessStepId(), 3);
+//
+//			for (User user : users) {
+//				AccountBean accountEmploy =
+//					AccountUtil.getAccountBean(user.getUserId(), user.getGroupId(), null);
+//
+//				Employee employee = (Employee) accountEmploy.getAccountInstance();
+//
+//				ls.add(employee);
+//
+//			}
 
 		}
 		catch (Exception e) {

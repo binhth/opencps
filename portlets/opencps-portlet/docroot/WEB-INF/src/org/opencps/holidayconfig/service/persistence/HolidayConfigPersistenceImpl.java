@@ -876,12 +876,6 @@ public class HolidayConfigPersistenceImpl extends BasePersistenceImpl<HolidayCon
 
 		holidayConfigImpl.setHolidayId(holidayConfig.getHolidayId());
 		holidayConfigImpl.setHoliday(holidayConfig.getHoliday());
-<<<<<<< HEAD
-		holidayConfigImpl.setDescription(holidayConfig.getDescription());
-		holidayConfigImpl.setCreatedDate(holidayConfig.getCreatedDate());
-		holidayConfigImpl.setModifiedDate(holidayConfig.getModifiedDate());
-		holidayConfigImpl.setRemove(holidayConfig.getRemove());
-=======
 		holidayConfigImpl.setCompanyId(holidayConfig.getCompanyId());
 		holidayConfigImpl.setGroupId(holidayConfig.getGroupId());
 		holidayConfigImpl.setUserId(holidayConfig.getUserId());
@@ -889,7 +883,6 @@ public class HolidayConfigPersistenceImpl extends BasePersistenceImpl<HolidayCon
 		holidayConfigImpl.setCreatedDate(holidayConfig.getCreatedDate());
 		holidayConfigImpl.setModifiedDate(holidayConfig.getModifiedDate());
 		holidayConfigImpl.setStatus(holidayConfig.getStatus());
->>>>>>> refs/heads/congbogiaothong-#2016-Feature-Dasboard
 
 		return holidayConfigImpl;
 	}

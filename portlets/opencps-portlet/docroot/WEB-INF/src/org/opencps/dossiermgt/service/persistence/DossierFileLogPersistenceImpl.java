@@ -84,6 +84,1106 @@ public class DossierFileLogPersistenceImpl extends BasePersistenceImpl<DossierFi
 	public static final FinderPath FINDER_PATH_COUNT_ALL = new FinderPath(DossierFileLogModelImpl.ENTITY_CACHE_ENABLED,
 			DossierFileLogModelImpl.FINDER_CACHE_ENABLED, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll", new String[0]);
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_L_D = new FinderPath(DossierFileLogModelImpl.ENTITY_CACHE_ENABLED,
+			DossierFileLogModelImpl.FINDER_CACHE_ENABLED,
+			DossierFileLogImpl.class, FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+			"findByL_D",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				
+			Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_L_D = new FinderPath(DossierFileLogModelImpl.ENTITY_CACHE_ENABLED,
+			DossierFileLogModelImpl.FINDER_CACHE_ENABLED,
+			DossierFileLogImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByL_D",
+			new String[] { Long.class.getName(), Long.class.getName() },
+			DossierFileLogModelImpl.LOGID_COLUMN_BITMASK |
+			DossierFileLogModelImpl.DOSSIERID_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_L_D = new FinderPath(DossierFileLogModelImpl.ENTITY_CACHE_ENABLED,
+			DossierFileLogModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByL_D",
+			new String[] { Long.class.getName(), Long.class.getName() });
+
+	/**
+	 * Returns all the dossier file logs where logId = &#63; and dossierId = &#63;.
+	 *
+	 * @param logId the log ID
+	 * @param dossierId the dossier ID
+	 * @return the matching dossier file logs
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public List<DossierFileLog> findByL_D(long logId, long dossierId)
+		throws SystemException {
+		return findByL_D(logId, dossierId, QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the dossier file logs where logId = &#63; and dossierId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link org.opencps.dossiermgt.model.impl.DossierFileLogModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param logId the log ID
+	 * @param dossierId the dossier ID
+	 * @param start the lower bound of the range of dossier file logs
+	 * @param end the upper bound of the range of dossier file logs (not inclusive)
+	 * @return the range of matching dossier file logs
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public List<DossierFileLog> findByL_D(long logId, long dossierId,
+		int start, int end) throws SystemException {
+		return findByL_D(logId, dossierId, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the dossier file logs where logId = &#63; and dossierId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link org.opencps.dossiermgt.model.impl.DossierFileLogModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param logId the log ID
+	 * @param dossierId the dossier ID
+	 * @param start the lower bound of the range of dossier file logs
+	 * @param end the upper bound of the range of dossier file logs (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching dossier file logs
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public List<DossierFileLog> findByL_D(long logId, long dossierId,
+		int start, int end, OrderByComparator orderByComparator)
+		throws SystemException {
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+				(orderByComparator == null)) {
+			pagination = false;
+			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_L_D;
+			finderArgs = new Object[] { logId, dossierId };
+		}
+		else {
+			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_L_D;
+			finderArgs = new Object[] {
+					logId, dossierId,
+					
+					start, end, orderByComparator
+				};
+		}
+
+		List<DossierFileLog> list = (List<DossierFileLog>)FinderCacheUtil.getResult(finderPath,
+				finderArgs, this);
+
+		if ((list != null) && !list.isEmpty()) {
+			for (DossierFileLog dossierFileLog : list) {
+				if ((logId != dossierFileLog.getLogId()) ||
+						(dossierId != dossierFileLog.getDossierId())) {
+					list = null;
+
+					break;
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(4 +
+						(orderByComparator.getOrderByFields().length * 3));
+			}
+			else {
+				query = new StringBundler(4);
+			}
+
+			query.append(_SQL_SELECT_DOSSIERFILELOG_WHERE);
+
+			query.append(_FINDER_COLUMN_L_D_LOGID_2);
+
+			query.append(_FINDER_COLUMN_L_D_DOSSIERID_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator);
+			}
+			else
+			 if (pagination) {
+				query.append(DossierFileLogModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(logId);
+
+				qPos.add(dossierId);
+
+				if (!pagination) {
+					list = (List<DossierFileLog>)QueryUtil.list(q,
+							getDialect(), start, end, false);
+
+					Collections.sort(list);
+
+					list = new UnmodifiableList<DossierFileLog>(list);
+				}
+				else {
+					list = (List<DossierFileLog>)QueryUtil.list(q,
+							getDialect(), start, end);
+				}
+
+				cacheResult(list);
+
+				FinderCacheUtil.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				FinderCacheUtil.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first dossier file log in the ordered set where logId = &#63; and dossierId = &#63;.
+	 *
+	 * @param logId the log ID
+	 * @param dossierId the dossier ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching dossier file log
+	 * @throws org.opencps.dossiermgt.NoSuchDossierFileLogException if a matching dossier file log could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public DossierFileLog findByL_D_First(long logId, long dossierId,
+		OrderByComparator orderByComparator)
+		throws NoSuchDossierFileLogException, SystemException {
+		DossierFileLog dossierFileLog = fetchByL_D_First(logId, dossierId,
+				orderByComparator);
+
+		if (dossierFileLog != null) {
+			return dossierFileLog;
+		}
+
+		StringBundler msg = new StringBundler(6);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("logId=");
+		msg.append(logId);
+
+		msg.append(", dossierId=");
+		msg.append(dossierId);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchDossierFileLogException(msg.toString());
+	}
+
+	/**
+	 * Returns the first dossier file log in the ordered set where logId = &#63; and dossierId = &#63;.
+	 *
+	 * @param logId the log ID
+	 * @param dossierId the dossier ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching dossier file log, or <code>null</code> if a matching dossier file log could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public DossierFileLog fetchByL_D_First(long logId, long dossierId,
+		OrderByComparator orderByComparator) throws SystemException {
+		List<DossierFileLog> list = findByL_D(logId, dossierId, 0, 1,
+				orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last dossier file log in the ordered set where logId = &#63; and dossierId = &#63;.
+	 *
+	 * @param logId the log ID
+	 * @param dossierId the dossier ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching dossier file log
+	 * @throws org.opencps.dossiermgt.NoSuchDossierFileLogException if a matching dossier file log could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public DossierFileLog findByL_D_Last(long logId, long dossierId,
+		OrderByComparator orderByComparator)
+		throws NoSuchDossierFileLogException, SystemException {
+		DossierFileLog dossierFileLog = fetchByL_D_Last(logId, dossierId,
+				orderByComparator);
+
+		if (dossierFileLog != null) {
+			return dossierFileLog;
+		}
+
+		StringBundler msg = new StringBundler(6);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("logId=");
+		msg.append(logId);
+
+		msg.append(", dossierId=");
+		msg.append(dossierId);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchDossierFileLogException(msg.toString());
+	}
+
+	/**
+	 * Returns the last dossier file log in the ordered set where logId = &#63; and dossierId = &#63;.
+	 *
+	 * @param logId the log ID
+	 * @param dossierId the dossier ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching dossier file log, or <code>null</code> if a matching dossier file log could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public DossierFileLog fetchByL_D_Last(long logId, long dossierId,
+		OrderByComparator orderByComparator) throws SystemException {
+		int count = countByL_D(logId, dossierId);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<DossierFileLog> list = findByL_D(logId, dossierId, count - 1,
+				count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the dossier file logs before and after the current dossier file log in the ordered set where logId = &#63; and dossierId = &#63;.
+	 *
+	 * @param dossierFileLogId the primary key of the current dossier file log
+	 * @param logId the log ID
+	 * @param dossierId the dossier ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next dossier file log
+	 * @throws org.opencps.dossiermgt.NoSuchDossierFileLogException if a dossier file log with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public DossierFileLog[] findByL_D_PrevAndNext(long dossierFileLogId,
+		long logId, long dossierId, OrderByComparator orderByComparator)
+		throws NoSuchDossierFileLogException, SystemException {
+		DossierFileLog dossierFileLog = findByPrimaryKey(dossierFileLogId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			DossierFileLog[] array = new DossierFileLogImpl[3];
+
+			array[0] = getByL_D_PrevAndNext(session, dossierFileLog, logId,
+					dossierId, orderByComparator, true);
+
+			array[1] = dossierFileLog;
+
+			array[2] = getByL_D_PrevAndNext(session, dossierFileLog, logId,
+					dossierId, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected DossierFileLog getByL_D_PrevAndNext(Session session,
+		DossierFileLog dossierFileLog, long logId, long dossierId,
+		OrderByComparator orderByComparator, boolean previous) {
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(6 +
+					(orderByComparator.getOrderByFields().length * 6));
+		}
+		else {
+			query = new StringBundler(3);
+		}
+
+		query.append(_SQL_SELECT_DOSSIERFILELOG_WHERE);
+
+		query.append(_FINDER_COLUMN_L_D_LOGID_2);
+
+		query.append(_FINDER_COLUMN_L_D_DOSSIERID_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(DossierFileLogModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(logId);
+
+		qPos.add(dossierId);
+
+		if (orderByComparator != null) {
+			Object[] values = orderByComparator.getOrderByConditionValues(dossierFileLog);
+
+			for (Object value : values) {
+				qPos.add(value);
+			}
+		}
+
+		List<DossierFileLog> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the dossier file logs where logId = &#63; and dossierId = &#63; from the database.
+	 *
+	 * @param logId the log ID
+	 * @param dossierId the dossier ID
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public void removeByL_D(long logId, long dossierId)
+		throws SystemException {
+		for (DossierFileLog dossierFileLog : findByL_D(logId, dossierId,
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+			remove(dossierFileLog);
+		}
+	}
+
+	/**
+	 * Returns the number of dossier file logs where logId = &#63; and dossierId = &#63;.
+	 *
+	 * @param logId the log ID
+	 * @param dossierId the dossier ID
+	 * @return the number of matching dossier file logs
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public int countByL_D(long logId, long dossierId) throws SystemException {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_L_D;
+
+		Object[] finderArgs = new Object[] { logId, dossierId };
+
+		Long count = (Long)FinderCacheUtil.getResult(finderPath, finderArgs,
+				this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(3);
+
+			query.append(_SQL_COUNT_DOSSIERFILELOG_WHERE);
+
+			query.append(_FINDER_COLUMN_L_D_LOGID_2);
+
+			query.append(_FINDER_COLUMN_L_D_DOSSIERID_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(logId);
+
+				qPos.add(dossierId);
+
+				count = (Long)q.uniqueResult();
+
+				FinderCacheUtil.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				FinderCacheUtil.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_L_D_LOGID_2 = "dossierFileLog.logId = ? AND ";
+	private static final String _FINDER_COLUMN_L_D_DOSSIERID_2 = "dossierFileLog.dossierId = ?";
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_L_D_A = new FinderPath(DossierFileLogModelImpl.ENTITY_CACHE_ENABLED,
+			DossierFileLogModelImpl.FINDER_CACHE_ENABLED,
+			DossierFileLogImpl.class, FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+			"findByL_D_A",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				Integer.class.getName(),
+				
+			Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_L_D_A = new FinderPath(DossierFileLogModelImpl.ENTITY_CACHE_ENABLED,
+			DossierFileLogModelImpl.FINDER_CACHE_ENABLED,
+			DossierFileLogImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByL_D_A",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				Integer.class.getName()
+			},
+			DossierFileLogModelImpl.LOGID_COLUMN_BITMASK |
+			DossierFileLogModelImpl.DOSSIERID_COLUMN_BITMASK |
+			DossierFileLogModelImpl.ACTOR_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_L_D_A = new FinderPath(DossierFileLogModelImpl.ENTITY_CACHE_ENABLED,
+			DossierFileLogModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByL_D_A",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				Integer.class.getName()
+			});
+
+	/**
+	 * Returns all the dossier file logs where logId = &#63; and dossierId = &#63; and actor = &#63;.
+	 *
+	 * @param logId the log ID
+	 * @param dossierId the dossier ID
+	 * @param actor the actor
+	 * @return the matching dossier file logs
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public List<DossierFileLog> findByL_D_A(long logId, long dossierId,
+		int actor) throws SystemException {
+		return findByL_D_A(logId, dossierId, actor, QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the dossier file logs where logId = &#63; and dossierId = &#63; and actor = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link org.opencps.dossiermgt.model.impl.DossierFileLogModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param logId the log ID
+	 * @param dossierId the dossier ID
+	 * @param actor the actor
+	 * @param start the lower bound of the range of dossier file logs
+	 * @param end the upper bound of the range of dossier file logs (not inclusive)
+	 * @return the range of matching dossier file logs
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public List<DossierFileLog> findByL_D_A(long logId, long dossierId,
+		int actor, int start, int end) throws SystemException {
+		return findByL_D_A(logId, dossierId, actor, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the dossier file logs where logId = &#63; and dossierId = &#63; and actor = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link org.opencps.dossiermgt.model.impl.DossierFileLogModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param logId the log ID
+	 * @param dossierId the dossier ID
+	 * @param actor the actor
+	 * @param start the lower bound of the range of dossier file logs
+	 * @param end the upper bound of the range of dossier file logs (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching dossier file logs
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public List<DossierFileLog> findByL_D_A(long logId, long dossierId,
+		int actor, int start, int end, OrderByComparator orderByComparator)
+		throws SystemException {
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+				(orderByComparator == null)) {
+			pagination = false;
+			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_L_D_A;
+			finderArgs = new Object[] { logId, dossierId, actor };
+		}
+		else {
+			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_L_D_A;
+			finderArgs = new Object[] {
+					logId, dossierId, actor,
+					
+					start, end, orderByComparator
+				};
+		}
+
+		List<DossierFileLog> list = (List<DossierFileLog>)FinderCacheUtil.getResult(finderPath,
+				finderArgs, this);
+
+		if ((list != null) && !list.isEmpty()) {
+			for (DossierFileLog dossierFileLog : list) {
+				if ((logId != dossierFileLog.getLogId()) ||
+						(dossierId != dossierFileLog.getDossierId()) ||
+						(actor != dossierFileLog.getActor())) {
+					list = null;
+
+					break;
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(5 +
+						(orderByComparator.getOrderByFields().length * 3));
+			}
+			else {
+				query = new StringBundler(5);
+			}
+
+			query.append(_SQL_SELECT_DOSSIERFILELOG_WHERE);
+
+			query.append(_FINDER_COLUMN_L_D_A_LOGID_2);
+
+			query.append(_FINDER_COLUMN_L_D_A_DOSSIERID_2);
+
+			query.append(_FINDER_COLUMN_L_D_A_ACTOR_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator);
+			}
+			else
+			 if (pagination) {
+				query.append(DossierFileLogModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(logId);
+
+				qPos.add(dossierId);
+
+				qPos.add(actor);
+
+				if (!pagination) {
+					list = (List<DossierFileLog>)QueryUtil.list(q,
+							getDialect(), start, end, false);
+
+					Collections.sort(list);
+
+					list = new UnmodifiableList<DossierFileLog>(list);
+				}
+				else {
+					list = (List<DossierFileLog>)QueryUtil.list(q,
+							getDialect(), start, end);
+				}
+
+				cacheResult(list);
+
+				FinderCacheUtil.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				FinderCacheUtil.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first dossier file log in the ordered set where logId = &#63; and dossierId = &#63; and actor = &#63;.
+	 *
+	 * @param logId the log ID
+	 * @param dossierId the dossier ID
+	 * @param actor the actor
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching dossier file log
+	 * @throws org.opencps.dossiermgt.NoSuchDossierFileLogException if a matching dossier file log could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public DossierFileLog findByL_D_A_First(long logId, long dossierId,
+		int actor, OrderByComparator orderByComparator)
+		throws NoSuchDossierFileLogException, SystemException {
+		DossierFileLog dossierFileLog = fetchByL_D_A_First(logId, dossierId,
+				actor, orderByComparator);
+
+		if (dossierFileLog != null) {
+			return dossierFileLog;
+		}
+
+		StringBundler msg = new StringBundler(8);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("logId=");
+		msg.append(logId);
+
+		msg.append(", dossierId=");
+		msg.append(dossierId);
+
+		msg.append(", actor=");
+		msg.append(actor);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchDossierFileLogException(msg.toString());
+	}
+
+	/**
+	 * Returns the first dossier file log in the ordered set where logId = &#63; and dossierId = &#63; and actor = &#63;.
+	 *
+	 * @param logId the log ID
+	 * @param dossierId the dossier ID
+	 * @param actor the actor
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching dossier file log, or <code>null</code> if a matching dossier file log could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public DossierFileLog fetchByL_D_A_First(long logId, long dossierId,
+		int actor, OrderByComparator orderByComparator)
+		throws SystemException {
+		List<DossierFileLog> list = findByL_D_A(logId, dossierId, actor, 0, 1,
+				orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last dossier file log in the ordered set where logId = &#63; and dossierId = &#63; and actor = &#63;.
+	 *
+	 * @param logId the log ID
+	 * @param dossierId the dossier ID
+	 * @param actor the actor
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching dossier file log
+	 * @throws org.opencps.dossiermgt.NoSuchDossierFileLogException if a matching dossier file log could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public DossierFileLog findByL_D_A_Last(long logId, long dossierId,
+		int actor, OrderByComparator orderByComparator)
+		throws NoSuchDossierFileLogException, SystemException {
+		DossierFileLog dossierFileLog = fetchByL_D_A_Last(logId, dossierId,
+				actor, orderByComparator);
+
+		if (dossierFileLog != null) {
+			return dossierFileLog;
+		}
+
+		StringBundler msg = new StringBundler(8);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("logId=");
+		msg.append(logId);
+
+		msg.append(", dossierId=");
+		msg.append(dossierId);
+
+		msg.append(", actor=");
+		msg.append(actor);
+
+		msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+		throw new NoSuchDossierFileLogException(msg.toString());
+	}
+
+	/**
+	 * Returns the last dossier file log in the ordered set where logId = &#63; and dossierId = &#63; and actor = &#63;.
+	 *
+	 * @param logId the log ID
+	 * @param dossierId the dossier ID
+	 * @param actor the actor
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching dossier file log, or <code>null</code> if a matching dossier file log could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public DossierFileLog fetchByL_D_A_Last(long logId, long dossierId,
+		int actor, OrderByComparator orderByComparator)
+		throws SystemException {
+		int count = countByL_D_A(logId, dossierId, actor);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<DossierFileLog> list = findByL_D_A(logId, dossierId, actor,
+				count - 1, count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the dossier file logs before and after the current dossier file log in the ordered set where logId = &#63; and dossierId = &#63; and actor = &#63;.
+	 *
+	 * @param dossierFileLogId the primary key of the current dossier file log
+	 * @param logId the log ID
+	 * @param dossierId the dossier ID
+	 * @param actor the actor
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next dossier file log
+	 * @throws org.opencps.dossiermgt.NoSuchDossierFileLogException if a dossier file log with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public DossierFileLog[] findByL_D_A_PrevAndNext(long dossierFileLogId,
+		long logId, long dossierId, int actor,
+		OrderByComparator orderByComparator)
+		throws NoSuchDossierFileLogException, SystemException {
+		DossierFileLog dossierFileLog = findByPrimaryKey(dossierFileLogId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			DossierFileLog[] array = new DossierFileLogImpl[3];
+
+			array[0] = getByL_D_A_PrevAndNext(session, dossierFileLog, logId,
+					dossierId, actor, orderByComparator, true);
+
+			array[1] = dossierFileLog;
+
+			array[2] = getByL_D_A_PrevAndNext(session, dossierFileLog, logId,
+					dossierId, actor, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected DossierFileLog getByL_D_A_PrevAndNext(Session session,
+		DossierFileLog dossierFileLog, long logId, long dossierId, int actor,
+		OrderByComparator orderByComparator, boolean previous) {
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(6 +
+					(orderByComparator.getOrderByFields().length * 6));
+		}
+		else {
+			query = new StringBundler(3);
+		}
+
+		query.append(_SQL_SELECT_DOSSIERFILELOG_WHERE);
+
+		query.append(_FINDER_COLUMN_L_D_A_LOGID_2);
+
+		query.append(_FINDER_COLUMN_L_D_A_DOSSIERID_2);
+
+		query.append(_FINDER_COLUMN_L_D_A_ACTOR_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(DossierFileLogModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(logId);
+
+		qPos.add(dossierId);
+
+		qPos.add(actor);
+
+		if (orderByComparator != null) {
+			Object[] values = orderByComparator.getOrderByConditionValues(dossierFileLog);
+
+			for (Object value : values) {
+				qPos.add(value);
+			}
+		}
+
+		List<DossierFileLog> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the dossier file logs where logId = &#63; and dossierId = &#63; and actor = &#63; from the database.
+	 *
+	 * @param logId the log ID
+	 * @param dossierId the dossier ID
+	 * @param actor the actor
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public void removeByL_D_A(long logId, long dossierId, int actor)
+		throws SystemException {
+		for (DossierFileLog dossierFileLog : findByL_D_A(logId, dossierId,
+				actor, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+			remove(dossierFileLog);
+		}
+	}
+
+	/**
+	 * Returns the number of dossier file logs where logId = &#63; and dossierId = &#63; and actor = &#63;.
+	 *
+	 * @param logId the log ID
+	 * @param dossierId the dossier ID
+	 * @param actor the actor
+	 * @return the number of matching dossier file logs
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public int countByL_D_A(long logId, long dossierId, int actor)
+		throws SystemException {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_L_D_A;
+
+		Object[] finderArgs = new Object[] { logId, dossierId, actor };
+
+		Long count = (Long)FinderCacheUtil.getResult(finderPath, finderArgs,
+				this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(4);
+
+			query.append(_SQL_COUNT_DOSSIERFILELOG_WHERE);
+
+			query.append(_FINDER_COLUMN_L_D_A_LOGID_2);
+
+			query.append(_FINDER_COLUMN_L_D_A_DOSSIERID_2);
+
+			query.append(_FINDER_COLUMN_L_D_A_ACTOR_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(logId);
+
+				qPos.add(dossierId);
+
+				qPos.add(actor);
+
+				count = (Long)q.uniqueResult();
+
+				FinderCacheUtil.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				FinderCacheUtil.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_L_D_A_LOGID_2 = "dossierFileLog.logId = ? AND ";
+	private static final String _FINDER_COLUMN_L_D_A_DOSSIERID_2 = "dossierFileLog.dossierId = ? AND ";
+	private static final String _FINDER_COLUMN_L_D_A_ACTOR_2 = "dossierFileLog.actor = ?";
 	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_D_F_S = new FinderPath(DossierFileLogModelImpl.ENTITY_CACHE_ENABLED,
 			DossierFileLogModelImpl.FINDER_CACHE_ENABLED,
 			DossierFileLogImpl.class, FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
@@ -2751,6 +3851,50 @@ public class DossierFileLogPersistenceImpl extends BasePersistenceImpl<DossierFi
 
 		else {
 			if ((dossierFileLogModelImpl.getColumnBitmask() &
+					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_L_D.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						dossierFileLogModelImpl.getOriginalLogId(),
+						dossierFileLogModelImpl.getOriginalDossierId()
+					};
+
+				FinderCacheUtil.removeResult(FINDER_PATH_COUNT_BY_L_D, args);
+				FinderCacheUtil.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_L_D,
+					args);
+
+				args = new Object[] {
+						dossierFileLogModelImpl.getLogId(),
+						dossierFileLogModelImpl.getDossierId()
+					};
+
+				FinderCacheUtil.removeResult(FINDER_PATH_COUNT_BY_L_D, args);
+				FinderCacheUtil.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_L_D,
+					args);
+			}
+
+			if ((dossierFileLogModelImpl.getColumnBitmask() &
+					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_L_D_A.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						dossierFileLogModelImpl.getOriginalLogId(),
+						dossierFileLogModelImpl.getOriginalDossierId(),
+						dossierFileLogModelImpl.getOriginalActor()
+					};
+
+				FinderCacheUtil.removeResult(FINDER_PATH_COUNT_BY_L_D_A, args);
+				FinderCacheUtil.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_L_D_A,
+					args);
+
+				args = new Object[] {
+						dossierFileLogModelImpl.getLogId(),
+						dossierFileLogModelImpl.getDossierId(),
+						dossierFileLogModelImpl.getActor()
+					};
+
+				FinderCacheUtil.removeResult(FINDER_PATH_COUNT_BY_L_D_A, args);
+				FinderCacheUtil.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_L_D_A,
+					args);
+			}
+
+			if ((dossierFileLogModelImpl.getColumnBitmask() &
 					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_D_F_S.getColumnBitmask()) != 0) {
 				Object[] args = new Object[] {
 						dossierFileLogModelImpl.getOriginalDossierId(),
@@ -2878,6 +4022,8 @@ public class DossierFileLogPersistenceImpl extends BasePersistenceImpl<DossierFi
 		dossierFileLogImpl.setFileGroupId(dossierFileLog.getFileGroupId());
 		dossierFileLogImpl.setStepId(dossierFileLog.getStepId());
 		dossierFileLogImpl.setIsUpdate(dossierFileLog.isIsUpdate());
+		dossierFileLogImpl.setActor(dossierFileLog.getActor());
+		dossierFileLogImpl.setLogId(dossierFileLog.getLogId());
 		dossierFileLogImpl.setFileName(dossierFileLog.getFileName());
 		dossierFileLogImpl.setFileVersion(dossierFileLog.getFileVersion());
 		dossierFileLogImpl.setFileLink(dossierFileLog.getFileLink());
