@@ -798,6 +798,9 @@ public class ProcessOrderUtils {
 					.createJSONObject();
 			jsonObject.put("id", StringPool.BLANK);
 			jsonObject.put("text", LanguageUtil.get(themeDisplay.getLocale(), "domainCode", "domainCode"));
+			jsonObject.put("children", JSONFactoryUtil.createJSONArray());
+			
+			jsonObject.put("idCHK", StringPool.BLANK);
 			jsonArray.put(jsonObject);
 			int countPeriod = 0;
 			
