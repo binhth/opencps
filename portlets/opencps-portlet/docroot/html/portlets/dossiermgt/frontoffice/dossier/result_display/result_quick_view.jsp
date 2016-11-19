@@ -89,7 +89,6 @@
 									themeDisplay, StringPool.BLANK);
 						}
 					}catch(Exception e){
-						continue;
 						
 					}
 				%>
