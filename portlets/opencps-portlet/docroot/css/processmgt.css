@@ -79,20 +79,20 @@
 }
 
 .opencps.dossiermgt.dossier-part-name {
-    display: table-cell;
-    overflow: hidden;
-    padding-left: 5px;
-    text-overflow: ellipsis;
-    vertical-align: middle;
+	display: table-cell;
+	overflow: hidden;
+	padding-left: 5px;
+	text-overflow: ellipsis;
+	vertical-align: middle;
+	max-width: 400px;
 }
 
 .opencps.dossiermgt.dossier-part-control {
     display: table-cell;
-    max-width: 255px;
-    line-height: 30px;
-    vertical-align: top;
-    width: 360px;
-
+	max-width: 360px;
+	line-height: 30px;
+	vertical-align: top;
+	width: 360px;
 }
 
 .opencps.dossiermgt.part-file-ctr.add-individual-part-group {
