@@ -292,13 +292,13 @@
 						<div class="row-fluid">
 							<div class="span1"></div>
 							
-							<div class="span9"><%=dossierBean.getServiceName() %></div>
+							<div class="span11"><%=dossierBean.getServiceName() %></div>
 						</div>
 						
 						<div class="row-fluid">
 							<div class="span1"></div>
 							
-							<div class="span9"><%=dossier.getGovAgencyName() %></div>
+							<div class="span11"><%=dossier.getGovAgencyName() %></div>
 						</div>
 						
 					</liferay-util:buffer>

@@ -142,17 +142,17 @@
 	</aui:col>
 </aui:row>
 
-<aui:row cssClass="nav-content-row">
-	<aui:col width="100">
-		<aui:input 
-			name="<%=DossierDisplayTerms.SERVICE_NO %>" 
-			cssClass="" 
-			disabled="<%=true %>"
-			type="text"
-			value="<%=serviceInfo != null ? serviceInfo.getServiceNo() : StringPool.BLANK %>"
-		/>	
-	</aui:col>
-</aui:row>
+<%-- <aui:row cssClass="nav-content-row"> --%>
+<%-- 	<aui:col width="100"> --%>
+<%-- 		<aui:input  --%>
+<%-- 			name="<%=DossierDisplayTerms.SERVICE_NO %>"  --%>
+<%-- 			cssClass=""  --%>
+<%-- 			disabled="<%=true %>" --%>
+<%-- 			type="text" --%>
+<%-- 			value="<%=serviceInfo != null ? serviceInfo.getServiceNo() : StringPool.BLANK %>" --%>
+<%-- 		/>	 --%>
+<%-- 	</aui:col> --%>
+<%-- </aui:row> --%>
 
 
 <aui:row cssClass="nav-content-row">
@@ -166,16 +166,16 @@
 	</aui:col>
 </aui:row>
 
-<aui:row cssClass="nav-content-row">
-	<aui:col width="100">
-		<aui:input 
-			name="<%=DossierDisplayTerms.GOVAGENCY_CODE %>" 
-			cssClass=""
-			disabled="<%=true %>"
-			value="<%=serviceConfig != null ? serviceConfig.getGovAgencyCode() : StringPool.BLANK %>"
-		/>	
-	</aui:col>
-</aui:row>
+<%-- <aui:row cssClass="nav-content-row"> --%>
+<%-- 	<aui:col width="100"> --%>
+<%-- 		<aui:input  --%>
+<%-- 			name="<%=DossierDisplayTerms.GOVAGENCY_CODE %>"  --%>
+<%-- 			cssClass="" --%>
+<%-- 			disabled="<%=true %>" --%>
+<%-- 			value="<%=serviceConfig != null ? serviceConfig.getGovAgencyCode() : StringPool.BLANK %>" --%>
+<%-- 		/>	 --%>
+<%-- 	</aui:col> --%>
+<%-- </aui:row> --%>
 
 <aui:row cssClass="nav-content-row">
 	<aui:col width="100">

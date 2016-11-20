@@ -1,3 +1,6 @@
+<%@page import="org.opencps.util.PortletConstants"%>
+<%@page import="org.opencps.util.PortletPropsValues"%>
+<%@page import="org.opencps.processmgt.util.ProcessOrderUtils"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -54,74 +57,70 @@
 	if(Validator.isNotNull(collectionDomain)) {
 		dictItems = DictItemLocalServiceUtil.getDictItemsByDictCollectionId(collectionDomain.getDictCollectionId());
 	}
+
+	String myComboTree = ProcessOrderUtils.generateComboboxTree(PortletPropsValues.DATAMGT_MASTERDATA_SERVICE_DOMAIN, PortletConstants.TREE_VIEW_ALL_ITEM, 
+			PortletConstants.TREE_VIEW_LEVER_2, false, renderRequest);
 %>
+
+
+<script>
+$(document).ready(function(){
+	var myComboTree = '<%=myComboTree %>';
+	var domainCode = '<%=domainCode%>';
+	$('#comboboxTree').combotree({  
+	
+	    animate:true,
+	    data: JSON.parse(myComboTree),
+	    onChange:function(){
+            $('#<portlet:namespace /><%=ServiceDisplayTerms.SERVICE_DOMAINCODE %>').val($('#comboboxTree').combotree('getValue'));
+        }
+	});
+
+	$ ('#comboboxTree').combotree('setValue', domainCode);
+});
+
+</script>
 <aui:nav-bar cssClass="opencps-toolbar custom-toolbar">
-<div class="form-search">
-	<aui:form action="<%= searchURL %>" method="post" name="fm">
-		<aui:row>
-			<aui:col width="25" cssClass="search-col">
-				<datamgt:ddr
-					depthLevel="1" 
-					dictCollectionCode="GOVERNMENT_AGENCY"
-					itemNames="administrationCode"
-					itemsEmptyOption="true"
-					cssClass="search-input select-box"
-					emptyOptionLabels="gov-code"
-					showLabel="false"
-					selectedItems="<%= administrationCode %>"
-				>
-				</datamgt:ddr>
+	<aui:nav-bar-search cssClass="pull-right">
+		<div class="form-search">
+			<aui:form action="<%= searchURL %>" method="post" name="fm">
+				<div class="toolbar_search_input">
+					<aui:row>
+						<aui:col width="30" cssClass="search-col">
+							<datamgt:ddr
+								depthLevel="1" 
+								dictCollectionCode="GOVERNMENT_AGENCY"
+								itemNames="administrationCode"
+								itemsEmptyOption="true"
+								cssClass="search-input select-box"
+								emptyOptionLabels="gov-code"
+								showLabel="false"
+								selectedItems="<%= administrationCode %>"
+							>
+							</datamgt:ddr>
 
-			</aui:col>
-			<aui:col width="25" cssClass="search-col">
-				<%-- <datamgt:ddr
-					depthLevel="1" 
-					dictCollectionCode="SERVICE_DOMAIN"
-					itemNames="domainCode"
-					itemsEmptyOption="true"	
-					cssClass="search-input select-box"
-					emptyOptionLabels="domainCode"
-					showLabel="false"
-					selectedItems="<%=domainCode %>"
-				>
-				</datamgt:ddr> --%>
-				
-				<aui:select name="<%=ServiceDisplayTerms.SERVICE_DOMAINCODE %>" label="">
-					<aui:option value="">
-						<liferay-ui:message key="<%=ServiceDisplayTerms.SERVICE_DOMAINCODE %>"/>
-					</aui:option>
-					<%
-						if(dictItems != null){
-							for(DictItem dictItem : dictItems){
-								if((curDictItem != null && dictItem.getDictItemId() == curDictItem.getDictItemId())||
-										(curDictItem != null && dictItem.getTreeIndex().contains(curDictItem.getDictItemId() + StringPool.PERIOD))){
-									continue;
-								}
-								
-								int level = StringUtil.count(dictItem.getTreeIndex(), StringPool.PERIOD);
-								String index = "|";
-								for(int i = 0; i < level; i++){
-									index += "_";
-								}
-								%>
-									<aui:option value="<%=dictItem.getDictItemId() %>"><%=index + dictItem.getItemName(locale) %></aui:option>
-								<%
-							}
-						}
-					%>
-				</aui:select>
+						</aui:col>
+						<aui:col width="30" cssClass="search-col">
 
-			</aui:col>
-			<aui:col width="45" cssClass="search-col">
-				<liferay-ui:input-search 
-					id="keywords1"
-					name="keywords"
-					title='<%= LanguageUtil.get(locale, "keywords") %>'
-					placeholder='<%= LanguageUtil.get(locale, "name") %>' 
-					cssClass="search-input input-keyword"
-				/>
-			</aui:col>
-		</aui:row>
-	</aui:form>
-</div>
+							<aui:input name="<%=ServiceDisplayTerms.SERVICE_DOMAINCODE %>" type="hidden"></aui:input>
+							<select id="comboboxTree" class="easyui-combotree"></select>
+
+						</aui:col>
+						<aui:col width="30" cssClass="search-col">
+							<%-- <label>
+								<liferay-ui:message key="keywords"/>
+							</label> --%>
+							<liferay-ui:input-search 
+								cssClass="search-input input-keyword"
+								id="keywords1"
+								name="keywords"
+								title='<%= LanguageUtil.get(locale, "keywords") %>'
+								placeholder='<%= LanguageUtil.get(portletConfig, locale, "put-keyword") %>' 
+							/>
+						</aui:col>
+					</aui:row>
+				</div>
+			</aui:form>
+		</div>
+	</aui:nav-bar-search>
 </aui:nav-bar>
