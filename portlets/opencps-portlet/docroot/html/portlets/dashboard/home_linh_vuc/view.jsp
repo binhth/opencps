@@ -64,7 +64,7 @@
 					String itemCode_cfg = GetterUtil.getString(portletPreferences.getValue("img-home-"+i+"_itemCode", ""));
 					
 					PortletURL renderUrl = PortletURLFactoryUtil.create(request, WebKeys.SERVICE_MGT_DIRECTORY, layout_cfg, PortletRequest.RENDER_PHASE);
-					renderUrl.setParameter("mvcPath", "/html/portlets/dossiermgt/submit/submitinstruction.jsp");
+					renderUrl.setParameter("mvcPath", "/html/portlets/servicemgt/directory/serviceinfodirectorylist.jsp");
 					renderUrl.setParameter("domainCode", itemCode_cfg);
 
 			%>
@@ -84,68 +84,3 @@
 		
 	</aui:col>
 </aui:row>
-
-<script>
-
-AUI().ready(function(A){
-	$( 'a[class*="img-home-"]' ).mouseover(function() {
-		$(".img-1").css( "display", "none" );
-		$(".img-2").css( "display", "none" );
-		$(".img-3").css( "display", "none" );
-		$(".img-4").css( "display", "none" );
-		$(".img-5").css( "display", "none" );
-		$(".img-6").css( "display", "none" );
-	});
-	
-	$( 'a[class*="img-home-"]' ).mouseout(function() {
-		$(".img-1").css( "display", "" );
-		$(".img-2").css( "display", "" );
-		$(".img-3").css( "display", "" );
-		$(".img-4").css( "display", "" );
-		$(".img-5").css( "display", "" );
-		$(".img-6").css( "display", "" );
-		$("body").css( "background", '' );
-		$("body").css( "background-size", "" );
-		$("body").css( "width", "" );
-		$("body").css( "height", "" );
-	});
-	
-	$( 'a[class="img-home-0"]' ).mouseover(function() {
-		$("body").css( "background", 'url("/opencps-ux-theme/css/../images/schemes/pointgtvt/frame_1/img-3.jpg") no-repeat scroll center 0' );
-		$("body").css( "background-size", "cover" );
-		$("body").css( "width", "100%" );
-		$("body").css( "height", "100%" );
-	});
-	$( 'a[class="img-home-1"]' ).mouseover(function() {
-		$("body").css( "background", 'url("/opencps-ux-theme/css/../images/schemes/pointgtvt/frame_1/img-5.jpg") no-repeat scroll center 0' );
-		$("body").css( "background-size", "cover" );
-		$("body").css( "width", "100%" );
-		$("body").css( "height", "100%" );
-	});
-	$( 'a[class="img-home-2"]' ).mouseover(function() {
-		$("body").css( "background", 'url("/opencps-ux-theme/css/../images/schemes/pointgtvt/frame_1/img-6.jpg") no-repeat scroll center 0' );
-		$("body").css( "background-size", "cover" );
-		$("body").css( "width", "100%" );
-		$("body").css( "height", "100%" );
-	});
-	$( 'a[class="img-home-3"]' ).mouseover(function() {
-		$("body").css( "background", 'url("/opencps-ux-theme/css/../images/schemes/pointgtvt/frame_1/img-1.jpg") no-repeat scroll center 0' );
-		$("body").css( "background-size", "cover" );
-		$("body").css( "width", "100%" );
-		$("body").css( "height", "100%" );
-	});
-	$( 'a[class="img-home-4"]' ).mouseover(function() {
-		$("body").css( "background", 'url("/opencps-ux-theme/css/../images/schemes/pointgtvt/frame_1/img-2.jpg") no-repeat scroll center 0' );
-		$("body").css( "background-size", "cover" );
-		$("body").css( "width", "100%" );
-		$("body").css( "height", "100%" );
-	});
-	$( 'a[class="img-home-5"]' ).mouseover(function() {
-		$("body").css( "background", 'url("/opencps-ux-theme/css/../images/schemes/pointgtvt/frame_1/img-4.jpg") no-repeat scroll center 0' );
-		$("body").css( "background-size", "cover" );
-		$("body").css( "width", "100%" );
-		$("body").css( "height", "100%" );
-	});
-});
-
-</script>

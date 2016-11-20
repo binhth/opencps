@@ -304,7 +304,7 @@
 								
 								
 								<liferay-util:buffer var="boundcol2">
-								<div class="row-fluid min-width340">
+								<div class="row-fluid">
 									<div class="span5 bold">
 										<liferay-ui:message key="subject-name"/>	
 									</div>
@@ -323,7 +323,7 @@
 									</div>
 								</div>
 								
-								<div class="row-fluid min-width340">
+								<div class="row-fluid ">
 									<div class="span5 bold">
 										<liferay-ui:message key="step-name"/>
 									</div>
@@ -332,7 +332,7 @@
 									</div>
 								</div>
 								
-								<div class="row-fluid min-width340">
+								<div class="row-fluid ">
 										<div class="span5 bold">
 											<liferay-ui:message key="dealine"/>
 										</div>

@@ -118,7 +118,7 @@
 					<div class="span5 bold-label">
 						<liferay-ui:message key="service-domain"/>
 					</div>
-					<div class="span7"><%=DictItemUtil.getNameDictItem(service.getDomainCode())%> - <liferay-ui:message key="level-dvc-temp"/><%=service.getServiceLevel() %></div>
+					<div class="span7"><%=DictItemUtil.getNameDictItem(service.getDomainCode())%> - <liferay-ui:message key="level-dvc-temp"/>: <%=service.getServiceLevel() %></div>
 				</div>
 				
 				<div class="row-fluid">

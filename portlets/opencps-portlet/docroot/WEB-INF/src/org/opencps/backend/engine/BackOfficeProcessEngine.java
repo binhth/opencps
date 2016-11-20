@@ -689,7 +689,7 @@ public class BackOfficeProcessEngine implements MessageListener {
 				List<SendNotificationMessage.InfoList> infoListEmploy =
 					new ArrayList<SendNotificationMessage.InfoList>();
 
-				List<Employee> employees = getListEmploy(processWorkflow);
+				List<Employee> employees = getListEmploy(processWorkflow, groupId);
 
 				for (Employee employee : employees) {
 
@@ -736,23 +736,23 @@ public class BackOfficeProcessEngine implements MessageListener {
 	 * @param assignToUserId
 	 * @return
 	 */
-	private List<Employee> getListEmploy(ProcessWorkflow processWorkflow) {
+	private List<Employee> getListEmploy(ProcessWorkflow processWorkflow, long groupId) {
 
 		List<Employee> ls = new ArrayList<>();
 
 		try {
-//			List<User> users =
-//				ProcessUtils.getAssignUsers(processWorkflow.getPostProcessStepId(), 3);
-//
-//			for (User user : users) {
-//				AccountBean accountEmploy =
-//					AccountUtil.getAccountBean(user.getUserId(), user.getGroupId(), null);
-//
-//				Employee employee = (Employee) accountEmploy.getAccountInstance();
-//
-//				ls.add(employee);
-//
-//			}
+			List<User> users =
+				ProcessUtils.getAssignUsers(processWorkflow.getPostProcessStepId(), 3);
+
+			for (User user : users) {
+				AccountBean accountEmploy =
+					AccountUtil.getAccountBean(user.getUserId(), groupId, null);
+
+				Employee employee = (Employee) accountEmploy.getAccountInstance();
+
+				ls.add(employee);
+
+			}
 
 		}
 		catch (Exception e) {
