@@ -50,7 +50,7 @@
 	<hr style="opacity: 0.7;">
 	<div class="home-search-sologan">
 	
-		<p style="font-size: 19px;margin-bottom: 0px;"><liferay-ui:message key="slogan-key-home-lv"/></p>
+		<p style="font-size: 16px;margin-bottom: 0px;padding-left: 2px;"><liferay-ui:message key="slogan-key-home-lv"/></p>
 		
 		<h2 style="font-size: 26px;padding-bottom: 5px;"></h2>
 		

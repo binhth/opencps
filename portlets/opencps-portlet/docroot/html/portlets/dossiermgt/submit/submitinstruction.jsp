@@ -124,7 +124,7 @@
 				<div class="row-fluid">
 					
 					<div class="span5 bold-label">
-						<liferay-ui:message key="gov-code"/>
+						<liferay-ui:message key="gov-code-temp"/>
 					</div>
 					<div class="span7"><%=itemName%></div>
 				</div>
