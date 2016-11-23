@@ -158,17 +158,25 @@ public class SignatureUtilOLD {
 			int signatureImageHeight = (bufferedImage != null && bufferedImage.getHeight() > 0) ? bufferedImage.getHeight() : 80;
 			float llx = textLocation.getAnchorX();
 			
-			float urx = llx + signatureImageWidth / 3;
+			float urx = llx + signatureImageWidth;
 			
-			float lly = textLocation.getPageURY() - textLocation.getAnchorY() - signatureImageHeight / 3;
+//			float lly = textLocation.getPageURY() - textLocation.getAnchorY() - signatureImageHeight / 3;
 			
-			float ury = lly + signatureImageHeight / 3;
+			float lly = (textLocation.getAnchorY() - signatureImageHeight);
+			
+			float ury = lly + signatureImageHeight;
 			
 			// inHash = signer.computeHash(new Rectangle(llx + 65, lly - 55, urx + 114, ury-20), 1);
-			
+			log.info("lly: " + lly);
+			log.info("lly-test: " + (textLocation.getAnchorY() - signatureImageHeight / 3));
+			log.info("lly-bottom: " + signatureImageHeight);
 			//signer.setSignatureAppearance(PdfSignatureAppearance.RenderingMode.GRAPHIC);
-			inHash = signer.computeHash(new Rectangle(llx, lly, urx, ury), 1);
-
+			
+			if(tenDangNhap.contains("vanthu")){
+				inHash = signer.computeHash(new Rectangle(llx + 200, lly, urx, ury), 1);
+			}else{
+				inHash = signer.computeHash(new Rectangle(llx, lly, urx, ury), 1);
+			}
 //			filePath2 = "/opt/liferay/jboss-7.0.2/standalone/deployments/TichHopGiaoThong-portlet.war/export/30798683514999_Shifting_Order.pdf";
 
 			fieldName = signer.getSignatureName();
