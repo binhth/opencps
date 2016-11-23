@@ -234,7 +234,7 @@ public class SignatureUtilOLD {
 	public static ServerSigner getServerSigner(String fullPath, Certificate cert, String imageBase64) {
 		ServerSigner signer = new ServerSigner(fullPath, cert);
 		signer.setSignatureGraphic(imageBase64);
-		signer.setSignatureAppearance(PdfSignatureAppearance.RenderingMode.GRAPHIC_AND_DESCRIPTION);
+		signer.setSignatureAppearance(PdfSignatureAppearance.RenderingMode.GRAPHIC);
 		return signer;
 	}
 
