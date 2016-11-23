@@ -71,6 +71,10 @@
 	
 	String myComboTree = ProcessOrderUtils.generateComboboxTree(PortletPropsValues.DATAMGT_MASTERDATA_SERVICE_DOMAIN, PortletConstants.TREE_VIEW_ALL_ITEM, 
 			PortletConstants.TREE_VIEW_LEVER_2, false, renderRequest);
+	
+	iteratorURL.setParameter(ServiceDisplayTerms.SERVICE_ADMINISTRATION, administrationCode);
+	iteratorURL.setParameter(ServiceDisplayTerms.SERVICE_DOMAINCODE, domainCode);
+	iteratorURL.setParameter("keywords", ParamUtil.getString(request, "keywords"));
 %>
 
 <aui:script use="aui-base,aui-io">

@@ -40,6 +40,7 @@
 	iteratorURL.setParameter("mvcPath", templatePath + "submitinstruction.jsp");
 	iteratorURL.setParameter("administrationCode", administrationCode);
 	iteratorURL.setParameter("domainCode", domainCode);
+	iteratorURL.setParameter("keywords", ParamUtil.getString(request, "keywords"));
 	
 	List<ServiceInfo> serviceInfos = new ArrayList<ServiceInfo>();
 	List<ServiceConfig> serviceConfigs = new ArrayList<ServiceConfig>();	
