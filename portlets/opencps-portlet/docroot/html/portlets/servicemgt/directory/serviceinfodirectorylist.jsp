@@ -73,8 +73,7 @@
 			PortletConstants.TREE_VIEW_LEVER_2, false, renderRequest);
 %>
 
-
-<script>
+<aui:script use="aui-base,aui-io">
 $(document).ready(function(){
 	var myComboTree = '<%=myComboTree %>';
 	var domainCode = '<%=domainCode%>';
@@ -84,14 +83,26 @@ $(document).ready(function(){
 	    data: JSON.parse(myComboTree),
 	    onChange:function(){
             $('#<portlet:namespace /><%=ServiceDisplayTerms.SERVICE_DOMAINCODE %>').val($('#comboboxTree').combotree('getValue'));
-        }
+        },
+        onClick:function(){
+        	<portlet:namespace />onSelectSubmit();
+        },
+	
 	});
 
-	$ ('#comboboxTree').combotree('setValue', domainCode);
+	$('#comboboxTree').combotree('setValue', domainCode);
+	
+	$("#<portlet:namespace />administrationCode").change(function() {
+		<portlet:namespace />onSelectSubmit();
+	});
+	Liferay.provide(window, '<portlet:namespace/>onSelectSubmit', function() {
+		var A = AUI();
+		
+		submitForm(document.<portlet:namespace />fm);
+	});
 });
 
-</script>
-
+</aui:script>
 <!-- <select class="easyui-combotree" url="/opencps-portlet/temp/city_data.json" name="city" style="width:156px;"/> -->
 
 <aui:nav-bar cssClass="opencps-toolbar custom-toolbar">

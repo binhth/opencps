@@ -1,5 +1,4 @@
 
-<%@page import="sun.security.action.GetLongAction"%>
 <%@page import="org.opencps.util.PortletConstants"%>
 <%@page import="org.opencps.util.PortletPropsValues"%>
 <%@page import="org.opencps.util.PortletUtil"%>

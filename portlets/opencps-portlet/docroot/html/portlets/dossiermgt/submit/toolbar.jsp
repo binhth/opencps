@@ -1,3 +1,6 @@
+<%@page import="com.liferay.portal.kernel.portlet.LiferayWindowState"%>
+<%@page import="javax.portlet.PortletRequest"%>
+<%@page import="com.liferay.portlet.PortletURLFactoryUtil"%>
 <%@page import="org.opencps.util.PortletConstants"%>
 <%@page import="org.opencps.util.PortletPropsValues"%>
 <%@page import="org.opencps.processmgt.util.ProcessOrderUtils"%>
@@ -60,10 +63,11 @@
 
 	String myComboTree = ProcessOrderUtils.generateComboboxTree(PortletPropsValues.DATAMGT_MASTERDATA_SERVICE_DOMAIN, PortletConstants.TREE_VIEW_ALL_ITEM, 
 			PortletConstants.TREE_VIEW_LEVER_2, false, renderRequest);
+	
 %>
 
 
-<script>
+<aui:script use="aui-base,aui-io">
 $(document).ready(function(){
 	var myComboTree = '<%=myComboTree %>';
 	var domainCode = '<%=domainCode%>';
@@ -73,13 +77,26 @@ $(document).ready(function(){
 	    data: JSON.parse(myComboTree),
 	    onChange:function(){
             $('#<portlet:namespace /><%=ServiceDisplayTerms.SERVICE_DOMAINCODE %>').val($('#comboboxTree').combotree('getValue'));
-        }
+        },
+        onClick:function(){
+        	<portlet:namespace />onSelectSubmit();
+        },
+	
 	});
 
-	$ ('#comboboxTree').combotree('setValue', domainCode);
+	$('#comboboxTree').combotree('setValue', domainCode);
+	
+	$("#<portlet:namespace />administrationCode").change(function() {
+		<portlet:namespace />onSelectSubmit();
+	});
+	Liferay.provide(window, '<portlet:namespace/>onSelectSubmit', function() {
+		var A = AUI();
+		
+		submitForm(document.<portlet:namespace />fm);
+	});
 });
 
-</script>
+</aui:script>
 <aui:nav-bar cssClass="opencps-toolbar custom-toolbar">
 	<aui:nav-bar-search cssClass="pull-right">
 		<div class="form-search">

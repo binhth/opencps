@@ -238,6 +238,9 @@ public class BackOfficeProcessEngine implements MessageListener {
 				if (curStepId != 0) {
 					currStep = ProcessUtils.getPostProcessStep(curStepId);
 					stepName = currStep.getStepName();
+				}else{
+					//TODO HOT FIX
+					currStep.setDossierStatus(PortletConstants.DOSSIER_STATUS_RECEIVING);
 				}
 				_log.info("=====changeStep.getProcessStepId():" + changeStep.getProcessStepId());
 				_log.info("=====currStep.getProcessStepId():" + currStep.getProcessStepId());

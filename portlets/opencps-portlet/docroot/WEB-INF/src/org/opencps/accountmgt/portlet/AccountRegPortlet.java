@@ -68,6 +68,7 @@ import org.opencps.util.PortletPropsValues;
 import org.opencps.util.PortletUtil;
 import org.opencps.util.WebKeys;
 
+import com.liferay.portal.DuplicateUserEmailAddressException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
@@ -309,6 +310,10 @@ public class AccountRegPortlet extends MVCPortlet {
 			actionResponse.setRenderParameter("busDomains", busDomains);
 			
 			if (e instanceof DuplicateBusinessEmailException) {
+				SessionErrors.add(
+				    actionRequest, DuplicateBusinessEmailException.class);
+			}
+			else if (e instanceof DuplicateUserEmailAddressException) {
 				SessionErrors.add(
 				    actionRequest, DuplicateBusinessEmailException.class);
 			}
@@ -558,6 +563,10 @@ public class AccountRegPortlet extends MVCPortlet {
 			if (e instanceof OutOfLengthCitizenAddressException) {
 				SessionErrors.add(
 				    actionRequest, OutOfLengthCitizenAddressException.class);
+			}
+			else if (e instanceof DuplicateUserEmailAddressException) {
+				SessionErrors.add(
+				    actionRequest, DuplicateCitizenEmailException.class);
 			}
 			else if (e instanceof OutOfLengthCitizenEmailException) {
 				SessionErrors.add(

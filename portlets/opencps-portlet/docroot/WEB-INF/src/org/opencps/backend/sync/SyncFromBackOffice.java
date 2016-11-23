@@ -51,6 +51,7 @@ import com.liferay.portal.kernel.messaging.MessageListenerException;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.util.SubscriptionSender;
 import com.liferay.util.PwdGenerator;
 
@@ -110,6 +111,12 @@ public class SyncFromBackOffice implements MessageListener {
 						toBackOffice.getActionInfo(),
 						toBackOffice.getMessageInfo());
 
+				//TODO HOT FIX
+				Dossier dossierHF = DossierLocalServiceUtil.fetchDossier(toBackOffice.getDossierId());
+				if(Validator.isNotNull(toBackOffice.getReceiveDatetime())){
+					dossierHF.setReceiveDatetime(toBackOffice.getReceiveDatetime());
+					DossierLocalServiceUtil.updateDossier(dossierHF);
+				}
 				List<WorkflowOutput> workflowOutputs =
 					WorkflowOutputLocalServiceUtil.getByProcessWFPostback(
 						toBackOffice.getProcessWorkflowId(), true);
