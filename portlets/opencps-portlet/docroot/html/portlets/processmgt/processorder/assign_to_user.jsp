@@ -461,27 +461,15 @@
 		</div>
 	</c:if>
 
-<<<<<<< HEAD
-	<aui:button type="button" value="submit" name="submit"/>
-=======
 	<aui:button-row cssClass="">
 		<aui:button type="button" value="submit" name="submit"/>
->>>>>>> refs/heads/rc-1.5.1-issue-fix#unmerge#mot
 	
-<<<<<<< HEAD
-	<c:if test="<%=esign %>">
-<%-- 		<aui:button type="button" value="esign" name="esign"/> --%>
-		<aui:button type="button" value="esign" name="esign" onClick="getFileComputerHash(1);"/>
-	</c:if>
-	<aui:button type="button" value="cancel" name="cancel"/>
-=======
 		<c:if test="<%=esign %>">
 	<%-- 		<aui:button type="button" value="esign" name="esign"/> --%>
 			<aui:button type="button" value="esign" name="esign" onClick="getFileComputerHash(1);"/>
 		</c:if>
 		<aui:button type="button" value="cancel" name="cancel"/>
 	</aui:button-row>
->>>>>>> refs/heads/rc-1.5.1-issue-fix#unmerge#mot
 	
 	<div id="myProgressBar" class="aui-progress-warning"></div>
 </aui:form>
@@ -652,7 +640,6 @@
 			);
 		
 	}
-<<<<<<< HEAD
 	
 </aui:script>
 
@@ -834,8 +821,6 @@
 // 		    }
 // 		});
 // 	}, ['aui-io','liferay-portlet-url']);
-=======
->>>>>>> refs/heads/rc-1.5.1-issue-fix#unmerge#mot
 	
 </aui:script>
 
