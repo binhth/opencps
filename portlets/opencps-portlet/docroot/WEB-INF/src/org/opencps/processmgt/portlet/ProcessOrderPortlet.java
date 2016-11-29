@@ -44,6 +44,7 @@ import org.opencps.accountmgt.NoSuchAccountOwnUserIdException;
 import org.opencps.accountmgt.NoSuchAccountTypeException;
 import org.opencps.backend.message.SendToEngineMsg;
 import org.opencps.backend.util.BackendUtils;
+import org.opencps.backend.util.DossierNoGenerator;
 import org.opencps.dossiermgt.DuplicateFileGroupException;
 import org.opencps.dossiermgt.EmptyFileGroupException;
 import org.opencps.dossiermgt.NoSuchDossierException;
@@ -434,6 +435,9 @@ public class ProcessOrderPortlet extends MVCPortlet {
 
 		Dossier dossier = null;
 
+		boolean genReceptionNo = ParamUtil.getBoolean(actionRequest,
+				"genReceptionNo");
+		
 		long assignToUserId = ParamUtil.getLong(actionRequest,
 				ProcessOrderDisplayTerms.ASSIGN_TO_USER_ID);
 
@@ -504,6 +508,12 @@ public class ProcessOrderPortlet extends MVCPortlet {
 			validateAssignTask(dossier.getDossierId(), processWorkflowId,
 					processStepId);
 
+			if(genReceptionNo){
+				String genReceptionNoPattern = ParamUtil.getString(actionRequest, "genReceptionNoPattern");
+				String receptionNo = DossierNoGenerator.genaratorNoReception(genReceptionNoPattern, dossierId);
+				dossier.setReceptionNo(receptionNo);
+				dossier = DossierLocalServiceUtil.updateDossier(dossier);
+			}
 			Message message = new Message();
 
 			SendToEngineMsg sendToEngineMsg = new SendToEngineMsg();

@@ -86,8 +86,8 @@
 			&& workflow.getGenerateReceptionNo()) {
 		
 		// If doisser don't have receiveNo, create receiveNo
-		receptionNo = DossierNoGenerator.genaratorNoReception(workflow.getReceptionNoPattern(), dossierId);
-		
+// 		receptionNo = DossierNoGenerator.genaratorNoReception(workflow.getReceptionNoPattern(), dossierId);
+	
 	}
 	
 	String strReceiveDate = ParamUtil.getString(request, "receiveDate");
@@ -148,7 +148,7 @@
 		}
 	}
 %>
-
+<div class="tempDIV16">
 <liferay-ui:error 
 	exception="<%= NoSuchDossierException.class %>" 
 	message="<%=NoSuchDossierException.class.getName() %>"
@@ -165,7 +165,21 @@
 <portlet:actionURL var="assignToUserURL" name="assignToUser"/>
 
 <aui:form name="fm" action="<%=assignToUserURL.toString() %>" method="post">
+	
+	<aui:input 
+		name="genReceptionNo" 
+		value="<%=(Validator.isNull(receptionNo) || (receptionNo.length() == 0)) 
+				&& Validator.isNotNull(workflow) 
+				&& workflow.getGenerateReceptionNo() %>" 
+		type="hidden"
+	/>
 
+	<aui:input 
+		name="genReceptionNoPattern" 
+		value="<%=Validator.isNotNull(workflow)? workflow.getReceptionNoPattern():StringPool.BLANK%>" 
+		type="hidden"
+	/>
+	
 	<aui:input 
 		name="assignFormDisplayStyle" 
 		value="<%=assignFormDisplayStyle %>" 
@@ -280,7 +294,7 @@
 	
 	<div class="row-fluid">
 	
-	<c:if test="<%= processWorkflow.getAssignUser() %>">
+	<c:if test="<%= processWorkflow.getAssignUser()%>">
 			<div class="<%=cssCol%>">
 				<aui:select 
 					name="<%=ProcessOrderDisplayTerms.ASSIGN_TO_USER_ID %>" 
@@ -301,7 +315,7 @@
 			</div>
 		</c:if>
 		
-		<c:if test="<%= processWorkflow.getRequestPayment() %>">
+		<c:if test="<%= processWorkflow.getRequestPayment()%>">
 		
 			<div class="<%=cssCol%>">
 				<aui:input 
@@ -314,7 +328,7 @@
 			</div>
 		</c:if>		
 		
-		<c:if test="<%= processWorkflow.getGenerateReceptionNo() %>">
+		<c:if test="<%= processWorkflow.getGenerateReceptionNo()%>">
 			<div class="<%=cssCol%>">
 				<aui:input 
 					name="<%=ProcessOrderDisplayTerms.RECEPTION_NO %>" 
@@ -324,7 +338,7 @@
 			</div>
 		</c:if>
 		
-		<c:if test="<%= processWorkflow.getGenerateDeadline() %>">
+		<c:if test="<%= processWorkflow.getGenerateDeadline()%>">
 			<div class="<%=cssCol%>">
 				<aui:row>
 					<label class="control-label custom-lebel" for='<portlet:namespace/><%="deadline" %>'>
@@ -447,13 +461,27 @@
 		</div>
 	</c:if>
 
+<<<<<<< HEAD
 	<aui:button type="button" value="submit" name="submit"/>
+=======
+	<aui:button-row cssClass="">
+		<aui:button type="button" value="submit" name="submit"/>
+>>>>>>> refs/heads/rc-1.5.1-issue-fix#unmerge#mot
 	
+<<<<<<< HEAD
 	<c:if test="<%=esign %>">
 <%-- 		<aui:button type="button" value="esign" name="esign"/> --%>
 		<aui:button type="button" value="esign" name="esign" onClick="getFileComputerHash(1);"/>
 	</c:if>
 	<aui:button type="button" value="cancel" name="cancel"/>
+=======
+		<c:if test="<%=esign %>">
+	<%-- 		<aui:button type="button" value="esign" name="esign"/> --%>
+			<aui:button type="button" value="esign" name="esign" onClick="getFileComputerHash(1);"/>
+		</c:if>
+		<aui:button type="button" value="cancel" name="cancel"/>
+	</aui:button-row>
+>>>>>>> refs/heads/rc-1.5.1-issue-fix#unmerge#mot
 	
 	<div id="myProgressBar" class="aui-progress-warning"></div>
 </aui:form>
@@ -624,6 +652,190 @@
 			);
 		
 	}
+<<<<<<< HEAD
+	
+</aui:script>
+
+
+<aui:script>
+
+// 	AUI().ready(function(A){
+
+// 		var cancelButton = A.one('#<portlet:namespace/>cancel');
+		
+// 		var esign = A.one('#<portlet:namespace/>esign');
+		
+// 		if(cancelButton){
+// 			cancelButton.on('click', function(){
+// 				<portlet:namespace/>closeDialog();
+// 			});
+// 		}
+		
+// 		var success = '<%=success%>';
+		
+// 		if(success == 'true'){
+// 			var backURL = '<%=backURL%>';
+// 			var Util = Liferay.Util;
+// 			<portlet:namespace/>closeDialog();
+// 			Util.getOpener().Liferay.fire('redirect', {responseData:{backURL:backURL}});
+// 		}
+		
+// 		if(esign){
+// 			esign.on('click', function(){
+// 				<portlet:namespace/>esign();
+// 			});
+// 		}
+		
+// 	});
+	
+// 	Liferay.provide(window, '<portlet:namespace/>closeDialog', function() {
+// 		var backURL = '<%=backURL%>';
+// 		var dialog = Liferay.Util.getWindow('<portlet:namespace/>assignToUser');
+// 		dialog.destroy();
+// 		var data = {
+// 			'conserveHash': true
+// 		};
+// 		Liferay.Util.getOpener().Liferay.Portlet.refresh('#p_p_id_<%= WebKeys.PROCESS_ORDER_PORTLET %>_', data);
+// 	});
+	
+// 	Liferay.provide(window, '<portlet:namespace/>verifySign', function(e) {
+// 		var A = AUI();
+// 		var instance = A.one(e);
+// 		var dossierFileId = instance.attr('dossier-file');
+		
+// 		var uri = '<%=PortletPropsValues.OPENCPS_SERVLET_VERIFY_SIGN_DOCUMENT_URL%>' + dossierFileId;
+		
+// 		var loadingMask = new A.LoadingMask(
+// 			{
+// 				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "Verify signature ...") %>',
+// 				target: A.one('#<portlet:namespace/>fm')
+// 			}
+// 		);
+		
+// 		loadingMask.show();
+		
+// 		openDialog(uri, '<portlet:namespace />verifySignature','<%= UnicodeLanguageUtil.get(pageContext, "verify") %>');
+		
+// 		loadingMask.hide();
+// 	},['aui-io','liferay-portlet-url', 'aui-loading-mask-deprecated']);
+	
+// 	Liferay.provide(window, '<portlet:namespace/>esign', function() {
+		
+// 		var A = AUI();
+		
+// 		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.PROCESS_ORDER_PORTLET, themeDisplay.getPlid(), PortletRequest.ACTION_PHASE) %>');
+// 		portletURL.setParameter("javax.portlet.action", "hashSingleFile");
+// 		portletURL.setWindowState('<%=WindowState.NORMAL%>');
+		
+// 		var esignDossierFiles = A.one('#<portlet:namespace/>esignDossierFiles');
+		
+// 		var dossierFileIds = [];
+		
+
+// 		var loadingMask = new A.LoadingMask(
+// 			{
+// 				'strings.loading': '<%= UnicodeLanguageUtil.get(pageContext, "esign...") %>',
+// 				target: A.one('#<portlet:namespace/>fm')
+// 			}
+// 		);
+		
+// 		//console.log(loadingMask);
+		
+// 		//console.log(loadingMask._attrs.strings.value.loading);
+		
+// 		//console.log(loadingMask.getAttrs());
+		
+// 		//var strings = {strings : {loading: 'xxx...'}};
+		
+// 		//loadingMask.setAttrs(strings);
+
+// 		//loadingMask.reset();
+		
+// 		//console.log(loadingMask.getAttrs());
+
+// 		loadingMask.show();
+	
+		
+// 		if(esignDossierFiles){
+// 			var childs = esignDossierFiles._node.children;
+// 			if(childs.length > 0){
+// 				for(var i = 0; i < childs.length; i++){
+// 					var option = A.one(childs[i]);
+// 					dossierFileIds.push(option.attr('value'));
+					
+// 					A.io.request(
+// 						portletURL.toString(),
+						
+// 						{
+// 						    dataType : 'json',
+// 						   	sync: true,
+// 						    data:{    	
+// 						    	<portlet:namespace/>dossierFileId : option.attr('value'),
+// 						    },   
+// 						    on: {
+// 						        success: function(event, id, obj) {
+// 									var instance = this;
+// 									var res = instance.get('responseData');
+// 									//console.log(res);
+// 									<portlet:namespace/>signature(res.hashHex, res.resources);
+// 								},
+// 						    	error: function(){
+						    	
+// 						    	}
+// 							}
+// 						}
+// 					);
+// 				}			
+// 			}
+// 		}
+		
+// 		loadingMask.hide();
+// 	},['aui-io','liferay-portlet-url', 'aui-loading-mask-deprecated']);
+	
+// 	Liferay.provide(window, '<portlet:namespace/>signature', function(hex, resources) {
+		
+// 		var portletURL = Liferay.PortletURL.createURL('<%= PortletURLFactoryUtil.create(request, WebKeys.PROCESS_ORDER_PORTLET, themeDisplay.getPlid(), PortletRequest.ACTION_PHASE) %>');
+// 		portletURL.setParameter("javax.portlet.action", "signature");
+//  		portletURL.setWindowState('<%=WindowState.NORMAL%>');
+// 		console.log(hex);
+// 		console.log(resources);
+		
+// 		$.sign({
+// 		    hash: {
+// 		        type: 'sha512',
+// 		        hex: hex
+// 		    },
+// 		    document: {
+// 		    	resources: resources
+// 		    },
+// 		    'backend': 'bcy',
+// 		    beforeSign: function(signer, hash) {
+// 		        // do something
+// 		    },
+// 		    afterSign: function(signer, signature) {
+// 		    	console.log(signature.value);
+// 				console.log(signature.certificate);
+// 		    	console.log(signature);
+// 		       $.ajax({
+// 			   		type: "POST",
+// 		       		url : portletURL.toString(),
+// 			   		async: false,
+// 		            data : {
+// 		                <portlet:namespace/>signature: signature.value,
+// 		                <portlet:namespace/>certificate: signature.certificate,
+// 		                <portlet:namespace/>resources: JSON.stringify(signer.options.document.resources)
+// 		            },success: function(data){
+// 		            	console.log(data);
+// 		            }
+// 		        });
+// 		    },
+// 		    onError: function(signer, error) {
+// 		        // do something
+// 		    }
+// 		});
+// 	}, ['aui-io','liferay-portlet-url']);
+=======
+>>>>>>> refs/heads/rc-1.5.1-issue-fix#unmerge#mot
 	
 </aui:script>
 
@@ -807,3 +1019,4 @@
 // 	}, ['aui-io','liferay-portlet-url']);
 	
 </aui:script>
+</div>

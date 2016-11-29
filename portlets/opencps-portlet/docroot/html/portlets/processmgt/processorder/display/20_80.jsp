@@ -220,9 +220,30 @@
 	
 	</aui:col>
 	<aui:col width="75" >
-
-		<aui:form name="fm">
+		<aui:form name="fm" action="<%= iteratorURL %>" method="POST" >
+			<aui:nav-bar cssClass="opencps-toolbar custom-toolbar">
+				<aui:nav-bar-search cssClass="pull-right front-custom-select-search" style="width: 70%;">
+					<aui:col cssClass="search-col">
+						<liferay-ui:input-search 
+							id="keywords1"
+							name="keywords"
+							title='<%= LanguageUtil.get(locale, "keywords") %>'
+							placeholder='<%=LanguageUtil.get(locale, "keywords") %>'
+							cssClass="search-input input-keyword"
+						/>
+					</aui:col>
+				</aui:nav-bar-search>
+			</aui:nav-bar>
+			<aui:input name="keywords" type="hidden" value="<%=ParamUtil.getString(request, \"keywords\") %>"></aui:input>
+			<aui:input name="serviceInfoId" type="hidden" value="<%=serviceInfoId %>"></aui:input>
+			<aui:input name="processStepId" type="hidden" value="<%=processStepId %>"></aui:input>
 			<div class="opencps-searchcontainer-wrapper">
+				<div class="opcs-serviceinfo-list-label">
+					<div class="title_box">
+				           <p class="file_manage_title ds"><liferay-ui:message key="title-danh-sach-ho-so" /></p>
+				           <p class="count"></p>
+				    </div>
+				</div>
 				<liferay-ui:search-container 
 						searchContainer="<%= new ProcessOrderSearch(renderRequest, SearchContainer.DEFAULT_DELTA, iteratorURL) %>"
 						rowChecker="<%=rowChecker%>"

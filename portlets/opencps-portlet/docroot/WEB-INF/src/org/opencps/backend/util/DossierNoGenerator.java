@@ -210,8 +210,9 @@ public class DossierNoGenerator {
 			
 			Dossier dossier = DossierLocalServiceUtil.fetchDossier(dossierId);
 			
-			dossierCounter = CounterLocalServiceUtil.increment(ServiceProcess.class.getName() + StringPool.PERIOD + Long.toString(dossier.getServiceConfigId()));
-        }
+			dossierCounter = CounterLocalServiceUtil.increment(ServiceProcess.class.getName() + "#" + Long.toString(dossier.getServiceConfigId()));
+
+		}
         catch (Exception e) {
         	dossierCounter = dossierId;
         }

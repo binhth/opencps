@@ -36,6 +36,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.util.dao.orm.CustomSQLUtil;
 
@@ -51,7 +52,12 @@ public class ProcessOrderFinderImpl extends BasePersistenceImpl<ProcessOrder>
 	public final static String SQL_PROCESS_ORDER_FINDER =
 		ProcessOrderFinder.class
 			.getName() + ".searchProcessOrder";
-
+	public final static String SQL_PROCESS_ORDER_COUNT_DUONG_SAT =
+			ProcessOrderFinder.class
+				.getName() + ".countProcessOrderDuongSat";
+	public final static String SQL_PROCESS_ORDER_FINDER_DUONG_SAT =
+			ProcessOrderFinder.class
+				.getName() + ".searchProcessOrderDuongSat";
 	public final static String SQL_PROCESS_ORDER_JUST_FINISHED_COUNT =
 		ProcessOrderFinder.class
 			.getName() + ".countProcessOrderJustFinished";
@@ -974,6 +980,332 @@ public class ProcessOrderFinderImpl extends BasePersistenceImpl<ProcessOrder>
 
 					processOrderBean.setActionNote(processOrder.getActionNote());
 					
+					processOrderBeans
+						.add(processOrderBean);
+				}
+			}
+
+			return processOrderBeans;
+		}
+		catch (Exception e) {
+			_log
+				.error(e);
+		}
+		finally {
+			closeSession(session);
+		}
+
+		return null;
+
+	}
+	
+	/**
+	 * @param serviceInfoId
+	 * @param processStepId
+	 * @param loginUserId
+	 * @param assignToUserId
+	 * @param keyWords
+	 * @return
+	 */
+	public int countProcessOrderDuongSat(
+		long serviceInfoId, long processStepId, long loginUserId,
+		long assignToUserId, String keyWords) {
+
+		Session session = null;
+		try {
+			session = openSession();
+
+			String sql = CustomSQLUtil
+				.get(SQL_PROCESS_ORDER_COUNT_DUONG_SAT);
+
+			if (serviceInfoId <= 0) {
+				sql = StringUtil
+					.replace(sql, "AND opencps_processorder.serviceInfoId = ?",
+						StringPool.BLANK);
+			}
+
+			if (processStepId <= 0) {
+				sql = StringUtil
+					.replace(sql, "AND opencps_processstep.processStepId = ?",
+						StringPool.BLANK);
+			}
+
+			if(Validator.isNull(keyWords)){
+				sql = StringUtil
+						.replace(sql, "AND (opencps_dossier.receptionNo like ? or opencps_serviceinfo.serviceName like ? or opencps_dossier.dossierId = ?)",
+							StringPool.BLANK);
+			}
+			SQLQuery q = session
+				.createSQLQuery(sql);
+			q
+				.setCacheable(false);
+
+			q
+				.addScalar(COUNT_COLUMN_NAME, Type.INTEGER);
+
+			QueryPos qPos = QueryPos
+				.getInstance(q);
+
+			if (serviceInfoId > 0) {
+				qPos
+					.add(serviceInfoId);
+			}
+
+			if (processStepId > 0) {
+				qPos
+					.add(processStepId);
+			}
+
+			qPos
+				.add(loginUserId);
+			
+			if(Validator.isNotNull(keyWords)){
+				qPos
+					.add(StringPool.PERCENT+keyWords+StringPool.PERCENT);
+				qPos
+					.add(StringPool.PERCENT+keyWords+StringPool.PERCENT);
+				qPos
+					.add(keyWords);
+			}
+			
+			qPos
+				.add(assignToUserId);
+
+			Iterator<Integer> itr = q
+				.iterate();
+
+			if (itr
+				.hasNext()) {
+				Integer count = itr
+					.next();
+
+				if (count != null) {
+					return count
+						.intValue();
+				}
+			}
+
+			return 0;
+		}
+		catch (Exception e) {
+			_log
+				.error(e);
+		}
+		finally {
+			closeSession(session);
+		}
+
+		return 0;
+
+	}
+
+	/**
+	 * @param serviceInfoId
+	 * @param processStepId
+	 * @param loginUserId
+	 * @param assignToUserId
+	 * @param keyWords
+	 * @param start
+	 * @param end
+	 * @param orderByComparator
+	 * @return
+	 */
+	public List searchProcessOrderDuongSat(long serviceInfoId,
+
+		long processStepId, long loginUserId, long assignToUserId, String keyWords, int start,
+		int end, OrderByComparator orderByComparator) {
+
+		Session session = null;
+		try {
+			session = openSession();
+
+			String sql = CustomSQLUtil
+				.get(SQL_PROCESS_ORDER_FINDER_DUONG_SAT);
+
+			if (serviceInfoId <= 0) {
+				sql = StringUtil
+					.replace(sql, "AND opencps_processorder.serviceInfoId = ?",
+						StringPool.BLANK);
+			}
+
+			if (processStepId <= 0) {
+				sql = StringUtil
+					.replace(sql, "AND opencps_processstep.processStepId = ?",
+						StringPool.BLANK);
+			}
+			
+			if(Validator.isNull(keyWords)){
+				sql = StringUtil
+						.replace(sql, "AND (opencps_dossier.receptionNo like ? or opencps_serviceinfo.serviceName like ? or opencps_dossier.dossierId = ?)",
+							StringPool.BLANK);
+			}
+			
+			sql = CustomSQLUtil.replaceOrderBy(sql, orderByComparator);
+			
+			SQLQuery q = session
+				.createSQLQuery(sql);
+
+			q
+				.setCacheable(false);
+
+			q
+				.addEntity("ProcessOrder", ProcessOrderImpl.class);
+
+			q
+				.addScalar("serviceConfigId", Type.LONG);
+			q
+				.addScalar("subjectId", Type.STRING);
+			q
+				.addScalar("subjectName", Type.STRING);
+			q
+				.addScalar("receptionNo", Type.STRING);
+			q
+				.addScalar("serviceName", Type.STRING);
+			q
+				.addScalar("stepName", Type.STRING);
+			q
+				.addScalar("sequenceNo", Type.STRING);
+			q
+				.addScalar("daysDuration", Type.INTEGER);
+			q
+				.addScalar("referenceDossierPartId", Type.LONG);
+			q
+				.addScalar("readOnly", Type.BOOLEAN);
+
+			QueryPos qPos = QueryPos
+				.getInstance(q);
+
+			if (serviceInfoId > 0) {
+				qPos
+					.add(serviceInfoId);
+			}
+
+			if (processStepId > 0) {
+				qPos
+					.add(processStepId);
+			}
+
+			qPos
+				.add(loginUserId);
+			
+			if(Validator.isNotNull(keyWords)){
+				qPos
+					.add(StringPool.PERCENT+keyWords+StringPool.PERCENT);
+				qPos
+					.add(StringPool.PERCENT+keyWords+StringPool.PERCENT);
+				qPos
+					.add(keyWords);
+			}
+			
+			qPos
+				.add(assignToUserId);
+
+			Iterator<Object[]> itr = (Iterator<Object[]>) QueryUtil
+				.list(q, getDialect(), start, end).iterator();
+
+			List<ProcessOrderBean> processOrderBeans =
+				new ArrayList<ProcessOrderBean>();
+
+			if (itr
+				.hasNext()) {
+				while (itr
+					.hasNext()) {
+					ProcessOrderBean processOrderBean = new ProcessOrderBean();
+
+					Object[] objects = itr
+						.next();
+
+					ProcessOrder processOrder = (ProcessOrder) objects[0];
+
+					long serviceConfigId = GetterUtil
+						.getLong(objects[1]);
+					String subjectId = (String) objects[2];
+					String subjectName = (String) objects[3];
+					String receptionNo = (String) objects[4];
+					String serviceName = (String) objects[5];
+					String stepName = (String) objects[6];
+					String sequenceNo = (String) objects[7];
+					int daysDuration = GetterUtil
+						.getInteger(objects[8]);
+					long referenceDossierPartId = GetterUtil
+						.getLong(objects[9]);
+
+					boolean readOnly = GetterUtil
+						.getBoolean(objects[10]);
+
+					processOrderBean
+						.setActionDatetime(processOrder
+							.getActionDatetime());
+					processOrderBean
+						.setActionUserId(processOrder
+							.getActionUserId());
+					processOrderBean
+						.setAssignToUserId(processOrder
+							.getAssignToUserId());
+					// processOrderBean.setAssignToUserName(assignToUserName);
+					processOrderBean
+						.setCompanyId(processOrder
+							.getCompanyId());
+					processOrderBean
+						.setDaysDuration(daysDuration);
+					// processOrderBean.setDealine(dealine);
+					processOrderBean
+						.setDossierId(processOrder
+							.getDossierId());
+					processOrderBean
+						.setDossierStatus(processOrder
+							.getDossierStatus());
+					processOrderBean
+						.setDossierTemplateId(processOrder
+							.getDossierTemplateId());
+					processOrderBean
+						.setFileGroupId(processOrder
+							.getFileGroupId());
+					processOrderBean
+						.setGovAgencyCode(processOrder
+							.getGovAgencyCode());
+					processOrderBean
+						.setGovAgencyName(processOrder
+							.getGovAgencyName());
+					processOrderBean
+						.setGovAgencyOrganizationId(processOrder
+							.getGovAgencyOrganizationId());
+					processOrderBean
+						.setGroupId(processOrder
+							.getGroupId());
+					processOrderBean
+						.setProcessOrderId(processOrder
+							.getProcessOrderId());
+					processOrderBean
+						.setProcessStepId(processStepId);
+					processOrderBean
+						.setReceptionNo(receptionNo);
+					processOrderBean
+						.setReferenceDossierPartId(referenceDossierPartId);
+					processOrderBean
+						.setSequenceNo(sequenceNo);
+					processOrderBean
+						.setServiceConfigId(serviceConfigId);
+					processOrderBean
+						.setServiceInfoId(processOrder
+							.getServiceInfoId());
+					processOrderBean
+						.setServiceName(serviceName);
+					processOrderBean
+						.setServiceProcessId(processOrder
+							.getServiceProcessId());
+					processOrderBean
+						.setStepName(stepName);
+					processOrderBean
+						.setSubjectId(subjectId);
+					processOrderBean
+						.setSubjectName(subjectName);
+					processOrderBean
+						.setUserId(processOrder
+							.getUserId());
+					processOrderBean
+						.setReadOnly(readOnly);
+
 					processOrderBeans
 						.add(processOrderBean);
 				}

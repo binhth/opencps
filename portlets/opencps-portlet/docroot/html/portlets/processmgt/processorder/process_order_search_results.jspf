@@ -1,4 +1,5 @@
 
+<%@page import="com.liferay.portal.kernel.util.Validator"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -20,8 +21,16 @@
 
 
 <%
-	totalCount = ProcessOrderLocalServiceUtil.countProcessOrder(serviceInfoId, processStepId, themeDisplay.getUserId(), assignToUserId);
-	processOrders = ProcessOrderLocalServiceUtil.searchProcessOrder(serviceInfoId, processStepId, themeDisplay.getUserId(), assignToUserId,
-		searchContainer.getStart(), searchContainer.getEnd(), 
-		ProcessOrderUtils.getProcessOrderByComparator(oderFieldToDo, oderByToDo));
+	if(Validator.isNotNull(searchTerms.getKeywords())){
+		totalCount = ProcessOrderLocalServiceUtil.countProcessOrderDuongSat(serviceInfoId, processStepId, themeDisplay.getUserId(), assignToUserId, searchTerms.getKeywords());
+		processOrders = ProcessOrderLocalServiceUtil.searchProcessOrderDuongSat(serviceInfoId, processStepId, themeDisplay.getUserId(), assignToUserId, searchTerms.getKeywords(),
+			searchContainer.getStart(), searchContainer.getEnd(), 
+			ProcessOrderUtils.getProcessOrderByComparator(oderFieldToDo, oderByToDo));
+	}else{
+		totalCount = ProcessOrderLocalServiceUtil.countProcessOrder(serviceInfoId, processStepId, themeDisplay.getUserId(), assignToUserId);
+		processOrders = ProcessOrderLocalServiceUtil.searchProcessOrder(serviceInfoId, processStepId, themeDisplay.getUserId(), assignToUserId,
+			searchContainer.getStart(), searchContainer.getEnd(), 
+			ProcessOrderUtils.getProcessOrderByComparator(oderFieldToDo, oderByToDo));
+	}
+	
 %>
