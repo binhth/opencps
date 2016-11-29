@@ -156,8 +156,8 @@ public class NotificationUtils {
 			_log.info("body:"+body);
 			_log.info("to:"+to);
 
-			SendMailUtils.sendEmail(
-				fromAddress,fromName, to, StringPool.BLANK, subject, body, htmlFormat);
+//			SendMailUtils.sendEmail(
+//				fromAddress,fromName, to, StringPool.BLANK, subject, body, htmlFormat);
 		}
 		catch (Exception e) {
 			_log.error(e);
