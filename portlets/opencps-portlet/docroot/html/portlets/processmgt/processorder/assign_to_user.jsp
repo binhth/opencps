@@ -86,8 +86,8 @@
 			&& workflow.getGenerateReceptionNo()) {
 		
 		// If doisser don't have receiveNo, create receiveNo
-		receptionNo = DossierNoGenerator.genaratorNoReception(workflow.getReceptionNoPattern(), dossierId);
-		
+// 		receptionNo = DossierNoGenerator.genaratorNoReception(workflow.getReceptionNoPattern(), dossierId);
+	
 	}
 	
 	String strReceiveDate = ParamUtil.getString(request, "receiveDate");
@@ -165,7 +165,21 @@
 <portlet:actionURL var="assignToUserURL" name="assignToUser"/>
 
 <aui:form name="fm" action="<%=assignToUserURL.toString() %>" method="post">
+	
+	<aui:input 
+		name="genReceptionNo" 
+		value="<%=(Validator.isNull(receptionNo) || (receptionNo.length() == 0)) 
+				&& Validator.isNotNull(workflow) 
+				&& workflow.getGenerateReceptionNo() %>" 
+		type="hidden"
+	/>
 
+	<aui:input 
+		name="genReceptionNoPattern" 
+		value="<%=Validator.isNotNull(workflow)? workflow.getReceptionNoPattern():StringPool.BLANK%>" 
+		type="hidden"
+	/>
+	
 	<aui:input 
 		name="assignFormDisplayStyle" 
 		value="<%=assignFormDisplayStyle %>" 

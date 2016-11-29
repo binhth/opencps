@@ -20,6 +20,10 @@ package org.opencps.backend.util;
 import java.util.Calendar;
 import java.util.Random;
 
+import org.opencps.dossiermgt.model.Dossier;
+import org.opencps.dossiermgt.service.DossierLocalServiceUtil;
+import org.opencps.processmgt.model.ServiceProcess;
+
 import com.liferay.counter.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -200,9 +204,13 @@ public class DossierNoGenerator {
 	private static String _serialNumberAutoIncrement(String pattern, long dossierId) {
 		long dossierCounter = 0;
 		
+		
+		
 		try {
-			dossierCounter = CounterLocalServiceUtil.increment(DossierNoGenerator.class.getName());
-
+			
+			Dossier dossier = DossierLocalServiceUtil.fetchDossier(dossierId);
+			
+			dossierCounter = CounterLocalServiceUtil.increment(ServiceProcess.class.getName() + "#" + Long.toString(dossier.getServiceConfigId()));
         }
         catch (Exception e) {
         	dossierCounter = dossierId;
