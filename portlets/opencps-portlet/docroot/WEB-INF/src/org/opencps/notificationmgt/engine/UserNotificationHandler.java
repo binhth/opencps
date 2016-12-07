@@ -179,7 +179,7 @@ public class UserNotificationHandler extends BaseUserNotificationHandler {
 			viewURL = liferayPortletResponse.createRenderURL(WebKeys.PAYMENT_MGT_PORTLET);
 
 			viewURL.setParameter(
-				"mvcPath", "/html/portlets/paymentmgt/frontoffice/frontofficeconfirmbank.jsp");
+				"mvcPath", "/html/portlets/paymentmgt/frontoffice/frontofficepaymentdetail.jsp");
 			viewURL.setParameter(PaymentFileDisplayTerms.PAYMENT_FILE_ID, paymentFileId);
 			viewURL.setParameter(Constants.CMD, Constants.VIEW);
 			viewURL.setParameter(WebKeys.BACK_URL, "/group/guest" + group);

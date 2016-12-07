@@ -48,6 +48,7 @@ public class NotificationEventKeys {
 		public static final String EVENT7= "207";
 		public static final String EVENT8= "208";
 		public static final String EVENT9= "209";
+		public static final String EVENT10= "210";
 		
 
 	}

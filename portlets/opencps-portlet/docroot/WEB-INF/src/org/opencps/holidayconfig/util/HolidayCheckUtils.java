@@ -19,6 +19,7 @@ package org.opencps.holidayconfig.util;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import org.opencps.processmgt.model.ActionHistory;
 import org.opencps.processmgt.model.ProcessStep;
@@ -35,6 +36,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 
 public class HolidayCheckUtils {
@@ -98,6 +100,64 @@ public class HolidayCheckUtils {
 			result = DateTimeUtil.convertTimemilisecondsToDays(result);
 
 			dateOverNumbers = (int) result;
+		}
+		return dateOverNumbers;
+	}
+	
+	public static int calculatorDateUntilDealine(Date startDate, Date endDate, int daysDuration) {
+
+		int dateOverNumbers = 0;
+
+		if (daysDuration > 0) {
+
+			Calendar endayCal = Calendar.getInstance();
+			endayCal.setTime(endDate);
+
+			Calendar dealineCal = Calendar.getInstance();
+			dealineCal.setTime(startDate);
+			
+			for (int i = 0; i < daysDuration; i++) {
+				
+				dealineCal.add(Calendar.DATE, 1);
+			}
+
+			long endDay = endayCal.getTimeInMillis();
+			long deadline = dealineCal.getTimeInMillis();
+			long result = 0;
+
+			result = deadline - endDay;
+
+			result = DateTimeUtil.convertTimemilisecondsToDays(result);
+
+			dateOverNumbers = (int) result;
+		}
+		return dateOverNumbers;
+	}
+	
+	public static String calculatorDateUntilDealineReturnFormart(Date startDate, Date endDate, int daysDuration,Locale locale) {
+
+		String dateOverNumbers = StringPool.BLANK;
+
+		if (daysDuration > 0 && Validator.isNotNull(startDate) && Validator.isNotNull(endDate)) {
+
+			Calendar endayCal = Calendar.getInstance();
+			endayCal.setTime(endDate);
+
+			Calendar dealineCal = Calendar.getInstance();
+			dealineCal.setTime(startDate);
+			
+			for (int i = 0; i < daysDuration; i++) {
+				
+				dealineCal.add(Calendar.DATE, 1);
+			}
+
+			long endDay = endayCal.getTimeInMillis();
+			long deadline = dealineCal.getTimeInMillis();
+			long result = 0;
+
+			result = deadline - endDay;
+
+			dateOverNumbers = DateTimeUtil.convertTimemilisecondsToFormat(result,locale);
 		}
 		return dateOverNumbers;
 	}

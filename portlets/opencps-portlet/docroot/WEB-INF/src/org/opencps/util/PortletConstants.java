@@ -232,5 +232,5 @@ public class PortletConstants {
 	
 	public static final int PAYMENT_METHOD_CASH = 1;
 	public static final int PAYMENT_METHOD_KEYPAY = 2;
-	public static final int PAYMENT_METHOD_BANK = 4;
+	public static final int PAYMENT_METHOD_BANK = 3;
 }

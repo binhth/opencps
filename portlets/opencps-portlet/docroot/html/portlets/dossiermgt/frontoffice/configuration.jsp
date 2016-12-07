@@ -1,5 +1,8 @@
 
 
+<%@page import="org.opencps.util.PortletPropsValues"%>
+<%@page import="org.opencps.util.PortletUtil"%>
+<%@page import="org.opencps.datamgt.model.DictItem"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -48,6 +51,10 @@
 	for (Layout pubLayout : pubLayouts) {
 		allLayout.add(pubLayout);
 	}
+	
+	List<DictItem> dictItems = PortletUtil.getDictItemInUseByCode(themeDisplay.getScopeGroupId(), 
+			PortletPropsValues.DATAMGT_MASTERDATA_SERVICE_DOMAIN, 
+			PortletConstants.TREE_VIEW_DEFAULT_ITEM_CODE);
 	
 	int itemsToDisplay_cfg = GetterUtil.getInteger(portletPreferences.getValue("itemsToDisplay", "2"));
 	

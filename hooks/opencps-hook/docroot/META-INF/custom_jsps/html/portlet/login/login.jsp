@@ -21,7 +21,6 @@
 	String linkToRegister = themeDisplay.getPortalURL() + "/register";
 	String linkDescriptToUse = themeDisplay.getPortalURL() + "/huong-dan-su-dung";
 %>
-
 <c:choose>
 	<c:when test="<%= themeDisplay.isSignedIn() %>">
 
@@ -207,7 +206,7 @@
 							</aui:fieldset>
 							<aui:row>
 								<aui:col width = "50">
-									<aui:a href="#">
+									<aui:a href="/forgot-password?p_p_id=58&p_p_lifecycle=0&p_p_state=normal&p_p_mode=view&p_p_col_id=column-2&p_p_col_count=1&_58_struts_action=/login/forgot_password">
 										<liferay-ui:message key="forgot-password"/>
 									</aui:a>
 								</aui:col>
@@ -308,9 +307,9 @@
 							</aui:button-row>
 							
 							<div class="forgot-password">
-								<aui:a href="#">
-									<liferay-ui:message key="forgot-password"/>
-								</aui:a>
+								<aui:a href="/forgot-password?p_p_id=58&p_p_lifecycle=0&p_p_state=normal&p_p_mode=view&p_p_col_id=column-2&p_p_col_count=1&_58_struts_action=/login/forgot_password">
+										<liferay-ui:message key="forgot-password"/>
+									</aui:a>
 							</div>
 						</div>
 						<div class="advance-signin">

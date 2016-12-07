@@ -1,4 +1,7 @@
 
+<%@page import="java.util.LinkedHashMap"%>
+<%@page import="java.util.HashSet"%>
+<%@page import="java.util.Set"%>
 <%@page import="com.liferay.portal.kernel.servlet.SessionErrors"%>
 <%@page import="com.liferay.portal.kernel.servlet.SessionMessages"%>
 <%
@@ -98,8 +101,23 @@
 						}catch(Exception e){
 							_log.error(e);
 						}
-					
-						total = totalCount;
+						Set<String> setToReturn = new HashSet<String>();
+						Set<String> set1 = new HashSet<String>();
+						//remove duplicates process orders
+						Map<String, ProcessOrderBean> cleanMapList = new LinkedHashMap<String, ProcessOrderBean>();
+						for (int i = 0; i < processOrders.size(); i++) {
+							if (!set1.add(processOrders.get(i).getProcessOrderId()+"")) {
+								setToReturn.add(processOrders.get(i).getProcessOrderId()+"");
+							}
+							ProcessOrderBean aasb = processOrders.get(i);
+							aasb.set_testDuplicate((String[])setToReturn.toArray(new String[setToReturn.size()]));
+							cleanMapList.put(processOrders.get(i).getProcessOrderId()+"", aasb);
+						}
+						
+						processOrders = new ArrayList<ProcessOrderBean>(cleanMapList.values());
+						
+						int aso = totalCount - cleanMapList.size();
+						total = totalCount - aso;
 						results = processOrders;
 						
 						pageContext.setAttribute("results", results);
@@ -120,7 +138,18 @@
 						processURL.setParameter("mvcPath", templatePath + "process_order_detail.jsp");
 						processURL.setParameter(ProcessOrderDisplayTerms.PROCESS_ORDER_ID, String.valueOf(processOrder.getProcessOrderId()));
 						processURL.setParameter("backURL", currentURL);
-						processURL.setParameter("isEditDossier", (processOrder.isReadOnly() || (processOrder.getAssignToUsesrId() != 0 &&  processOrder.getAssignToUsesrId() != user.getUserId())) ? String.valueOf(false) : String.valueOf(true));
+						boolean flag = false;
+						for(int i=0; i<processOrder.get_testDuplicate().length;i++){
+							if(processOrder.get_testDuplicate()[i].equals(processOrder.getProcessOrderId()+"")){
+								flag = true;
+								break;
+							}
+						}
+						if(flag){
+							processURL.setParameter("isEditDossier", String.valueOf(true));
+						}else{
+							processURL.setParameter("isEditDossier", (processOrder.isReadOnly() || (processOrder.getAssignToUsesrId() != 0 &&  processOrder.getAssignToUsesrId() != user.getUserId())) ? String.valueOf(false) : String.valueOf(true));
+						}
 					
 						String deadLine = Validator.isNotNull(processOrder.getDealine()) ? processOrder.getDealine() : StringPool.DASH;
 						
@@ -202,7 +231,11 @@
 						row.addText(generalInfo);
 						row.addText(detail);
 						row.addButton(actionBtn, href);
-						row.setClassName((processOrder.isReadOnly() || (processOrder.getAssignToUsesrId() != 0 &&  processOrder.getAssignToUsesrId() != user.getUserId())) ? "readonly" : StringPool.BLANK);
+						if(flag){
+							row.setClassName(StringPool.BLANK);
+						}else{
+							row.setClassName((processOrder.isReadOnly() || (processOrder.getAssignToUsesrId() != 0 &&  processOrder.getAssignToUsesrId() != user.getUserId())) ? "readonly" : StringPool.BLANK);
+						}
 						
 						//row.setClassHoverName("");
 					%>	

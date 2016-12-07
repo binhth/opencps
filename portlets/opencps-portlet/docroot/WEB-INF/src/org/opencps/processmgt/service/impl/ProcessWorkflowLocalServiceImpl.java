@@ -95,7 +95,7 @@ public class ProcessWorkflowLocalServiceImpl
 	    String autoEvent, String actionName, boolean assignUser,
 	    long actionUserId, boolean requestPayment, String paymentFee,
 	    boolean generateReceptionNo, String receptionNoPattern,
-	    boolean generateDeadline, String deadlinePattern, boolean isFinishStep, String preCondition, boolean isMultipled,
+	    boolean generateDeadline, String deadlinePattern, boolean isFinishStep, String preCondition, boolean isMultipled, String actionCode,
 	    ServiceContext context)
 	    throws PortalException, SystemException {
 
@@ -125,6 +125,7 @@ public class ProcessWorkflowLocalServiceImpl
 			workflow.setIsFinishStep(isFinishStep);
 			workflow.setIsMultipled(isMultipled);
 			workflow.setPreCondition(preCondition);
+			workflow.setActionCode(actionCode);
 			
 			processWorkflowPersistence.update(workflow);
 		}

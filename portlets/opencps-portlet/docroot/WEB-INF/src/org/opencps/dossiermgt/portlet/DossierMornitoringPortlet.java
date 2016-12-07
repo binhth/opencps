@@ -96,7 +96,16 @@ public class DossierMornitoringPortlet extends MVCPortlet {
 			redirectURL.setParameter("jspPage", templatePath + "dossiermonitoringresult.jsp");
 			redirectURL.setParameter(DossierDisplayTerms.DOSSIER_ID, String.valueOf(ds.getDossierId()));
 			response.sendRedirect(redirectURL.toString());
+		} else {
+			
 		}
+		
+		if (ds != null) {
+			redirectURL.setParameter("jspPage", templatePath + "dossiermonitoringresult.jsp");
+			redirectURL.setParameter(DossierDisplayTerms.DOSSIER_ID, String.valueOf(ds.getDossierId()));
+			response.sendRedirect(redirectURL.toString());
+		}
+		
 //		else if (Validator.isNotNull(receptionNo) && !"".equals(receptionNo)) {		
 //			redirectURL.setParameter("jspPage", templatePath + "dossiermonitoringdossierlist.jsp");
 //			redirectURL.setParameter("keywords", receptionNo);

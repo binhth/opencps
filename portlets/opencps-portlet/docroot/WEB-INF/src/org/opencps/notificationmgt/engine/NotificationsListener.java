@@ -78,6 +78,7 @@ public class NotificationsListener implements MessageListener {
 			String event = StringPool.BLANK;
 			String group = StringPool.BLANK;
 			String email = StringPool.BLANK;
+			String userName = StringPool.BLANK;;
 			String phone = StringPool.BLANK;
 			long groupId = 0;
 			long dossierId = 0;
@@ -102,8 +103,9 @@ public class NotificationsListener implements MessageListener {
 						if (sendType.contains(NotificationEventKeys.EMAIL)) {
 							email = info.getUserMail();
 							dossierId = item.getDossierId();
+							userName = info.getFullName();
 
-							NotificationUtils.sendEmailNotification(item, email,dossierId);
+							NotificationUtils.sendEmailNotification(item, email,dossierId,userName);
 
 						}
 						if (sendType.contains(NotificationEventKeys.INBOX)) {

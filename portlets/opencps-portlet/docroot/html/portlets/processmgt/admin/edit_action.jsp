@@ -233,7 +233,11 @@
 		</aui:col>	
 	</aui:row>
 	
-	
+	<aui:row>
+		<aui:col width="50">
+			<aui:input name="actionCode" />			
+		</aui:col>
+	</aui:row>
 	<label class="bold"><liferay-ui:message key="results-values"/></label>
 	
 	<div id="workflow-output">

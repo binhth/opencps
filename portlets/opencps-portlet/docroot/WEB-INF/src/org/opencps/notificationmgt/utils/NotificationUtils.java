@@ -23,6 +23,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import org.opencps.accountmgt.model.Business;
+import org.opencps.accountmgt.model.Citizen;
+import org.opencps.dossiermgt.bean.AccountBean;
 import org.opencps.dossiermgt.model.Dossier;
 import org.opencps.dossiermgt.model.ServiceConfig;
 import org.opencps.dossiermgt.model.impl.DossierImpl;
@@ -31,10 +34,12 @@ import org.opencps.dossiermgt.service.ServiceConfigLocalServiceUtil;
 import org.opencps.notificationmgt.engine.UserNotificationHandler;
 import org.opencps.notificationmgt.message.SendNotificationMessage;
 import org.opencps.paymentmgt.model.PaymentFile;
+import org.opencps.processmgt.model.ProcessOrder;
 import org.opencps.processmgt.model.ProcessWorkflow;
 import org.opencps.processmgt.service.ProcessWorkflowLocalServiceUtil;
 import org.opencps.usermgt.model.Employee;
 import org.opencps.usermgt.service.EmployeeLocalServiceUtil;
+import org.opencps.util.AccountUtil;
 import org.opencps.util.MessageBusKeys;
 import org.opencps.util.PortletPropsValues;
 import org.opencps.util.SendMailUtils;
@@ -93,10 +98,12 @@ public class NotificationUtils {
 
 		long plId = 0;
 		StringBuffer title = new StringBuffer();
+		StringBuffer content = new StringBuffer();
 
 		try {
 
-			title.append("[").append(message.getDossierId()).append("]").append(LanguageUtil.get(locale, event));
+			title.append("[").append(message.getDossierId()).append("]").append(
+				LanguageUtil.get(locale, event));
 
 			Layout layOut = null;
 
@@ -104,6 +111,16 @@ public class NotificationUtils {
 
 			if (Validator.isNotNull(layOut)) {
 				plId = layOut.getPlid();
+			}
+
+			Dossier dossiser = null;
+
+			if (message.getDossierId() > 0) {
+
+				dossiser = DossierLocalServiceUtil.getDossier(message.getDossierId());
+
+				content.append(dossiser.getReceptionNo()).append("<br>").append(
+					message.getNotificationContent());
 			}
 
 		}
@@ -116,7 +133,7 @@ public class NotificationUtils {
 		payloadJSONObject.put("paymentFileId", message.getPaymentFileId());
 		payloadJSONObject.put("userIdDelivery", userIdDelivery);
 		payloadJSONObject.put("title", title.toString());
-		payloadJSONObject.put("notificationText", message.getNotificationContent());
+		payloadJSONObject.put("notificationText", content.toString());
 		payloadJSONObject.put("plId", plId);
 		payloadJSONObject.put("friendlyUrl", group);
 		payloadJSONObject.put("groupId", groupId);
@@ -125,7 +142,7 @@ public class NotificationUtils {
 	}
 
 	public static void sendEmailNotification(
-		SendNotificationMessage message, String email, long dossierId) {
+		SendNotificationMessage message, String email, long dossierId, String userName) {
 
 		String fromAddress = StringPool.BLANK;
 		String fromName = StringPool.BLANK;
@@ -155,11 +172,14 @@ public class NotificationUtils {
 
 			subject = StringUtil.replace(subject, "[OpenCPS]", "[" + fromName + "]");
 
-			body =
-				StringUtil.replace(body, "{receptionNo}", String.valueOf(message.getDossierId()));
+			body = StringUtil.replace(body, "[receiverUserName]", "[" + userName + "]");
+			body = StringUtil.replace(body, "{OpenCPS}", fromName);
+			body = StringUtil.replace(body, "{dossierId}", String.valueOf(message.getDossierId()));
+			body = StringUtil.replace(body, "{receptionNo}", dossier.getReceptionNo());
 			body =
 				StringUtil.replace(
 					body, "{event}", LanguageUtil.get(locale, message.getNotificationEventName()));
+			body = StringUtil.replace(body, "{message}", message.getNotificationContent());
 
 			_log.info("fromAddress:" + fromAddress);
 			_log.info("fromName:" + fromName);
@@ -178,7 +198,9 @@ public class NotificationUtils {
 	public static void sendNotificationToAccountant(Dossier dossier, PaymentFile paymentFile) {
 
 		try {
+			List<SendNotificationMessage> lsNotification = new ArrayList<SendNotificationMessage>();
 
+			// ADD EVENT VAN THU
 			SendNotificationMessage notiMsg = new SendNotificationMessage();
 			notiMsg.setDossierId(dossier.getDossierId());
 			notiMsg.setNotificationEventName(NotificationEventKeys.OFFICIALS.EVENT10);
@@ -200,9 +222,8 @@ public class NotificationUtils {
 			ProcessWorkflow processWorkflow = null;
 
 			Employee employee = null;
-			
-			MainLoop:
-			for (int i = 0; i < processWorkflowList.size(); i++) {
+
+			MainLoop: for (int i = 0; i < processWorkflowList.size(); i++) {
 
 				processWorkflow = processWorkflowList.get(i);
 
@@ -210,13 +231,13 @@ public class NotificationUtils {
 					processWorkflow.getRequestPayment()) {
 
 					List<String> emailList = getEmailFromPattern(processWorkflow.getPaymentFee());
-					
+
 					User user = null;
 					String email = StringPool.BLANK;
 					if (emailList.size() > 0) {
 						for (int k = 0; k < emailList.size(); k++) {
 							email = emailList.get(k);
-							
+
 							if (Validator.isEmailAddress(email.trim())) {
 								_log.info("email:" + email);
 								user =
@@ -227,7 +248,7 @@ public class NotificationUtils {
 								employee =
 									EmployeeLocalServiceUtil.getEmployeeByEmail(
 										dossier.getGroupId(), email);
-								
+
 								if (Validator.isNotNull(user) && Validator.isNotNull(employee)) {
 
 									infoEmploy.setUserId(user.getUserId());
@@ -235,6 +256,7 @@ public class NotificationUtils {
 									infoEmploy.setUserPhone(employee.getTelNo());
 									infoEmploy.setGroupId(dossier.getGroupId());
 									infoEmploy.setGroup(NotificationEventKeys.GROUP4);
+									infoEmploy.setFullName(employee.getFullName());
 								}
 								infoListEmploy.add(infoEmploy);
 								break MainLoop;
@@ -245,12 +267,62 @@ public class NotificationUtils {
 				}
 
 			}
-			_log.info("infoListEmploy.size():"+infoListEmploy.size());
 			notiMsg.setInfoList(infoListEmploy);
 
-			List<SendNotificationMessage> lsNotification = new ArrayList<SendNotificationMessage>();
 			lsNotification.add(notiMsg);
 
+			// ADD EVENT CONG DAN
+
+			AccountBean accountBean =
+				AccountUtil.getAccountBean(dossier.getUserId(), dossier.getGroupId(), null);
+
+			Citizen citizen = null;
+			Business bussines = null;
+
+			if (accountBean.isCitizen()) {
+				citizen = (Citizen) accountBean.getAccountInstance();
+			}
+			if (accountBean.isBusiness()) {
+				bussines = (Business) accountBean.getAccountInstance();
+			}
+			notiMsg = new SendNotificationMessage();
+			notiMsg.setDossierId(dossier.getDossierId());
+			notiMsg.setNotificationEventName(NotificationEventKeys.USERS_AND_ENTERPRISE.EVENT10);
+			notiMsg.setPaymentFileId(paymentFile.getPaymentFileId());
+			notiMsg.setType("SMS, INBOX, EMAIL");
+
+			SendNotificationMessage.InfoList info = new SendNotificationMessage.InfoList();
+
+			List<SendNotificationMessage.InfoList> infoList =
+				new ArrayList<SendNotificationMessage.InfoList>();
+
+			if (Validator.isNotNull(citizen)) {
+				info.setUserId(citizen.getUserId());
+				info.setUserMail(citizen.getEmail());
+				info.setUserPhone(citizen.getTelNo());
+				info.setFullName(citizen.getFullName());
+
+			}
+			else if (Validator.isNotNull(bussines)) {
+				info.setUserId(bussines.getUserId());
+				info.setUserMail(bussines.getEmail());
+				info.setUserPhone(bussines.getTelNo());
+				info.setFullName(bussines.getName());
+
+			}
+
+			info.setGroup(NotificationEventKeys.GROUP3);
+			info.setGroupId(dossier.getGroupId());
+			infoList.add(info);
+
+			Locale vnLocale = new Locale("vi", "VN");
+
+			notiMsg.setNotificationContent(LanguageUtil.get(vnLocale, "payment-order-done"));
+			notiMsg.setInfoList(infoList);
+
+			lsNotification.add(notiMsg);
+
+			_log.info("=====lsNotification.size():" + lsNotification.size());
 			if (lsNotification.size() > 0) {
 
 				Message msgNoti = new Message();

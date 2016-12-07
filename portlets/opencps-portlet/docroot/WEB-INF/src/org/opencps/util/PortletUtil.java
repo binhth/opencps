@@ -382,11 +382,14 @@ public class PortletUtil {
 		DictItem dictItem = null;
 
 		try {
-			dictItem = DictItemLocalServiceUtil.getDictItemByCode(itemCode);
-			if (Validator.isNotNull(dictItem)) {
-				name = dictItem.getItemName(locale);
+			if (itemCode.trim().length() > 0) {
+				dictItem = DictItemLocalServiceUtil.getDictItemByCode(itemCode);
+				if (Validator.isNotNull(dictItem) && Validator.isNotNull(locale)) {
+					name = dictItem.getItemName(locale);
+				}
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			_log.error(e);
 		}
 

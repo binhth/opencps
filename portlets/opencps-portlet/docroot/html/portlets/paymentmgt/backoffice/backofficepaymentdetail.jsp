@@ -134,10 +134,10 @@
 						%>
 							
 						<c:if test="<%= isCash %>">
-							[ <liferay-ui:message key="cash"></liferay-ui:message> ];
+							[ <liferay-ui:message key="cash"></liferay-ui:message> ]
 						</c:if>
 						<c:if test="<%= isKeypay %>">
-							[ <liferay-ui:message key="keypay"></liferay-ui:message> ];
+							[ <liferay-ui:message key="keypay"></liferay-ui:message> ]
 						</c:if>
 						<c:if test="<%= isBank %>">
 							[ <liferay-ui:message key="bank"></liferay-ui:message> ]

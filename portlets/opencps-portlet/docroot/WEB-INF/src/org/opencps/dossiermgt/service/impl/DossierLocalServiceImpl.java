@@ -2246,8 +2246,7 @@ public class DossierLocalServiceImpl extends DossierLocalServiceBaseImpl {
 				dossier.setEstimateDatetime(estimateDatetime);
 			}
 
-			if (Validator.isNotNull(receiveDatetime)
-					&& Validator.isNotNull(dossier.getEstimateDatetime())) {
+			if (Validator.isNotNull(receiveDatetime)) {
 				dossier.setReceiveDatetime(receiveDatetime);
 			}
 

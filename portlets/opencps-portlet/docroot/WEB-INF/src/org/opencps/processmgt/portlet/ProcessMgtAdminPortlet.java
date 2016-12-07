@@ -207,7 +207,9 @@ public class ProcessMgtAdminPortlet extends MVCPortlet {
 		    ParamUtil.getBoolean(actionRequest, "generateDeadlineCheckbox");
 
 		String deadlinePattern =
-		    ParamUtil.getString(actionRequest, "deadlinePattern");
+					    ParamUtil.getString(actionRequest, "deadlinePattern");
+		String actionCode =
+					    ParamUtil.getString(actionRequest, "actionCode");
 		
 		boolean isFinishStep =
 					    ParamUtil.getBoolean(actionRequest, "isFinishStepCheckbox");
@@ -256,7 +258,7 @@ public class ProcessMgtAdminPortlet extends MVCPortlet {
 				        autoEvent, actionName, assignUser, actionUserId,
 				        requestPayment, paymentFee, generateReceptionNo,
 				        receptionNoPattern, generateDeadline, deadlinePattern,
-				        isFinishStep, preCondition, isMultipled, serviceContext);
+				        isFinishStep, preCondition, isMultipled, actionCode, serviceContext);
 
 				// Add WorkflowOutput
 

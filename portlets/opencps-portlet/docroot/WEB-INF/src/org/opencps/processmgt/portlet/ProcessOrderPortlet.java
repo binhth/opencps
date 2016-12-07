@@ -2168,9 +2168,9 @@ public class ProcessOrderPortlet extends MVCPortlet {
 		if (dossierId <= 0) {
 			throw new NoSuchDossierException();
 		}
-		
+
 		ProcessWorkflow processWorkflow = null;
-		
+
 		try {
 			processWorkflow = ProcessWorkflowLocalServiceUtil
 					.getProcessWorkflow(processWorkflowId);
@@ -2737,4 +2737,80 @@ public class ProcessOrderPortlet extends MVCPortlet {
 		}
 	}
 
+	public void validateAssignTask(ActionRequest actionRequest,
+			ActionResponse actionResponse) throws IOException {
+		List<WorkflowOutput> workflowOutputs = new ArrayList<WorkflowOutput>();
+
+		List<ProcessStepDossierPart> processStepDossierParts = new ArrayList<ProcessStepDossierPart>();
+		
+		
+
+		JSONArray array = JSONFactoryUtil.createJSONArray();
+
+		long dossierId = ParamUtil.getLong(actionRequest,
+				ProcessOrderDisplayTerms.DOSSIER_ID);
+
+		long processStepId = ParamUtil.getLong(actionRequest,
+				ProcessOrderDisplayTerms.PROCESS_STEP_ID);
+
+		long processWorkflowId = ParamUtil.getLong(actionRequest,
+				ProcessOrderDisplayTerms.PROCESS_WORKFLOW_ID);
+
+		processStepDossierParts = ProcessUtils
+				.getDossierPartByStep(processStepId);
+
+		if (processStepDossierParts != null) {
+
+			for (ProcessStepDossierPart processStepDossierPart : processStepDossierParts) {
+
+				if (processStepDossierPart.getDossierPartId() > 0) {
+					try {
+
+						List<WorkflowOutput> workflowOutputsTemp = WorkflowOutputLocalServiceUtil
+								.getByProcessByPWID_DPID(processWorkflowId,
+										processStepDossierPart
+												.getDossierPartId());
+
+						if (workflowOutputsTemp != null) {
+							workflowOutputs.addAll(workflowOutputsTemp);
+						}
+					} catch (Exception e) {
+					}
+				}
+
+			}
+		}
+
+		if (workflowOutputs != null && !workflowOutputs.isEmpty()) {
+			for (WorkflowOutput workflowOutput : workflowOutputs) {
+				
+				if (workflowOutput.getRequired()) {
+
+					DossierFile dossierFile = null;
+					DossierPart dossierPart = null;
+					try {
+						dossierPart = DossierPartLocalServiceUtil
+								.getDossierPart(workflowOutput
+										.getDossierPartId());
+						dossierFile = DossierFileLocalServiceUtil
+								.getDossierFileInUse(dossierId,
+										dossierPart.getDossierpartId());
+					} catch (Exception e) {
+						// TODO: handle exception
+					}
+
+					if (dossierFile == null && dossierPart != null) {
+
+						array.put(dossierPart.getDossierpartId());
+					
+					}
+				}
+			}
+		}
+		
+		if(array != null){
+			PortletUtil.writeJSON(actionRequest, actionResponse, array);
+		}
+
+	}
 }
