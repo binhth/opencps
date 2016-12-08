@@ -112,7 +112,7 @@
 									depthLevel="1" 
 									dictCollectionCode="DOSSIER_SUB_STATUS" 
 									showLabel="<%=false%>"
-									emptyOptionLabels="dossier-status"
+									emptyOptionLabels="filter-by-subStatus-left"
 									itemsEmptyOption="true"
 									itemNames="dossierSubStatus"
 									optionValueType="code"
@@ -191,6 +191,12 @@
 </aui:nav-bar>
 
 <aui:script use="liferay-util-list-fields,liferay-portlet-url">
+
+	AUI().ready(function(A){
+		A.one("#<portlet:namespace/>dossierSubStatus").on('change',function(){
+			submitForm(document.<portlet:namespace />fmSearch);
+		});
+	});
 	Liferay.provide(window, '<portlet:namespace/>processMultipleDossier', function() {
 	
 		var A = AUI();
