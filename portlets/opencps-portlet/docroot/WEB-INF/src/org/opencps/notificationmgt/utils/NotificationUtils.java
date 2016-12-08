@@ -168,8 +168,11 @@ public class NotificationUtils {
 				PrefsPropsUtil.getString(dossier.getCompanyId(), PropsKeys.ADMIN_EMAIL_FROM_NAME);
 			to = email;
 			subject = PortletPropsValues.SUBJECT_TO_CUSTOMER;
-			body = PortletPropsValues.CONTENT_TO_CUSTOMER;
-
+			if(Validator.isNull(dossier.getReceptionNo())){
+				body = PortletPropsValues.CONTENT_TO_CUSTOMER_WITHOUT_RECEPTION_NO;
+			}else{
+				body = PortletPropsValues.CONTENT_TO_CUSTOMER;
+			}
 			subject = StringUtil.replace(subject, "[OpenCPS]", "[" + fromName + "]");
 
 			body = StringUtil.replace(body, "[receiverUserName]", "[" + userName + "]");

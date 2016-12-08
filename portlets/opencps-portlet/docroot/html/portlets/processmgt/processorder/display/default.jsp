@@ -145,11 +145,8 @@
 								break;
 							}
 						}
-						if(flag){
-							processURL.setParameter("isEditDossier", String.valueOf(true));
-						}else{
-							processURL.setParameter("isEditDossier", (processOrder.isReadOnly() || (processOrder.getAssignToUsesrId() != 0 &&  processOrder.getAssignToUsesrId() != user.getUserId())) ? String.valueOf(false) : String.valueOf(true));
-						}
+							
+						processURL.setParameter("isEditDossier", (processOrder.isReadOnly() || (processOrder.getAssignToUsesrId() != 0 &&  processOrder.getAssignToUsesrId() != user.getUserId())) ? String.valueOf(false) : String.valueOf(true));
 					
 						String deadLine = Validator.isNotNull(processOrder.getDealine()) ? processOrder.getDealine() : StringPool.DASH;
 						
@@ -231,11 +228,7 @@
 						row.addText(generalInfo);
 						row.addText(detail);
 						row.addButton(actionBtn, href);
-						if(flag){
-							row.setClassName(StringPool.BLANK);
-						}else{
-							row.setClassName((processOrder.isReadOnly() || (processOrder.getAssignToUsesrId() != 0 &&  processOrder.getAssignToUsesrId() != user.getUserId())) ? "readonly" : StringPool.BLANK);
-						}
+						row.setClassName((processOrder.isReadOnly() || (processOrder.getAssignToUsesrId() != 0 &&  processOrder.getAssignToUsesrId() != user.getUserId())) ? "readonly" : StringPool.BLANK);
 						
 						//row.setClassHoverName("");
 					%>	

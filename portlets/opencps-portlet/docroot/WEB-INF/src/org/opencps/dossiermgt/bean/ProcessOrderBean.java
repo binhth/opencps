@@ -460,6 +460,16 @@ public class ProcessOrderBean {
 
 	private String _actionNote;
 	
+	private String dossierSubStatus;
+	
+	public String getDossierSubStatus() {
+		return dossierSubStatus;
+	}
+
+	public void setDossierSubStatus(String dossierSubStatus) {
+		this.dossierSubStatus = dossierSubStatus;
+	}
+
 	private String [] _testDuplicate;
 	
 	public String[] get_testDuplicate() {

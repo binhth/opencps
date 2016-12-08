@@ -247,7 +247,7 @@
 										<div class='<%= "text-align-right span1 " + cssStatusColor%>'>
 											<i class='<%="fa fa-circle sx10 " + processOrder.getDossierStatus()%>'></i>
 										</div>
-										<div class="span2 bold-label">
+										<div class="span3 bold-label">
 											<liferay-ui:message key="reception-no"/>
 										</div>
 										<span class="span9">
@@ -256,12 +256,7 @@
 									</div>
 
 									<div class="row-fluid">
-										<div class='<%= "text-align-right span1 " + cssStatusColor%>'>
-										</div>
-										<div class="span2 bold-label">
-											<liferay-ui:message key="service-name"/>
-										</div>
-										<span class="span9">
+										<span class="span12">
 											<%=processOrder.getServiceName() %>
 										</span>
 									</div>

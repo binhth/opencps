@@ -121,7 +121,7 @@ NumberFormat numberFormat = NumberFormat.getNumberInstance(locale);
 		</div>
 	</c:if>
 	
-	<c:if test="<%= (total > delta) || (total > PropsValues.SEARCH_CONTAINER_PAGE_DELTA_VALUES[0]) %>">
+	<c:if test="<%= 1==1 %>">
 		<div class="clearfix lfr-pagination">
 			<div class="pagination">
 	                           

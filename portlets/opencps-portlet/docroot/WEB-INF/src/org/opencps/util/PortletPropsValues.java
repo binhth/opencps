@@ -321,6 +321,7 @@ public class PortletPropsValues {
 	public static final String SYSTEM_EMAIL = PortletProps.get(PortletPropsKeys.SYSTEM_EMAIL);
 	public static final String SUBJECT_TO_CUSTOMER = PortletProps.get(PortletPropsKeys.SUBJECT_TO_CUSTOMER);
 	public static final String CONTENT_TO_CUSTOMER = PortletProps.get(PortletPropsKeys.CONTENT_TO_CUSTOMER);
+	public static final String CONTENT_TO_CUSTOMER_WITHOUT_RECEPTION_NO = PortletProps.get(PortletPropsKeys.CONTENT_TO_CUSTOMER_WITHOUT_RECEPTION_NO);
 	
 	public static final int HOLIDAYCONFIG_DESCRIPTION_LENGTH = GetterUtil
 		    .getInteger(PortletProps

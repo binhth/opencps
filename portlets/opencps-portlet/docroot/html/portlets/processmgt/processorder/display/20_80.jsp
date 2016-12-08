@@ -1,4 +1,5 @@
 
+<%@page import="org.opencps.util.PortletConstants"%>
 <%@page import="java.util.Arrays"%>
 <%@page import="java.util.HashSet"%>
 <%@page import="java.util.Set"%>
@@ -104,6 +105,8 @@
 	
 	long processStepId = ParamUtil.getLong(request, "processStepId");
 	
+	String dossierSubStatus = ParamUtil.getString(request, "dossierSubStatus");
+	
 	try{
 		
 		if(tabs1.equals(ProcessUtils.TOP_TABS_PROCESS_ORDER_WAITING_PROCESS)){
@@ -151,12 +154,9 @@
 		    .createJSONObject();
 	arrayParam.put("serviceInfoId", (serviceInfoId > 0) ? String.valueOf(serviceInfoId):StringPool.BLANK);
 	arrayParam.put("processStepId", (processStepId > 0) ? String.valueOf(processStepId):StringPool.BLANK);
+	arrayParam.put("dossierSubStatus", Validator.isNotNull(dossierSubStatus) ? dossierSubStatus:StringPool.BLANK);
 	arrayParam.put("tabs1", tabs1);
 	
-	String processStepIdJsonData = ProcessOrderUtils.generateTreeView(
-			processOrderSteps, 
-			LanguageUtil.get(locale, "filter-process-step").replaceAll("--", StringPool.BLANK) , 
-			"radio");
 %>
 
 <aui:row>
@@ -164,56 +164,38 @@
 	
 		<div style="margin-bottom: 25px;" class="opencps-searchcontainer-wrapper default-box-shadow radius8">
 		
-			<div id="processStepIdTree" class="openCPSTree"></div>
-			
+			<div id="subStatusTree" class="openCPSTree"></div>
+			<%
+			String dossierSubStatusJsonData = ProcessOrderUtils.generateTreeView(
+					"DOSSIER_SUB_STATUS", 
+					PortletConstants.TREE_VIEW_ALL_ITEM, 
+					LanguageUtil.get(locale, "filter-by-subStatus-left") , 
+					PortletConstants.TREE_VIEW_LEVER_1, 
+					"radio",
+					false,
+					renderRequest);
+			%>
 		</div>
-	
-	<div class="opencps-searchcontainer-wrapper default-box-shadow radius8">
-		
-		<div id="serviceInfoIdTree" class="openCPSTree"></div>
-		
-		<%
-		
-		String serviceInfoIdJsonData = ProcessOrderUtils.generateTreeView(
-				processOrderServices, 
-				LanguageUtil.get(locale, "service-info").replaceAll("--", StringPool.BLANK) , 
-				"radio");
-		%>
-		
-	</div>
+
 	
 <liferay-portlet:actionURL  var="menuCounterUrl" name="menuCounterAction"/>
 <liferay-portlet:actionURL  var="menuCounterServiceInfoIdUrl" name="menuCounterServiceInfoIdAction"/>
 <aui:script use="liferay-util-window,liferay-portlet-url">
 
-	var serviceInfoId = '<%=String.valueOf(serviceInfoId) %>';
-	var processStepId = '<%=String.valueOf(processStepId) %>';
-	var serviceInfoIdJsonData = '<%=serviceInfoIdJsonData%>';
-	var processStepIdJsonData = '<%=processStepIdJsonData%>';
+	var dossierSubStatus = '<%=String.valueOf(dossierSubStatus) %>';
+	var dossierSubStatusJsonData = '<%=dossierSubStatusJsonData%>';
 	var arrayParam = '<%=arrayParam.toString() %>';
 	AUI().ready(function(A){
-		buildTreeView("serviceInfoIdTree", 
-				"serviceInfoId", 
-				serviceInfoIdJsonData, 
+		buildTreeView("subStatusTree", 
+				"dossierSubStatus", 
+				dossierSubStatusJsonData, 
 				arrayParam, 
 				'<%= PortletURLFactoryUtil.create(request, WebKeys.PROCESS_ORDER_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>', 
 				'<%=templatePath + "processordertodolist.jsp" %>', 
 				'<%=LiferayWindowState.NORMAL.toString() %>', 
 				'normal',
 				'<%=menuCounterServiceInfoIdUrl.toString() %>',
-				serviceInfoId,
-				'<%=renderResponse.getNamespace() %>',
-				'<%=hiddenTreeNodeEqualNone%>');
-		buildTreeView("processStepIdTree", 
-				'processStepId', 
-				processStepIdJsonData, 
-				arrayParam, 
-				'<%= PortletURLFactoryUtil.create(request, WebKeys.PROCESS_ORDER_PORTLET, themeDisplay.getPlid(), PortletRequest.RENDER_PHASE) %>', 
-				'<%=templatePath + "processordertodolist.jsp" %>', 
-				'<%=LiferayWindowState.NORMAL.toString() %>', 
-				'normal',
-				'<%=menuCounterUrl.toString() %>',
-				processStepId,
+				dossierSubStatus,
 				'<%=renderResponse.getNamespace() %>',
 				'<%=hiddenTreeNodeEqualNone%>');
 		
@@ -224,22 +206,12 @@
 	</aui:col>
 	<aui:col width="75" >
 		<aui:form name="fm" action="<%= iteratorURL %>" method="POST" >
-			<aui:nav-bar cssClass="opencps-toolbar custom-toolbar">
-				<aui:nav-bar-search cssClass="pull-right front-custom-select-search" style="width: 70%;">
-					<aui:col cssClass="search-col">
-						<liferay-ui:input-search 
-							id="keywords1"
-							name="keywords"
-							title='<%= LanguageUtil.get(locale, "keywords") %>'
-							placeholder='<%=LanguageUtil.get(locale, "keywords") %>'
-							cssClass="search-input input-keyword"
-						/>
-					</aui:col>
-				</aui:nav-bar-search>
-			</aui:nav-bar>
+			<liferay-util:include page='<%=templatePath + "toolbar.jsp" %>' servletContext="<%=application %>" />
+			
 			<aui:input name="keywords" type="hidden" value="<%=ParamUtil.getString(request, \"keywords\") %>"></aui:input>
 			<aui:input name="serviceInfoId" type="hidden" value="<%=serviceInfoId %>"></aui:input>
 			<aui:input name="processStepId" type="hidden" value="<%=processStepId %>"></aui:input>
+			<aui:input name="dossierSubStatus" type="hidden" value="<%=dossierSubStatus %>"></aui:input>
 			<div class="opencps-searchcontainer-wrapper">
 				<div class="opcs-serviceinfo-list-label">
 					<div class="title_box">
@@ -313,11 +285,7 @@
 											break;
 										}
 									}
-									if(flag){
-										processURL.setParameter("isEditDossier", String.valueOf(true));
-									}else{
-										processURL.setParameter("isEditDossier", (processOrder.isReadOnly() || (processOrder.getAssignToUsesrId() != 0 &&  processOrder.getAssignToUsesrId() != user.getUserId())) ? String.valueOf(false) : String.valueOf(true));
-									}
+									processURL.setParameter("isEditDossier", (processOrder.isReadOnly() || (processOrder.getAssignToUsesrId() != 0 &&  processOrder.getAssignToUsesrId() != user.getUserId())) ? String.valueOf(false) : String.valueOf(true));
 								
 									String deadlineVal = Validator.isNotNull(processOrder.getDealine()) ? processOrder.getDealine() : StringPool.DASH;
 									
@@ -397,11 +365,7 @@
 									row.addText(boundcol1);
 									row.addText(boundcol2);
 									row.addButton(actionButt, hrefFix);
-									if(flag){
-										row.setClassName(StringPool.BLANK);
-									}else{
-										row.setClassName((processOrder.isReadOnly() || (processOrder.getAssignToUsesrId() != 0 &&  processOrder.getAssignToUsesrId() != user.getUserId())) ? "readonly" : StringPool.BLANK);
-									}
+									row.setClassName((processOrder.isReadOnly() || (processOrder.getAssignToUsesrId() != 0 &&  processOrder.getAssignToUsesrId() != user.getUserId())) ? "readonly" : StringPool.BLANK);
 									
 									
 									//row.setClassHoverName("");

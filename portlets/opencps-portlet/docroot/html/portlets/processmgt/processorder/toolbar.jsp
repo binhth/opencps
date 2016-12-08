@@ -1,3 +1,4 @@
+<%@page import="org.opencps.dossiermgt.search.DossierDisplayTerms"%>
 <%
 /**
  * OpenCPS is the open source Core Public Services software
@@ -45,6 +46,10 @@
 	
 	long processStepId = ParamUtil.getLong(request, "processStepId");
 	
+	String dossierSubStatus = ParamUtil.getString(request, "dossierSubStatus");
+	
+	String todolistDisplayStyle = GetterUtil.getString(portletPreferences.getValue("todolistDisplayStyle", "default"));
+	
 	try{
 		
 		if(tabs1.equals(ProcessUtils.TOP_TABS_PROCESS_ORDER_WAITING_PROCESS)){
@@ -62,8 +67,8 @@
 		
 		
 	}catch(Exception e){}
+	
 %>
-
 <liferay-portlet:renderURL varImpl="searchURL" portletName="<%=WebKeys.PROCESS_ORDER_PORTLET %>">
 	<liferay-portlet:param name="tabs1" value="<%=tabs1 %>"/>
 	<c:choose>
@@ -100,7 +105,28 @@
 			<aui:form action="<%= searchURL %>" method="post" name="fmSearch">
 			<liferay-portlet:renderURLParams varImpl="searchURL" />
 				<aui:row>
-					<aui:col width="30" cssClass="search-col">
+					<aui:col width="25" cssClass="search-col">
+						<c:choose>
+							<c:when test="<%=!todolistDisplayStyle.equals(\"treemenu_left\") %>">
+								<datamgt:ddr 
+									depthLevel="1" 
+									dictCollectionCode="DOSSIER_SUB_STATUS" 
+									showLabel="<%=false%>"
+									emptyOptionLabels="dossier-status"
+									itemsEmptyOption="true"
+									itemNames="dossierSubStatus"
+									optionValueType="code"
+									selectedItems="<%=dossierSubStatus %>"
+									cssClass="search-input select-box"
+								/>
+							</c:when>
+							<c:otherwise>
+								<aui:input name="dossierSubStatus" type="hidden" value="<%=dossierSubStatus %>"></aui:input>
+							</c:otherwise>
+						</c:choose>
+					</aui:col>
+				
+					<aui:col width="25" cssClass="search-col">
 						<aui:select 
 							name="serviceInfoId" 
 							label="<%=StringPool.BLANK %>" 
@@ -126,9 +152,9 @@
 						</aui:select>
 					</aui:col>
 				
-					<aui:col width="30" cssClass="search-col">
+					<aui:col width="25" cssClass="search-col">
 						<aui:select 
-							name="dossierStatus" 
+							name="processStepId" 
 							label="<%=StringPool.BLANK %>" 
 							inlineField="<%=true %>" 
 							inlineLabel="left"
@@ -149,7 +175,7 @@
 							%>
 						</aui:select>
 					</aui:col>
-					<aui:col width="30" cssClass="search-col">
+					<aui:col width="25" cssClass="search-col">
 						<liferay-ui:input-search 
 							id="keywords1"
 							name="keywords"
@@ -199,54 +225,10 @@
 	});
 	
 	Liferay.provide(window, '<portlet:namespace/>searchByProcecssStep', function(e) {
-		
-		var A = AUI();
-		
-		var serviceInfoId = '<%=serviceInfoId%>';
-		
-		var instance = A.one(e);
-		
-		var processStepId = instance.val();
-		
-		var fmSearch = A.one('#<portlet:namespace/>fmSearch');
-		
-		var action = fmSearch.attr('action');
-		
-		var keywords = A.one('#<portlet:namespace/>keywords').val();
-		
-		var portletURL = Liferay.PortletURL.createURL(action);
-		portletURL.setParameter("serviceInfoId", serviceInfoId);
-		portletURL.setParameter("processStepId", processStepId);
-		portletURL.setParameter("keywords", keywords);
-		
-		fmSearch.setAttribute('action', portletURL.toString());
-		
 		submitForm(document.<portlet:namespace />fmSearch);
 	},['liferay-portlet-url']);
 	
 	Liferay.provide(window, '<portlet:namespace/>searchByProcecssOrderService', function(e) {
-		
-		var A = AUI();
-		
-		var processStepId = 0;
-		
-		var instance = A.one(e);
-		
-		var serviceInfoId = instance.val();
-		
-		var fmSearch = A.one('#<portlet:namespace/>fmSearch');
-		
-		var action = fmSearch.attr('action');
-
-		var keywords = A.one('#<portlet:namespace/>keywords').val();
-		
-		var portletURL = Liferay.PortletURL.createURL(action);
-		portletURL.setParameter("serviceInfoId", serviceInfoId);
-		portletURL.setParameter("processStepId", processStepId);
-		portletURL.setParameter("keywords", keywords);
-		
-		fmSearch.setAttribute('action', portletURL.toString());
-		
 		submitForm(document.<portlet:namespace />fmSearch);
 	},['liferay-portlet-url']);
 </aui:script>

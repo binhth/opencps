@@ -539,7 +539,8 @@
 				opencps_processstep.sequenceNo,
 				opencps_processstep.daysDuration,
 				opencps_processstep.referenceDossierPartId,
-				stepallowance.readOnly
+				stepallowance.readOnly,
+				opencps_processstep.dossierSubStatus
 			FROM 
 				opencps_processorder
 			INNER JOIN
@@ -595,6 +596,7 @@
 					AND stepallowance.readOnly = TRUE
 				)
 			)
+			AND opencps_processstep.dossierSubStatus = ?
 			AND (opencps_dossier.receptionNo = ? or opencps_serviceinfo.serviceName like ? or opencps_dossier.subjectName like ? or opencps_dossier.dossierId = ?)
 			ORDER BY 
 				opencps_processorder.modifiedDate DESC, 
@@ -661,6 +663,7 @@
                     AND stepallowance.readOnly = TRUE
                 )
             )
+            AND opencps_processstep.dossierSubStatus = ?
             AND (opencps_dossier.receptionNo = ? or opencps_serviceinfo.serviceName like ? or opencps_dossier.subjectName like ? or opencps_dossier.dossierId = ?)
 		]]>
 	</sql>

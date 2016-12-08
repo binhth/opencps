@@ -44,6 +44,8 @@ import org.opencps.accountmgt.NoSuchAccountOwnUserIdException;
 import org.opencps.accountmgt.NoSuchAccountTypeException;
 import org.opencps.backend.message.SendToEngineMsg;
 import org.opencps.backend.util.BackendUtils;
+import org.opencps.datamgt.model.DictItem;
+import org.opencps.datamgt.service.DictItemLocalServiceUtil;
 import org.opencps.dossiermgt.DuplicateFileGroupException;
 import org.opencps.dossiermgt.EmptyFileGroupException;
 import org.opencps.dossiermgt.NoSuchDossierException;
@@ -2489,6 +2491,60 @@ public class ProcessOrderPortlet extends MVCPortlet {
 		PortletUtil.writeJSON(actionRequest, actionResponse, jsonObject);
 	}
 
+	/**
+	 * @param actionRequest
+	 * @param actionResponse
+	 * @throws PortalException
+	 * @throws SystemException
+	 * @throws IOException
+	 */
+	@SuppressWarnings("unchecked")
+	public void menuCounterSubStatus(ActionRequest actionRequest,
+			ActionResponse actionResponse) throws PortalException,
+			SystemException, IOException {
+
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+		ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest
+				.getAttribute(WebKeys.THEME_DISPLAY);
+
+		long groupId = themeDisplay.getScopeGroupId();
+
+		// now read your parameters, e.g. like this:
+		// long someParameter = ParamUtil.getLong(request, "someParameter");
+
+		// String keywords = ParamUtil.getString(actionRequest, "keywords");
+
+		long serviceInfoId = ParamUtil.getLong(actionRequest,
+				"serviceInfoId");
+		long processStepId = ParamUtil.getLong(actionRequest,
+				"processStepId");
+		String keywords = ParamUtil.getString(actionRequest, "keywords");
+
+		String tabs1 = ParamUtil.getString(actionRequest, "tabs1");
+		
+		long counterVal = 0;
+		JSONObject obj = null;
+		for (DictItem item : PortletUtil.getDictItemInUseByCode(groupId, "DOSSIER_SUB_STATUS", PortletConstants.TREE_VIEW_ALL_ITEM)) {
+			
+			obj = JSONFactoryUtil.createJSONObject();
+
+			if (tabs1
+					.equals(ProcessUtils.TOP_TABS_PROCESS_ORDER_WAITING_PROCESS)) {
+
+				counterVal = ProcessOrderLocalServiceUtil.countProcessOrderKeyWords(serviceInfoId, processStepId, 
+						themeDisplay.getUserId(), themeDisplay.getUserId(), 
+						keywords,item.getItemCode());
+
+			} 
+			obj.put("code", item.getItemCode());
+			obj.put("counter", String.valueOf(counterVal));
+			jsonArray.put(obj);
+		}
+
+		jsonObject.put("badge", jsonArray);
+		PortletUtil.writeJSON(actionRequest, actionResponse, jsonObject);
+	}
 	private boolean _hasPermission = true;
 
 	public boolean hasPermission() {

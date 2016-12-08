@@ -20,9 +20,9 @@
 
 
 <%
-	if(Validator.isNotNull(searchTerms.getKeywords())){
-		totalCount = ProcessOrderLocalServiceUtil.countProcessOrderKeyWords(serviceInfoId, processStepId, themeDisplay.getUserId(), assignToUserId, searchTerms.getKeywords());
-		processOrders = ProcessOrderLocalServiceUtil.searchProcessOrderKeyWords(serviceInfoId, processStepId, themeDisplay.getUserId(), assignToUserId, searchTerms.getKeywords(),
+	if(Validator.isNotNull(searchTerms.getKeywords()) || Validator.isNotNull(dossierSubStatus)){
+		totalCount = ProcessOrderLocalServiceUtil.countProcessOrderKeyWords(serviceInfoId, processStepId, themeDisplay.getUserId(), assignToUserId, searchTerms.getKeywords(),dossierSubStatus);
+		processOrders = ProcessOrderLocalServiceUtil.searchProcessOrderKeyWords(serviceInfoId, processStepId, themeDisplay.getUserId(), assignToUserId, searchTerms.getKeywords(),dossierSubStatus,
 			searchContainer.getStart(), searchContainer.getEnd(), 
 			ProcessOrderUtils.getProcessOrderByComparator(todolistOrderByField, todolistOrderByType));
 	}else{
